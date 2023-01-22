@@ -1,4 +1,4 @@
-import { buildFile }                from "../animation-functions/file-builder/build-filepath.js";
+import { buildFile }                from "../animation-functions/file-builder/new-builder.js";
 import { custom_notify }            from "../constants/constants.js"
 import { particleDefaultValues }    from "../animation-functions/levels-particles/particleDefaults.js";
 
