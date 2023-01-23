@@ -7,10 +7,6 @@ export async function buildFile(getMeta, type, animation, dbType, variant, color
         return { file: customPath, fileData: customPath }
     }
 
-    if (!aaDatabase[dbType]?.[type]?.[animation]) {
-        return { file: aaDatabase[dbType]?.[type]}
-    }
-
     const cleanType = getCleanProperty(aaDatabase[dbType], type);
     const cleanAnimation = getCleanProperty(aaDatabase[dbType][cleanType], animation);
     const cleanVariant = getCleanProperty(aaDatabase[dbType][cleanType][cleanAnimation], variant);
