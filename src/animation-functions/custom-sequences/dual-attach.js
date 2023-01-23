@@ -6,7 +6,7 @@ export async function dualattach(handler, animationData) {
     const sourceFX = animationData.sourceFX;
     const macro = animationData.macro;
 
-    const animFile = await buildFile(false, data.video.menuType, data.video.animation, "range", data.video.variant, data.video.color, data.video.customPath)
+    const animFile = await buildFile("range", data.video)
 
     const onlyX = data.video.customPath ? data.options.onlyX : false;
 
