@@ -7,7 +7,7 @@ import * as animate from "../animation-functions"
 const wait = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 
 export async function trafficCop(handler) {
-    
+    if (!handler) { return; }
     const data = foundry.utils.deepClone(handler.animationData);
     if (data.advanced?.excludedType?.enabled && data.advanced?.excludedType?.path && data.advanced?.excludedType?.property) {
         if (AAAutorecFunctions.checkExcludedProperty(handler.item, data.advanced?.excludedType?.property, data.advanced?.excludedType?.path)) {
@@ -26,7 +26,7 @@ export async function trafficCop(handler) {
 
     if (sanitizedData.macro && sanitizedData.macro.enable && sanitizedData.macro.playWhen === "2") {
 
-        if (handler.isTemplateItem) {
+        if (handler.isTemplateAnimation) {
             switch (game.system.id) {
                 case "a5e":
                 case "sw5e":
@@ -45,14 +45,15 @@ export async function trafficCop(handler) {
                     await wait(500)
                     handler.templateData = canvas.templates?.placeables?.[canvas.templates.placeables.length - 1]?.document;
                     playMacro()
-                }    
+                }
         } else {
             playMacro()
         }
         function playMacro() {
-            new Sequence()
-            .macro(sanitizedData.macro.name, handler.workflow, handler, sanitizedData.macro.args)
-            .play()
+            handler.runMacro(sanitizedData.macro)
+            //new Sequence()
+            //.macro(sanitizedData.macro.name, handler.workflow, handler, sanitizedData.macro.args)
+            //.play()
         }
         return;
     }

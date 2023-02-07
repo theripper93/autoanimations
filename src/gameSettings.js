@@ -642,6 +642,20 @@ class AAGameSettings extends TJSGameSettings {
                   config: true,
                }
             });
+
+            settings.push({
+               namespace,
+               key: 'disableGrantedAuraEffects',
+               folder: game.system.title || game.system.name,
+               options: {
+                  name: 'autoanimations.settings.disableGrantedAura',
+                  hint: 'autoanimations.settings.disableGrantedAuraHint',
+                  scope: scope.world,
+                  type: Boolean,
+                  default: false,
+                  config: true,
+               }
+            });
             break;
 
          case 'pf1':
@@ -727,6 +741,24 @@ class AAGameSettings extends TJSGameSettings {
                   type: Boolean,
                   default: true,
                   config: true,
+               }
+            });
+            break;
+         case "twodsix":
+            settings.push({
+               namespace,
+               key: 'playtrigger',
+               folder: game.system.title || game.system.name,
+               options: {
+                  name: 'autoanimations.settings.playAnimations',
+                  scope: scope.world,
+                  type: String,
+                  choices: {
+                     onAttack: 'autoanimations.settings.attack',
+                     onDamage: 'autoanimations.settings.damage',
+                  },
+                  default: 'onAttack',
+                  config: true
                }
             });
             break;

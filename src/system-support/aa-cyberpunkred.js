@@ -1,7 +1,6 @@
 import { debug }            from "../constants/constants.js";
 import { trafficCop }       from "../router/traffic-cop.js"
 import AAHandler            from "../system-handlers/workflow-data.js";
-import { AnimationState }   from "../AnimationState.js";
 import { getRequiredData }  from "./getRequiredData.js";
 
 export function systemHooks() {
@@ -9,7 +8,7 @@ export function systemHooks() {
 }
 
 async function checkChatMessage(msg) {
-    if (msg.user.id !== game.user.id || !AnimationState.enabled) { return };
+    if (msg.user.id !== game.user.id) { return };
 
     let findData = funkyTest(msg)
 
@@ -30,8 +29,7 @@ async function checkChatMessage(msg) {
     let isAmmo = checkAmmo(compiledData);
     if (isAmmo) { compiledData.ammoItem = isAmmo }
     const handler = await AAHandler.make(compiledData)
-    if (!handler) { return; }
-    if (!handler.item || !handler.sourceToken) { debug("No Item or Source Token", handler.item, handler.sourceToken); return;}
+    if (!handler?.item || !handler?.sourceToken) { debug("No Item or Source Token", handler); return;}
     trafficCop(handler);
 }
 
