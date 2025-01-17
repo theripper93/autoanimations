@@ -58,7 +58,7 @@ export function systemHooks() {
             const item = activity?.parent?.parent;
             const overrideNames = activity?.name && !["heal", "summon"].includes(activity?.name?.trim()) ? [activity.name] : [];
             useItem(await getRequiredData({item, actor: item.parent, workflow: item, useItemHook: {item, config, options}, spellLevel: options?.flags?.dnd5e?.use?.spellLevel || void 0, overrideNames}));
-            if (game.modules.get("ready-set-roll-5e")?.active) return true;
+            if (game.modules.get("ready-set-roll-5e")?.active) return false;
         });
         Hooks.on("dnd5e.preCreateActivityTemplate", async (activity, templateData) => {
             templateData.flags.autoanimations = {
