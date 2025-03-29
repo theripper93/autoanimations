@@ -10,6 +10,14 @@ export class AAAutorecFunctions {
         return newName;
     }
 
+    static getRealName(name, item) {
+        if(!name || !item) { return; }
+
+        if(!game.modules.has('babele')) return name;
+
+        return item.flags.babele.originalName || name;
+    }
+
     static sortAndFilterMenus(menus) {
 
         let combinedMenus = [...menus.melee, ...menus.range, ...menus.ontoken,

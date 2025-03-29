@@ -69,8 +69,9 @@
   }
 
   //let itemName = item.label;
+  const realName = AAAutorecFunctions.getRealName($animation.label, item);
   //Check the Autorec Menu for a matching Section
-  $: isInAutorec = AAAutorecFunctions.singleMenuSearch(aefxMenu, AAAutorecFunctions.rinseName($animation.label), $animation.label);
+  $: isInAutorec = AAAutorecFunctions.singleMenuSearch(aefxMenu, AAAutorecFunctions.rinseName(realName), realName);
 
   let menu = isInAutorec
     ? game.i18n.localize(`autoanimations.animTypes.${isInAutorec.menu}`)

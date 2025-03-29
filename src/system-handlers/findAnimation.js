@@ -4,15 +4,16 @@ import { debug } from "../constants/constants.js";
 
 export async function handleItem(data) {
 
+    console.error(handleItem);
     // GTFO if no Item was sent
     if (!data.item) { return; };
 
     const item = data.item;
-    const itemName = item.name ?? item.label;
+    const itemName = AAAutorecFunctions.getRealName(item.name ?? item.label, item);
     const rinsedItemName = itemName ? AAAutorecFunctions.rinseName(itemName) : "noitem";
 
     const ammoItem = data.ammoItem;
-    const rinsedAmmoName = ammoItem?.name ? AAAutorecFunctions.rinseName(ammoItem.name) : "";
+    const rinsedAmmoName = ammoItem?.name ? AAAutorecFunctions.rinseName(AAAutorecFunctions.getRealName(ammoItem.name, ammoItem)) : "";
 
     // Send Item thru Flag Merge
     const itemFlags = await flagMigrations.handle(data.item, {activeEffect: data.activeEffect}) || {};
