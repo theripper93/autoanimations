@@ -15,7 +15,7 @@ export class AAAutorecFunctions {
 
         if(!game.modules.has('babele')) return name;
 
-        return item.flags.babele.originalName || name;
+        return item.getFlag('babele', 'originalName') || name;
     }
 
     static sortAndFilterMenus(menus) {

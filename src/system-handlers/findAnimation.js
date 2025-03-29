@@ -4,7 +4,6 @@ import { debug } from "../constants/constants.js";
 
 export async function handleItem(data) {
 
-    console.error(handleItem);
     // GTFO if no Item was sent
     if (!data.item) { return; };
 

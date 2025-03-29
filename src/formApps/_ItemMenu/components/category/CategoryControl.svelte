@@ -58,7 +58,7 @@
 
   //Check the Autorec Menu for a matching Section
   let filteredSettings = AAAutorecFunctions.sortAndFilterMenus(autorecSettings)
-  const realName = AAAutorecFunctions.getRealName($animation.label, item);
+  let realName = AAAutorecFunctions.getRealName($animation.label, item);
   $: isInAutorec = AAAutorecFunctions.allMenuSearch(filteredSettings, AAAutorecFunctions.rinseName(realName), realName);
   //let filteredSettings = AAAutorecFunctions.sortAndFilterAllMenus(autorecSettings)
   $: isInAEAutorec =  AAAutorecFunctions.singleMenuSearch(autorecSettings.aefx, AAAutorecFunctions.rinseName($animation.label), $animation.label);

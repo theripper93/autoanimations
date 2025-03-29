@@ -69,7 +69,7 @@
   }
 
   //let itemName = item.label;
-  const realName = AAAutorecFunctions.getRealName($animation.label, item);
+  let realName = AAAutorecFunctions.getRealName($animation.label, item);
   //Check the Autorec Menu for a matching Section
   $: isInAutorec = AAAutorecFunctions.singleMenuSearch(aefxMenu, AAAutorecFunctions.rinseName(realName), realName);
 
