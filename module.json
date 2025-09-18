@@ -82,11 +82,6 @@
 			"lang": "cn",
 			"name": "中文（简体）",
 			"path": "lang/zh_Hans.json"
-		},
-		{
-			"lang": "pt-BR",
-			"name": "Português (Brasil)",
-			"path": "lang/pt_BR.json"
 		}
 	],
 	"relationships": {
