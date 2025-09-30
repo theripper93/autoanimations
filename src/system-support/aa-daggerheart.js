@@ -34,7 +34,7 @@ async function checkDHMessage(msg) {
       return targetarray;
     }
 
-    function getItemDH(selection, source) {
+    function getItemDH(selection, source, Name) {
         const actor = fromUuidSync(source);
         let item = actor.items.find(i => i._id == selection);
         if(!item)
