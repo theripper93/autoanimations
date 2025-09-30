@@ -5,7 +5,7 @@ import { getRequiredData }  from "./getRequiredData.js";
 
 export function systemHooks() {
   Hooks.on("createChatMessage", async (msg) => {
-  if(msg.type != "dualityRoll"){
+  if(msg.type != "dualityRoll" && msg.type != "adversaryRoll"){
     return;
   }
   let data2 = msg.system ?? msg.flags?.daggerheart;
@@ -19,8 +19,8 @@ async function checkDHMessage(msg) {
   }
   let compiledData = await getRequiredData({
       name: msg.title,
-      item: getItemDH(msg.source.item, msg.source.actor),
-      actorId: fromUuidSync(msg.source.actor),
+      item: getItemDH(msg.source.item, msg.source.actor, msg.title),
+      actorId: getTokenFromScene(msg.source.actor),
       targets: getTargetsDH(),///msg.targets,
       workflow: msg
   });
@@ -34,8 +34,14 @@ async function checkDHMessage(msg) {
       return targetarray;
     }
 
-    function getItemDH(selection, source) {
+    function getItemDH(selection, source, itemTitle) {
         const actor = fromUuidSync(source);
         let item = actor.items.find(i => i._id == selection);
+        if(!item)
+        {
+          let DHItem = ({name: itemTitle.substring(itemTitle.indexOf(":") + 2)});
+          item = DHItem;
+        }
+       
         return item;
     }
