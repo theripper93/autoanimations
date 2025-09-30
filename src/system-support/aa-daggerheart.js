@@ -34,12 +34,12 @@ async function checkDHMessage(msg) {
       return targetarray;
     }
 
-    function getItemDH(selection, source, Name) {
+    function getItemDH(selection, source, itemTitle) {
         const actor = fromUuidSync(source);
         let item = actor.items.find(i => i._id == selection);
         if(!item)
         {
-          let DHItem = ({name: Name.substring(Name.indexOf(":") + 2)});
+          let DHItem = ({name: itemTitle.substring(itemTitle.indexOf(":") + 2)});
           item = DHItem;
         }
        
