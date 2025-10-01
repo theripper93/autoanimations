@@ -79,18 +79,44 @@ async function setFireModeOptions(data) {
 }
 
 function checkAmmo(data) {
-    let item = data.item || {};
-    let token = data.token;
-    let ammoId = item.system?.magazine?.ammoId?.split(".") ?? ""; // ammoId in object can be empty string
-    if (ammoId === "" || (ammoId.length === 1 && ammoId[0] === ""))
-        ammoId = item.system?.magazine?.ammoData?.uuid?.split(".");
+    const weapon = data?.item ?? {};
+    const token  = data?.token;
+    const actor  = token?.actor ?? weapon?.actor ?? null;
+    if (!actor || !weapon?.system) return null;
 
-    let ammoItem;
-    if (ammoId) {
-        let trueId = ammoId[ammoId.length - 1];
-        ammoItem = token.actor?.items?.get(trueId);
+    // Preferred path in v12: weapon.system.installedItems.list
+    const installedIds = weapon.system?.installedItems?.list ?? [];
+    const varieties = weapon.system?.ammoVariety ?? []; // e.g. ["rifle"]
+
+  // Find the first installed ammo item that matches variety and has >0 rounds if present
+  let ammoItem = null;
+    for (const id of installedIds) {
+        const it = actor.items?.get(id);
+        if (it?.type === "ammo") {
+            const matchesVariety = !varieties?.length || varieties.includes(it.system?.variety);
+            const hasAmmo = (typeof it.system?.amount !== "number") ? true : it.system.amount > 0;
+            if (matchesVariety && hasAmmo) { ammoItem = it; break; }
+        }
     }
-    return ammoItem;
+
+  // --- Backward compatibility fallbacks (pre-v12) ---
+    if (!ammoItem) {
+        // Older fields sometimes carried a UUID like "Actor.X.Item.Y"
+        const ammoIdRaw = weapon.system?.magazine?.ammoId || weapon.system?.magazine?.ammoData?.uuid;
+        if (typeof ammoIdRaw === "string" && ammoIdRaw.length) {
+            const parts = ammoIdRaw.split(".");
+            const last = parts[parts.length - 1];
+            const legacy = actor.items?.get(last);
+            if (legacy?.type === "ammo") ammoItem = legacy;
+        }
+    }
+
+    // As a last resort, try to infer by name/variety from actor inventory (avoid duplicates!)
+    if (!ammoItem && varieties?.length) {
+        ammoItem = actor.items.find(i => i.type === "ammo" && varieties.includes(i.system?.variety));
+    }
+
+    return ammoItem ?? null;
 }
 
 function extactData(msg) {
