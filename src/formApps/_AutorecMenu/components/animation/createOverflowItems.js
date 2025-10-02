@@ -29,7 +29,7 @@ export function createOverflowItems(animation, category) {
                content: `Are you sure you want to delete: ${label}`,
                draggable: false,
                modal: false,
-            });
+            }, { themeName: 'light' });
 
             if (result) {
                category.deleteEntry(animation.id);

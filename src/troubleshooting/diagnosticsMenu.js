@@ -24,6 +24,7 @@ export default class AADiagnostics extends TJSDialog {
             height: "auto",
             closeOnSubmit: true,
             id: `AutomatedAnimations-Diagnostics`,
+            themeName: 'light'
         })
     }
 

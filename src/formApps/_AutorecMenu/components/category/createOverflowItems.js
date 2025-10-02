@@ -18,7 +18,7 @@ export function createOverflowItems(category) {
                content: `Are you sure you want to delete all animations from '${category.label}'?`,
                draggable: false,
                modal: false,
-            });
+            }, { themeName: 'light' });
 
             if (result) {
                category.clearEntries();
