@@ -1,5 +1,5 @@
 <script>
-    import { applyScrolltop }    from "#runtime/svelte/action/dom/properties";
+    import { applyScroll }      from "#runtime/svelte/action/dom/properties";
 
     import Animation            from "../animation/Animation.svelte";
 
@@ -19,7 +19,7 @@
     $: onFolderChange($dataReducer);
 </script>
 
-<main use:applyScrolltop={category.stores.scrollTop}
+<main use:applyScroll={{ scrollTop: category.stores.scrollTop }}
       on:openAny={onFolderChange}
       on:closeAny={onFolderChange}>
         {#each [...$dataReducer] as animation, idx (animation.id)}
