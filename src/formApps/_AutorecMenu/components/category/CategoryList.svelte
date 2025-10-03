@@ -22,20 +22,19 @@
 <main use:applyScroll={{ scrollTop: category.stores.scrollTop }}
       on:openAny={onFolderChange}
       on:closeAny={onFolderChange}>
-        {#each [...$dataReducer] as animation, idx (animation.id)}
-            <section>
-                <Animation {animation} {idx} {category}/>
-            </section>
-        {/each}
+   {#each [...$dataReducer] as animation, idx (animation.id)}
+      <section>
+         <Animation {animation} {idx} {category}/>
+      </section>
+   {/each}
 </main>
 
 <style lang=scss>
   main {
     position: relative;
     overflow-y: auto;
-    padding: 0 3%;
-    padding-bottom: 150px;
-    scrollbar-width: thin;  // For Firefox
+    padding: 1rem 0.35rem 150px 1rem;
+    scrollbar-gutter: stable;
   }
 
   section {
