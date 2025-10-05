@@ -25,7 +25,7 @@ const TEST = {
     - For spells, we use the same trick with the magic school as a fallback
  */
 async function checkChatMessage(msg) {
-    if (msg.user.id !== game.user.id || !AnimationState.enabled) { 
+    if (msg.user.id !== game.user.id || !AnimationState.enabled) {
         return;
     }
 
@@ -36,7 +36,7 @@ async function checkChatMessage(msg) {
 
     // #1 Let's create the compiledData based on the test type
     const compiledData = await computeCompiledData(msg, test);
-    if (!compiledData) { 
+    if (!compiledData) {
         return;
     }
 
@@ -60,7 +60,7 @@ async function checkChatMessage(msg) {
     //  - when doing perception tests
     //  - when going sneaking tests
     //  - ...
-    const skill = compiledData.item?.getActionSkill()
+    const skill = test.data?.action?.skill; // reverting to the skill
     if (skill && await tryAnnimationWith(compiledData, skill)) {
         return;
     }
