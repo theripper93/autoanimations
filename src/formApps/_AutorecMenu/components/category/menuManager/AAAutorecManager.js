@@ -114,7 +114,7 @@ export class AAAutorecManager
 
         const filename = `fvtt-AutomatedAnimations-GlobalMenu${string}.json`;
 
-        saveDataToFile(JSON.stringify(exportData, null, 2), "text/json", filename);
+       foundry.utils.saveDataToFile(JSON.stringify(exportData, null, 2), "text/json", filename);
     }
 
     /**
