@@ -72,7 +72,7 @@
             },
          },
          defaultYes: false,
-      }).render(true);
+      }, { themeName: 'light' }).render(true);
    }
 
    async function overwriteMenu() {
