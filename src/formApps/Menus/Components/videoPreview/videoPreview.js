@@ -37,6 +37,7 @@ export default class TotalPreview extends TJSDialog {
             height: "auto",
             closeOnSubmit: true,
             id: `AA-Video-Preview`,
+            themeName: 'light'
         })
     }
 

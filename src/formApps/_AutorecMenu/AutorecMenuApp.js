@@ -1,4 +1,4 @@
-import { SvelteApplication }    from "#runtime/svelte/application";
+import { SvelteApp }            from "#runtime/svelte/application";
 
 import { AutorecAppShell }      from "./components";
 import AADiagnostics            from "../../troubleshooting/diagnosticsMenu.js";
@@ -6,7 +6,7 @@ import AADiagnostics            from "../../troubleshooting/diagnosticsMenu.js";
 import { constants }            from "#constants";
 import { gameSettings }         from "#gameSettings";
 
-export default class AutorecMenuApp extends SvelteApplication {
+export default class AutorecMenuApp extends SvelteApp {
     /** @inheritDoc */
     constructor(options)
     {
@@ -32,6 +32,7 @@ export default class AutorecMenuApp extends SvelteApplication {
             width: 600,
             height: 750,
             minWidth: 550,
+            themeName: 'light',
 
             svelte: {
                 class: AutorecAppShell,

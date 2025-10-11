@@ -23,6 +23,7 @@ export default class ItemToAutorec extends TJSDialog {
          height: "auto",
          closeOnSubmit: true,
          id: `AA-Copy-Item-To-Global`,
+         themeName: 'light'
       });
    }
 }

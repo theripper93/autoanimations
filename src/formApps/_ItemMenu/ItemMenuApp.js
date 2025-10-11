@@ -1,4 +1,4 @@
-import { SvelteApplication }    from "#runtime/svelte/application";
+import { SvelteApp } from "#runtime/svelte/application";
 
 import { ItemAppShell } from "./components";
 import { showAutorecMenu } from "../_AutorecMenu/showUI";
@@ -8,14 +8,11 @@ import ItemInfoDialog from "./components/animation/itemInfoDialog.js";
 import { sessionConstants } from "#constants";
 import { aaSessionStorage } from "#sessionStorage";
 
-export default class ItemMenuApp extends SvelteApplication {
+export default class ItemMenuApp extends SvelteApp {
     /** @inheritDoc */
     constructor(item)
     {
         super({
-            title: `A-A Item Menu`,
-            id: `AA-item-settings`,
-            zIndex: 102,
             svelte: {
                 class: ItemAppShell,
                 target: document.body,
@@ -40,11 +37,17 @@ export default class ItemMenuApp extends SvelteApplication {
      */
     static get defaultOptions() {
         return foundry.utils.mergeObject(super.defaultOptions, {
+            title: `A-A Item Menu`,
+            id: `AA-item-settings`,
+            zIndex: 102,
+
             resizable: true,
             minimizable: true,
             width: 600,
             height: 750,
             minWidth: 550,
+
+            themeName: 'light'
         });
     }
 

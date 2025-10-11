@@ -84,8 +84,6 @@
     }
   }
   footer {
-    position: absolute;
-    bottom: 0;
     flex: none;
     padding: 0.5em 0.5em;
     cursor: pointer;
@@ -96,6 +94,8 @@
 
     height: 40px;
     width: 100%;
+
+    margin-top: auto;
 
     font-size: 1em;
     font-weight: bold;

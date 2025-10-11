@@ -42,6 +42,7 @@ export default class OptionsDialog extends TJSDialog {
             height: 600,
             closeOnSubmit: true,
             id: `OptionsInformation`,
+            themeName: 'light'
         })
     }
 

@@ -8,14 +8,14 @@ export function currentAutorecVersion() {
 export const autoRecMigration = {
 
     /**
-     * 
-     * @param {*} autoObject 
+     *
+     * @param {*} autoObject
      * @param {
-     * shouldSubmit: Boolean (Merges should be submitted), 
-     * newSchema: Boolean (Is a new data Schema?), 
+     * shouldSubmit: Boolean (Merges should be submitted),
+     * newSchema: Boolean (Is a new data Schema?),
      * submitAll: Boolean (A-A ONLY override to submit ALL merged Menus)
-     * } options 
-     * @returns 
+     * } options
+     * @returns
      */
     async handle(autoObject, options = {}) {
 
@@ -23,7 +23,7 @@ export const autoRecMigration = {
             ui.notifications.info("Automated Animations | Exporting your Global Automatic Recognition Menu before running Migration")
             const data = (game.settings.get('autoanimations', 'aaAutorec'))
             const filename = `Autorec-Menu-Backup`;
-            saveDataToFile(JSON.stringify(data, null, 2), "text/json", filename);
+            foundry.utils.saveDataToFile(JSON.stringify(data, null, 2), "text/json", filename);
             autoObject = {
                 melee: game.settings.get('autoanimations', 'aaAutorec-melee'),
                 range: game.settings.get('autoanimations', 'aaAutorec-range'),
@@ -87,7 +87,7 @@ export const autoRecMigration = {
             } else {
                 let versionHandler = game.settings.get('autoanimations', 'aaAutorec');
                 versionHandler.version = Object.keys(this.migrations).map(n => Number(n)).reverse()[0];
-                await game.settings.set('autoanimations', 'aaAutorec', versionHandler)    
+                await game.settings.set('autoanimations', 'aaAutorec', versionHandler)
             }
         }
         ui.notifications.info("Automatic Recognition Menu update is Complete!")

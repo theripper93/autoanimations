@@ -27,6 +27,7 @@ export default class ItemInfoDialog extends TJSDialog {
             height: "auto",
             closeOnSubmit: true,
             id: `ItemInformation`,
+            themeName: 'light'
         })
     }
 

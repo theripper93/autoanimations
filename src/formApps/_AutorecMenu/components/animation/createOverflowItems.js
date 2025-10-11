@@ -29,7 +29,7 @@ export function createOverflowItems(animation, category) {
                content: `Are you sure you want to delete: ${label}`,
                draggable: false,
                modal: false,
-            });
+            }, { themeName: 'light' });
 
             if (result) {
                category.deleteEntry(animation.id);
@@ -44,7 +44,7 @@ export function createOverflowItems(animation, category) {
       {
          label: "Advanced",
          icon: "fab fa-searchengin",
-         onPress: async () => {
+         onPress: () => {
             new TJSDialog({
                modal: false,
                title: "Advanced Features: " + `${animation._data.label}`,
@@ -55,7 +55,9 @@ export function createOverflowItems(animation, category) {
                   },
                },
                defaultYes: false,
-            }).render(true);
+            }, { themeName: 'light' }).render(true);
+
+            return true;
          },
       },
    ];
