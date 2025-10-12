@@ -1,14 +1,14 @@
 ---
-name: "[BUG] - TYPE BRIEF DESCRIPTION HERE"
-about: Create a report to help us improve
+name: "[SYSTEM-BUG] - TYPE SYSTEM NAME AND BRIEF DESCRIPTION HERE"
+about: 'Report a problem with a game system implementation '
 title: "[BUG] - TYPE BRIEF DESCRIPTION HERE"
-labels: ''
+labels: help wanted
 assignees: ''
 
 ---
 
 **Describe the bug**
-A clear and concise description of what the bug is.
+A clear and concise description of what the bug is. For general bugs please use the discord channel, this is only for game system autorec issues 
 
 **To Reproduce**
 Steps to reproduce the behavior:
@@ -32,9 +32,7 @@ If applicable, add screenshots to help explain your problem.
  - Browser & version [e.g. Google Chrome 98.0.4758.82]
 
 **Active modules:**
- - Sequencer
- - socketlib
- - [insert more modules here]
+ All non dependencies must be disabled
 
 **Additional context**
 Add any other context about the problem here.
