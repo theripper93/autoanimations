@@ -19,7 +19,7 @@
          onYes: () => setDefault(),
          onNo: () => console.log("Exiting without default restore"),
          defaultYes: false,
-      });
+      }, { themeName: 'light' });
 
       async function setDefault() {
          AAAutorecManager.exportMenu("-backup");
@@ -36,7 +36,7 @@
          onYes: () => getFiles(),
          onNo: () => console.log("Exiting without default restore"),
          defaultYes: false,
-      });
+      }, { themeName: 'light' });
 
       async function getFiles() {
          const content = await renderTemplate("modules/autoanimations/htmlTemplate/import-data.html", {
@@ -56,7 +56,7 @@
                   await application.close();
                });
             },
-         });
+         }, { themeName: 'light' });
       }
    }
 
@@ -72,7 +72,7 @@
             },
          },
          defaultYes: false,
-      }).render(true);
+      }, { themeName: 'light' }).render(true);
    }
 
    async function overwriteMenu() {
@@ -83,7 +83,7 @@
          onYes: () => getFiles(),
          onNo: () => console.log("Exiting without overwrite"),
          defaultYes: false,
-      });
+      }, { themeName: 'light' });
 
       async function getFiles() {
          const content = await renderTemplate("modules/autoanimations/htmlTemplate/import-data.html", {
@@ -102,7 +102,7 @@
                   await application.close();
                });
             },
-         });
+         }, { themeName: 'light' });
       }
    }
 

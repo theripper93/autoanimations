@@ -12,16 +12,20 @@ const constants = {
  * @type {AASessionConstants} Defines all the module session storage static constants.
  */
 const sessionConstants = {
+   activeEffectAppState: `${constants.moduleId}.active-effect.app-state`,
+   itemAppState: `${constants.moduleId}.item.app-state`,
    optionsInfoAppState: `${constants.moduleId}.options-info.app-state`,
    videoPreviewAppState: `${constants.moduleId}.video-preview.app-state`,
-   itemAppState: `${constants.moduleId}.item.app-state`,
-   activeEffectAppState: `${constants.moduleId}.active-effect.app-state`,
 };
 
 export { constants, sessionConstants };
 
 /**
  * @typedef {object} AASessionConstants
+ *
+ * @property {string} activeEffectAppState - Stores the app state / position for AEMenuApp.
+ *
+ * @property {string} itemAppState - Stores the app state / position for ItemMenuApp.
  *
  * @property {string} optionsInfoAppState - Stores the app state / position of the OptionsInformation dialog.
  *

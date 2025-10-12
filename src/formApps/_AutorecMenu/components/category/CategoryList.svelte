@@ -1,7 +1,7 @@
 <script>
-    import { applyScrolltop }    from "#runtime/svelte/action/dom/properties";
+    import { TJSScrollContainer }   from "#standard/component/container";
 
-    import Animation            from "../animation/Animation.svelte";
+    import Animation                from "../animation/Animation.svelte";
 
     /** @type {CategoryStore} */
     export let category;
@@ -19,28 +19,28 @@
     $: onFolderChange($dataReducer);
 </script>
 
-<main use:applyScrolltop={category.stores.scrollTop}
-      on:openAny={onFolderChange}
-      on:closeAny={onFolderChange}>
-        {#each [...$dataReducer] as animation, idx (animation.id)}
-            <section>
-                <Animation {animation} {idx} {category}/>
-            </section>
-        {/each}
-</main>
+<TJSScrollContainer scrollTop={category.stores.scrollTop}>
+   <main on:openAny={onFolderChange}
+         on:closeAny={onFolderChange}>
+      {#each [...$dataReducer] as animation, idx (animation.id)}
+         <section>
+            <Animation {animation} {idx} {category}/>
+         </section>
+      {/each}
+   </main>
+</TJSScrollContainer>
 
 <style lang=scss>
-  main {
-    position: relative;
-    overflow-y: auto;
-    padding: 0 3%;
-    padding-bottom: 150px;
-    scrollbar-width: thin;  // For Firefox
-  }
+   main {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
 
-  section {
-    height: fit-content;
-    width: 100%;
-    margin-bottom: 3px;
-  }
+      padding: 1rem 0.5rem 1rem 1rem;
+   }
+
+   section {
+      height: fit-content;
+      width: 100%;
+   }
 </style>

@@ -50,7 +50,7 @@ export function copyToFrom(animation, item, autorecSettings, isAE) {
             content: `Are you sure you want copy <strong>${label}</strong> from the <strong>Global ${menu} Menu?</strong>`,
             draggable: false,
             modal: false,
-         });
+         }, { themeName: 'light' });
 
          if (result) {
             animation.copyFromAutorec(isInAutorec);

@@ -18,7 +18,8 @@ export default class MenuManager extends TJSDialog {
             id: `Autorec-Menu-Manager`,
             minimizable: false,
             width: 'auto',
-            height: 'auto'
+            height: 'auto',
+            themeName: 'light'
         });
     }
 
