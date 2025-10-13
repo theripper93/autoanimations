@@ -20,7 +20,7 @@ async function checkDHMessage(msg) {
   let compiledData = await getRequiredData({
       name: msg.title,
       item: getItemDH(msg.source.item, msg.source.actor, msg.title),
-      actorId: getTokenFromScene(msg.source.actor),
+      actorId: canvas.scene.tokens.get(msg.source.actor),
       targets: getTargetsDH(),///msg.targets,
       workflow: msg
   });
