@@ -25,7 +25,7 @@ async function checkDHMessage(msg) {
       workflow: msg
   });
   const handler = await AAHandler.make(compiledData);
-  trafficCop$1(handler);
+  trafficCop(handler);
   
 }
     function getTargetsDH(){
