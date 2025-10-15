@@ -205,9 +205,9 @@ export async function teleportation(handler, animationData) {
         animSeq.delay(data.options.delayMove)
         //animSeq.fadeOut(data.start.options.tokenOut)
         if (data.options.teleport) {
-            animSeq.teleportTo({ x: gridPos[0], y: gridPos[1], elevation: pos.elevation })
+            animSeq.teleportTo({ x: gridPos[0], y: gridPos[1], elevation: pos.elevation } ,{ relativeToCenter: true })
         } else {
-            animSeq.moveTowards({ x: gridPos[0], y: gridPos[1], elevation: pos.elevation })
+            animSeq.moveTowards({ x: gridPos[0], y: gridPos[1], elevation: pos.elevation }, { relativeToCenter: true })
             animSeq.moveSpeed(data.options.speed)
         }
         
