@@ -8,14 +8,14 @@ export function systemHooks() {
 }
 
 async function checkChatMessage(msg) {
-    if (msg.user.id !== game.user.id) { return };
+    if (msg.author !== game.user) { return };
 
     let findData = funkyTest(msg);
     if (!findData.itemId) { 
         debug("Unable to locate Item ID from Chat Message HTML")
         return;
     }
-    let item = msg.item ?? msg.itemSource;
+    let item = findData.item ?? msg.item ?? msg.itemSource;
     let compiledData = await getRequiredData({
         itemId: findData.itemId,
         item: item,
@@ -27,51 +27,29 @@ async function checkChatMessage(msg) {
     if (!handler?.item || !handler?.sourceToken) { debug("No Item or Source Token", handler); return;}
     trafficCop(handler);
 }
-/*
-function findItemId(msg) {
-    const systemId = game.system.id;
-    let itemId;
-    itemId = extractItemId(msg);
-    if (!itemId) {
-        const flags = msg.flags;
-        itemId = flags.itemId ??
-                flags.ItemId ??
-                flags[systemId]?.itemId ??
-                flags[systemId]?.ItemId ??
-                msg.rolls[0]?.options?.itemId
 
-    }
-    return itemId;
-}
-
-function extractItemId(msg) {
-    try {
-        return $(msg.content).attr("data-item-id");
-    } catch (exception) {
-        console.log("COULD NOT GET ITEM ID")
-        return null;
-    }
-}
-*/
 function funkyTest(msg) {
-    //let findItemId = $(msg.content).find(`[data-item-id]`);
-    let filterItemId = $(msg.content).filter(`[data-item-id]`);
-    let itemId = filterItemId?.[0]?.attributes?.['data-item-id']?.value || filterItemId?.prevObject?.[0]?.attributes?.['data-item-id']?.value;
-    if (!itemId) {
-        const systemId = game.system.id;
-        let flags = msg.flags;
-        itemId = flags.itemId ??
-                flags.ItemId ??
-                flags[systemId]?.itemId ??
-                flags[systemId]?.ItemId ??
-                msg.rolls?.[0]?.options?.itemId
-    }
 
-    let filterTokenId = $(msg.content).filter(`[data-token-id]`);
-    let tokenId = filterTokenId?.[0]?.attributes?.['data-token-id']?.value || filterTokenId?.prevObject?.[0]?.attributes?.['data-token-id']?.value;
+    const element = document.createElement('div');
+    element.innerHTML = msg.content;
 
-    let filterActorId = $(msg.content).filter(`[data-actor-id]`);
-    let actorId = filterActorId?.[0]?.attributes?.['data-actor-id']?.value || filterActorId?.prevObject?.[0]?.attributes?.['data-actor-id']?.value;
+    const elItemUUID = element.querySelector("[data-item-uuid]")?.getAttribute("data-item-uuid");
+    const elActorID = element.querySelector("[data-actor-id]")?.getAttribute("data-actor-id");
+    const elTokenUUID = element.querySelector("[data-token-uuid]")?.getAttribute("data-token-uuid");
+    const elItemID = element.querySelector("[data-item-id]")?.getAttribute("data-item-id");
 
-    return {itemId, tokenId, actorId}
+    const systemFlags = msg.flags[game.system.id] || {};
+    const flagItemID = systemFlags.itemId;
+    const flagActorID = systemFlags.actorId;
+    const flagTokenUUID = systemFlags.tokenUuid;
+    const flagItemUUID = systemFlags.itemUuid;
+
+
+    const token = fromUuidSync(flagTokenUUID || elTokenUUID) || canvas.tokens.get(msg.speaker?.token);
+    let item = fromUuidSync(flagItemUUID || elItemUUID) || msg.item || msg.itemSource
+    const actor = item?.actor || token?.actor || game.actors.get(flagActorID || elActorID);
+
+    if(!item) item = actor?.items.get(flagItemID || elItemID || msg.rolls?.[0]?.options?.itemId);
+
+    return {token, item, actor , itemId: item?.id, actorId: actor?.id, tokenId: token?.id};
 }
