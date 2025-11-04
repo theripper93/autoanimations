@@ -8,6 +8,9 @@ export function systemHooks() {
   if(msg.type != "dualityRoll" && msg.type != "adversaryRoll"){
     return;
   }
+  if (msg.user.id !== game.user.id) {
+    return
+  }
   let data2 = msg.system ?? msg.flags?.daggerheart;
     checkDHMessage(data2);
   });
@@ -37,6 +40,11 @@ async function checkDHMessage(msg) {
     function getItemDH(selection, source, itemTitle) {
         const actor = fromUuidSync(source);
         let item = actor.items.find(i => i._id == selection);
+        if(itemTitle.indexOf(":"))
+        {
+        let DHItemSubName = { name: itemTitle.substring(itemTitle.indexOf(":") + 2)};
+        item2 = DHItemSubName;
+        }
         if(!item)
         {
           let DHItem = ({name: itemTitle.substring(itemTitle.indexOf(":") + 2)});
