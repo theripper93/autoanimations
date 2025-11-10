@@ -78,6 +78,11 @@
 			"name": "正體中文",
 			"path": "lang/zh-tw.json"
 		},
+    {
+			"lang": "cs",
+			"name": "Čeština",
+			"path": "lang/cs.json"
+		},
 		{
 			"lang": "cn",
 			"name": "中文（简体）",
