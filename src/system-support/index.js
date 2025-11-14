@@ -34,4 +34,4 @@ export * as impmal from "./aa-ImpMal.js";
 export * as salvageunion from "./aa-salvage-union.js"
 export * as deathinspace from "./aa-deathinspace.js"
 export * as daggerheart from "./aa-daggerheart.js"
-
+export * as fantasticdepths from "./aa-fade.js"

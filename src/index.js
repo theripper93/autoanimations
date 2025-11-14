@@ -205,6 +205,7 @@ Hooks.once('ready', async function () {
      * The Witcher RPG
      * TwoDSix
      * Dark Heresy 2e
+     * Fantastic Depths
     */
 
     // Register Hooks by system
