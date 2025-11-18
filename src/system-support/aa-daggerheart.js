@@ -43,7 +43,7 @@ async function checkDHMessage(msg) {
         if(itemTitle.indexOf(":"))
         {
         let DHItemSubName = { name: itemTitle.substring(itemTitle.indexOf(":") + 2)};
-        item2 = DHItemSubName;
+        item = DHItemSubName;
         }
         if(!item)
         {
