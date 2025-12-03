@@ -2,54 +2,48 @@ import { trafficCop }       from "../router/traffic-cop.js"
 import AAHandler            from "../system-handlers/workflow-data.js";
 import { getRequiredData }  from "./getRequiredData.js";
 
-
 export function systemHooks() {
-  Hooks.on("createChatMessage", async (msg) => {
-  if(msg.type != "dualityRoll" && msg.type != "adversaryRoll"){
-    return;
-  }
-  if (msg.user.id !== game.user.id) {
-    return
-  }
-  let data2 = msg.system ?? msg.flags?.daggerheart;
-    checkDHMessage(data2);
-  });
+  Hooks.on("createChatMessage", _onCreateChatMessage);
 }
 
-async function checkDHMessage(msg) {
-  if(!msg.source.item){
-    return;
-  }
-  let compiledData = await getRequiredData({
-      name: msg.title,
-      item: getItemDH(msg.source.item, msg.source.actor, msg.title),
-      actorId: canvas.scene.tokens.get(msg.source.actor),
-      targets: getTargetsDH(),///msg.targets,
-      workflow: msg
+/**
+ * Hook callback that fires  after conclusion of a creation workflow of a ChatMessage.
+ * @param {foundry.documents.ChatMessage} msg - The new ChatMessage instance which has been created
+ * @param {foundry.abstract.types.DatabaseCreateOperation} _options - Additional options which modified the creation request
+ * @param {String} userId - The ID of the User who triggered the creation workflow
+ * @returns
+ */
+async function _onCreateChatMessage(msg, _options, userId) {
+  const validTypes = ["adversaryRoll", "dualityRoll"];
+  if (!validTypes.includes(msg.type) || !msg.isAuthor) return;
+
+  const data = msg.system ?? msg.flags?.daggerheart;
+
+  const itemId = data.source.item;
+  if (!itemId) return;
+
+  const actor = fromUuidSync(data.source.actor);
+  const item = DHGetItem(actor, itemId, msg.type);
+
+  const compiledData = await getRequiredData({
+    item: item,
+    actor: actor,
+    targets: Array.from(game.user.targets),
+    workflow: data,
   });
+
   const handler = await AAHandler.make(compiledData);
   trafficCop(handler);
-  
+
+  function DHGetItem(actor, item, type)
+  {
+    if(type == "adversaryRoll" && !actor.items.get(item))
+    {
+      return actor.system.attack;
+    }
+    else
+    {
+      return actor.items.get(item)
+    }
+  }
 }
-    function getTargetsDH(){
-      const targetarray = Array.from(game.user.targets);
-
-      return targetarray;
-    }
-
-    function getItemDH(selection, source, itemTitle) {
-        const actor = fromUuidSync(source);
-        let item = actor.items.find(i => i._id == selection);
-        if(itemTitle.indexOf(":"))
-        {
-        let DHItemSubName = { name: itemTitle.substring(itemTitle.indexOf(":") + 2)};
-        item = DHItemSubName;
-        }
-        if(!item)
-        {
-          let DHItem = ({name: itemTitle.substring(itemTitle.indexOf(":") + 2)});
-          item = DHItem;
-        }
-       
-        return item;
-    }
