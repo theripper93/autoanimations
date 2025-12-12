@@ -1,82 +1,63 @@
-import { trafficCop }       from "../router/traffic-cop.js"
-import AAHandler            from "../system-handlers/workflow-data.js";
-import { getRequiredData }  from "./getRequiredData.js";
+/**
+ * @file aa-daggerheart.js
+ * @version 1.0.0
+ * 
+ * Compatibility: Designed and tested for Daggerheart system version 1.3.2.
+ * 
+ * @Note
+ * I implemented this code, overwriting the previous one.
+ * If you have any questions about how it works, you can send a message to my Discord: `joaquinp98` or mail to: `joaquinperyera98@gmail.com`
+ * But feel free to overwrite this code at any time if you wish.
+ */
 
+import { trafficCop } from "../router/traffic-cop.js";
+import AAHandler from "../system-handlers/workflow-data.js";
 
 /**
- * Hooks into Foundry VTT's `createChatMessage` event to trigger Automated Animations
- * for Daggerheart game system messages.
- * It filters messages based on their type and user ID before processing.
+ * CONSTANTS
+ */
+const VALID_MESSAGE_TYPES = ["adversaryRoll", "dualityRoll"];
+
+/**
+ * Registers system hooks.
  */
 export function systemHooks() {
-  Hooks.on("createChatMessage", async (msg) => {
-  if(msg.type != "dualityRoll" && msg.type != "adversaryRoll"){
-    return;
-  }
-  if (msg.user.id !== game.user.id) {
-    return
-  }
-  let data2 = msg.system ?? msg.flags?.daggerheart;
-    checkDHMessage(data2);
-  });
+   Hooks.on("createChatMessage", handleChatMessageCreation);
 }
 
 /**
- * Processes a Daggerheart chat message to extract data relevant for Automated Animations.
- * It gathers item information, targets, and prepares data for the animation handler.
- * @param {object} msg - The Daggerheart chat message data, typically `msg.system` or `msg.flags.daggerheart`.
+ * Hook callback that fires after conclusion of a creation workflow of a ChatMessage.
+ * @param {foundry.documents.ChatMessage} msg - The new ChatMessage instance.
+ * @param {Partial<foundry.abstract.types.DatabaseCreateOperation>} _options - Additional options which modified the creation request
+ * @param {String} userId - The ID of the User who triggered the creation workflow
+ * @returns {Promise<void>}
  */
-async function checkDHMessage(msg) {
-  if(!msg?.source?.item){ return; }
-  let itemData = getItemDH(msg.source.item, msg.source.actor, msg.title);
-  
-  let extraNames = [];
-  // If the title contains a colon, extract the part after it as a potential subname for matching
-  if (msg.title && msg.title.indexOf(":") > -1) {
-    const subname = msg.title.substring(msg.title.indexOf(":") + 2).trim();
-    if (subname) { extraNames.push(subname); }
-  }
+async function handleChatMessageCreation(msg, _options, _userId) {
+   if (!msg.isAuthor || !VALID_MESSAGE_TYPES.includes(msg.type)) return;
 
-  let compiledData = await getRequiredData({
-      name: msg.title,
-      item: itemData,
-      actorId: canvas.scene.tokens.get(msg.source.actor),
-      targets: getTargetsDH(),//msg.targets,
-      workflow: msg,
-      extraNames: extraNames, // Pass extracted subnames for prioritized matching
-  });
-  const handler = await AAHandler.make(compiledData);
-  trafficCop(handler);
-  
-}
+   const workflowData = msg.system ?? msg.flags?.daggerheart;
 
-/**
- * Retrieves the currently targeted tokens by the game user.
- * @returns {Array<Token>} An array of targeted token documents.
- */
-function getTargetsDH(){
-    const targetarray = Array.from(game.user.targets);
-    return targetarray;
-}
+   if (!workflowData?.source?.item) return;
 
-/**
- * Retrieves the item data associated with a Daggerheart workflow.
- * It attempts to find the item by ID and falls back to creating a dummy item
- * with the provided title if no matching item document is found.
- * @param {string} selection - The ID or identifier of the item.
- * @param {string} source - The UUID of the actor that owns the item.
- * @param {string} itemTitle - The title of the item from the chat message.
- * @returns {object} The item document or a simplified object containing the item's name.
- */
-function getItemDH(selection, source, itemTitle) {
-    const actor = fromUuidSync(source);
-    let item = actor.items.find(i => i._id == selection);
+   const { item: itemId, actor: actorUuid } = workflowData.source;
 
-    // If an item was found by ID, use its actual name.
-    if (item) { return item; }
+   const actor = await fromUuid(actorUuid);
+   const item = actor?.items.get(itemId);
+   if (!actor || !item)
+      return console.warn(
+         `Daggerheart Workflow: Could not find Item (${itemId}) or Actor (${actorUuid}) for ChatMessage.`,
+         {
+            msg,
+            actor,
+            item,
+         }
+      );
 
-    // If no item was found by ID, create a dummy item object using the full itemTitle.
-    // This ensures a name is always available for handleItem to attempt a match.
-    let DHItem = { name: itemTitle };
-    return DHItem;
+   const handler = await AAHandler.make({
+      item,
+      actor,
+      targets: Array.from(game.user.targets),
+   });
+
+   trafficCop(handler);
 }
