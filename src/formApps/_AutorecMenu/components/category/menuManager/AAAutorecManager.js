@@ -144,13 +144,13 @@ export class AAAutorecManager
         let mergeMenu = updatedImport;
 
         let mergeList = []
-        if (options.melee) { mergeList.push("melee")};
-        if (options.range) { mergeList.push("range")};
-        if (options.ontoken) { mergeList.push("ontoken")};
-        if (options.templatefx) { mergeList.push("templatefx")};
-        if (options.aura) { mergeList.push("aura")};
-        if (options.preset) { mergeList.push("preset")};
-        if (options.aefx) { mergeList.push("aefx")};
+        if (options.melee || options.submitAll) { mergeList.push("melee")};
+        if (options.range || options.submitAll) { mergeList.push("range")};
+        if (options.ontoken || options.submitAll) { mergeList.push("ontoken")};
+        if (options.templatefx || options.submitAll) { mergeList.push("templatefx")};
+        if (options.aura || options.submitAll) { mergeList.push("aura")};
+        if (options.preset || options.submitAll) { mergeList.push("preset")};
+        if (options.aefx || options.submitAll) { mergeList.push("aefx")};
 
         for (var i = 0; i < mergeList.length; i++) {
             let existingMenu = currentMenu[mergeList[i]];
