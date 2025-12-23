@@ -12,8 +12,10 @@ export class AAAutorecFunctions {
 
     static sortAndFilterMenus(menus) {
 
-        let combinedMenus = [...menus.melee, ...menus.range, ...menus.ontoken,
-            ...menus.templatefx, ...menus.aura, ...menus.preset];
+        let combinedMenus = [];
+        for (const key in menus) {
+            combinedMenus = [...combinedMenus, ...menus[key]];
+        }
 
         let sortedMenus = combinedMenus.sort((a, b) => b.label?.replace(/\s+/g, '').length - a.label?.replace(/\s+/g, '').length);
         return {
@@ -74,6 +76,10 @@ export class AAAutorecFunctions {
         if (!rinsedName) { 
             custom_warning("No Name was provided for the Global Menu search")
             return;
+        }
+
+        if(!Array.isArray(menu)) {
+            menu = Object.values(menu).flat();
         }
 
         let sortedMenu = menu.sort((a, b) => b.label.replace(/\s+/g, '').length - a.label?.replace(/\s+/g, '').length);

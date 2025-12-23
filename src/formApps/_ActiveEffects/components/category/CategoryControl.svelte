@@ -100,8 +100,14 @@
     clickPropagate: false, // Necessary to capture click for Firefox.
   };
 
+  const objectAefxMenu = aefxMenu.reduce((obj, item) => {
+    obj[item.activeEffectType] ??= [];
+    obj[item.activeEffectType].push(item);
+    return obj;
+  }, {});
+
   const subMenu = {
-    items: copyToFrom(animation, item, aefxMenu, true),
+    items: copyToFrom(animation, item, objectAefxMenu, true),
   };
 
 </script>
