@@ -1,9 +1,9 @@
 /**
  * @file aa-daggerheart.js
- * @version 1.0.0
- * 
+ * @version 1.0.1
+ *
  * Compatibility: Designed and tested for Daggerheart system version 1.3.2.
- * 
+ *
  * @Note
  * I implemented this code, overwriting the previous one.
  * If you have any questions about how it works, you can send a message to my Discord: `joaquinp98` or mail to: `joaquinperyera98@gmail.com`
@@ -11,6 +11,7 @@
  */
 
 import { trafficCop } from "../router/traffic-cop.js";
+import { getRequiredData }  from "./getRequiredData.js";
 import AAHandler from "../system-handlers/workflow-data.js";
 
 /**
@@ -53,11 +54,13 @@ async function handleChatMessageCreation(msg, _options, _userId) {
          }
       );
 
-   const handler = await AAHandler.make({
+   const compiledData = await getRequiredData({
       item,
       actor,
       targets: Array.from(game.user.targets),
    });
+   
+   const handler = await AAHandler.make(compiledData);
 
    trafficCop(handler);
 }
