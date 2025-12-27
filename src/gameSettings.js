@@ -870,6 +870,22 @@ class AAGameSettings extends TJSGameSettingsWithUI {
                }
             });
             break;
+         case 'impmal':
+                settings.push({
+                  namespace,
+                  key: 'criticalAnimation',
+                  folder: game.system.title || game.system.name,
+                  options: {
+                    name: 'autoanimations.settings.criticalAnimation',
+                    //name: 'Choose A File',
+                    scope: scope.world,
+                    config: true,
+                    type: String,
+                    default: '',
+                    filePicker: 'imagevideo'
+                  }
+                });
+            break;
          case "cyberpunk-red-core":
             settings.push({
                namespace,

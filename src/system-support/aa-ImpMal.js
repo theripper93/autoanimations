@@ -4,73 +4,44 @@ import { getRequiredData }  from "./getRequiredData.js";
 
 export function systemHooks() {
     Hooks.on("createChatMessage", async (msg) => {
- 		if (msg.user.id !== game.user.id) { return };
+ 		if (msg.author.id !== game.user.id) { return };
         const systemName = 'impmal';
 
-        //v11 handling
-        if(msg.flags[systemName]?.test) {
-	        if (msg.flags[systemName].test.class =="WeaponTest") {
-	        	let compiledData = await getRequiredData({
-                    actorId: msg.speaker.actor ?? msg.flags[systemName].test.context.speaker.actor,
-                    targets: compileTargets(msg.flags[systemName].test.context.targetSpeakers),
-	        		itemId: msg.flags[systemName].test.context.weaponId,
-	                workflow: msg,
-	        	})	
-	        	if (msg.flags[systemName].test.data.burst == true) compiledData.overrideRepeat=3
-	        	if (msg.flags[systemName].test.data.rapidFire == true) compiledData.overrideRepeat=6
-            
-                if (!compiledData.item) { return; }
-                runImpMal(compiledData)
+        if (msg.system.class =="WeaponTest") {
+            let compiledData = await getRequiredData({
+                actorId: msg.speaker.actor ?? msg.system.context.speaker.actor,
+                targets: compileTargets(msg.system.context.targetSpeakers),
+                itemId: msg.system.context.weaponId,
+                workflow: msg,
+            })	
+            if (msg.system.data.burst == true) compiledData.overrideRepeat=3
+            if (msg.system.data.rapidFire == true) compiledData.overrideRepeat=6
+        
+            if (!compiledData.item) { return; }
+            runImpMal(compiledData)
+            checkCrit(msg)
 
-	        } else {
-	        	 let compiledData = await getRequiredData({
-                    actorId: msg.speaker.actor ?? msg.flags[systemName].test.context.speaker.actor,
-                    targets: compileTargets(msg.flags[systemName].test.context.targetSpeakers),
-	        		itemId: msg.flags[systemName].test.context.powerId,
-	                workflow: msg,
-                })
-	        	if (!compiledData.item) { return; }
-                runImpMal(compiledData)	
-	        }
-        }
-        //v12 handling
-        else {
-            if (msg.system.class =="WeaponTest") {
-	        	let compiledData = await getRequiredData({
-                    actorId: msg.speaker.actor ?? msg.system.context.speaker.actor,
-                    targets: compileTargets(msg.system.context.targetSpeakers),
-	        		itemId: msg.system.context.weaponId,
-	                workflow: msg,
-	        	})	
-	        	if (msg.system.data.burst == true) compiledData.overrideRepeat=3
-	        	if (msg.system.data.rapidFire == true) compiledData.overrideRepeat=6
+        } else {
+            let itemUuid = msg.system.context?.itemUsedUuid
+            let itemId = msg.system.context?.powerId ?? msg.system.context?.skillItemId
             
-                if (!compiledData.item) { return; }
-                runImpMal(compiledData)
-                checkCrit(msg.system.result)
-
-	        } else {
-                let itemUuid = msg.system.context?.itemUsedUuid
-                let itemId = msg.system.context?.powerId ?? msg.system.context?.skillItemId
-               
-                let compiledData = await getRequiredData({
-                    actorId: msg.speaker.actor ?? msg.system.context?.speaker.actor,
-                    targets: compileTargets(msg.system.context?.targetSpeakers),
-                    itemUuid: itemUuid,
-	        		itemId: itemId,
-                    item: itemId || itemUuid ? null: {name: msg.system.context?.skill},
-	                workflow: msg,
-                })
-	        	if (!compiledData.item) { return; }
-                runImpMal(compiledData)	
-	        }
+            let compiledData = await getRequiredData({
+                actorId: msg.speaker.actor ?? msg.system.context?.speaker.actor,
+                targets: compileTargets(msg.system.context?.targetSpeakers),
+                itemUuid: itemUuid,
+                itemId: itemId,
+                item: itemId || itemUuid ? null: {name: msg.system.context?.skill},
+                workflow: msg,
+            })
+            if (!compiledData.item) { return; }
+            runImpMal(compiledData)	
         }
 	});
 }	
 
 function compileTargets(targets) {
   if (!targets) { return []; }
-  return Array.from(targets).map(sceneTarget => canvas.tokens.get(sceneTarget.token));
+  return Array.from(targets).map(target => game.scenes.get(target.scene)?.tokens.get(target.token));
 }
 
 async function runImpMal(input) {
@@ -78,15 +49,15 @@ async function runImpMal(input) {
     trafficCop(handler);
 }
 
-async function checkCrit(result) {
-    if(!result.critical) return;
-
+async function checkCrit(msg) {
+    if(!msg.system.result.critical) return;
+    
     let critAnim = game.settings.get("autoanimations", "criticalAnimation");
     if(!critAnim) return;
 
     let critSequence = new Sequence({moduleName: "Automated Animations", softFail: !game.settings.get("autoanimations", "debug")});
 
-    for(let target of game.user.targets){
+    for(let target of compileTargets(msg.system.context?.targetSpeakers)){
         critSequence
         .effect()
         .file(critAnim)
