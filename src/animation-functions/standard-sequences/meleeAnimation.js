@@ -32,6 +32,7 @@ export async function melee(handler, animationData) {
     let switchDistance = 5;
     if (handler.systemId === "swade") { switchDistance = 1 }
     if (handler.systemId === "alienrpg") { switchDistance = canvas.grid.distance * 1.5 }
+    if (handler.systemId === "gurps") { switchDistance = 0; }
 
     let rangeArray = [];
     let meleeArray = [];

@@ -206,6 +206,7 @@ Hooks.once('ready', async function () {
      * TwoDSix
      * Dark Heresy 2e
      * Fantastic Depths
+     * GURPS
     */
 
     // Register Hooks by system
