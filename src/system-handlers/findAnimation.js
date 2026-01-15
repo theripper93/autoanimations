@@ -30,7 +30,7 @@ export async function handleItem(data) {
         melee: game.settings.get("autoanimations", "aaAutorec-melee"),
         range: game.settings.get("autoanimations", "aaAutorec-range"),
         ontoken: game.settings.get("autoanimations", "aaAutorec-ontoken"),
-        templatefx: data.isTemplate ? game.settings.get("autoanimations", "aaAutorec-templatefx") : [],
+        templatefx: game.settings.get("autoanimations", "aaAutorec-templatefx"),
         aura: game.settings.get("autoanimations", "aaAutorec-aura"),
         preset: game.settings.get("autoanimations", "aaAutorec-preset"),
         aefx: data.activeEffect ? game.settings.get("autoanimations", "aaAutorec-aefx") : [],
