@@ -23,7 +23,7 @@ export function systemHooks() {
 
         } else {
             let itemUuid = msg.system.context?.itemUsedUuid
-            let itemId = msg.system.context?.powerId ?? msg.system.context?.skillItemId
+            let itemId = msg.system.context?.powerId ?? msg.system.context?.itemId ?? msg.system.context?.weaponId ?? msg.system.context?.skillItemId
             
             let compiledData = await getRequiredData({
                 actorId: msg.speaker.actor ?? msg.system.context?.speaker.actor,
@@ -41,7 +41,10 @@ export function systemHooks() {
 
 function compileTargets(targets) {
   if (!targets) { return []; }
-  return Array.from(targets).map(target => game.scenes.get(target.scene)?.tokens.get(target.token));
+   return Array.from(targets).map(target => {
+      let token = game.scenes.get(target.scene)?.tokens.get(target.token)
+      return token?.constructor.name === "TokenDocument" ? token?.object : token;
+   });
 }
 
 async function runImpMal(input) {
