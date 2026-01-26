@@ -175,17 +175,19 @@ export default class AAHandler {
             if (!canvas || !canvas.grid || !canvas.dimensions)
                 return noResult;
             //@ts-ignore
-            const t1StartX = t1.document.width >= 1 ? 0.5 : t1.document.width / 2;
-            const t1StartY = t1.document.height >= 1 ? 0.5 : t1.document.height / 2;
-            const t2StartX = target.document.width >= 1 ? 0.5 : target.document.width / 2;
-            const t2StartY = target.document.height >= 1 ? 0.5 : target.document.height / 2;
+            const t1Doc = t1.document ?? t1;
+            const targetDoc = target.document ?? target;
+            const t1StartX = t1Doc.width >= 1 ? 0.5 : t1Doc.width / 2;
+            const t1StartY = t1Doc.height >= 1 ? 0.5 : t1Doc.height / 2;
+            const t2StartX = targetDoc.width >= 1 ? 0.5 : targetDoc.width / 2;
+            const t2StartY = targetDoc.height >= 1 ? 0.5 : targetDoc.height / 2;
             var x, x1, y, y1, d, r, segments = [], rdistance, distance;
-            for (x = t1StartX; x < t1.document.width; x++) {
-                for (y = t1StartY; y < t1.document.height; y++) {
-                    const origin = new PIXI.Point(...canvas.grid.getCenter(Math.round(t1.document.x + (canvas.dimensions.size * x)), Math.round(t1.document.y + (canvas.dimensions.size * y))));
-                    for (x1 = t2StartX; x1 < target.document.width; x1++) {
-                        for (y1 = t2StartY; y1 < target.document.height; y1++) {
-                            const dest = new PIXI.Point(...canvas.grid.getCenter(Math.round(target.document.x + (canvas.dimensions.size * x1)), Math.round(target.document.y + (canvas.dimensions.size * y1))));
+            for (x = t1StartX; x < t1Doc.width; x++) {
+                for (y = t1StartY; y < t1Doc.height; y++) {
+                    const origin = new PIXI.Point(...canvas.grid.getCenter(Math.round(t1Doc.x + (canvas.dimensions.size * x)), Math.round(t1Doc.y + (canvas.dimensions.size * y))));
+                    for (x1 = t2StartX; x1 < targetDoc.width; x1++) {
+                        for (y1 = t2StartY; y1 < targetDoc.height; y1++) {
+                            const dest = new PIXI.Point(...canvas.grid.getCenter(Math.round(targetDoc.x + (canvas.dimensions.size * x1)), Math.round(targetDoc.y + (canvas.dimensions.size * y1))));
                             const r = new Ray(origin, dest);
                             segments.push({ ray: r });
                         }
