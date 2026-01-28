@@ -118,10 +118,10 @@ export default class AAHandler {
     // Sets the Size of the effect
     getSize(isRadius = false, size = 1, token, addToken = false) {
         const td = token.document;
-        const maxSize = Math.max(td.width * td.texture.scaleX, td.height * td.texture.scaleY)
-        return isRadius
-            ? addToken ? (size * 2) + maxSize : size * 2
-            : maxSize * 1.5 * size;
+        const maxSize = Math.max(td.width * td.texture.scaleX, td.height * td.texture.scaleY) / (td.ring.enabled*td.ring.subject.scale || 1);
+        if (isRadius && addToken) return (size * 2) + maxSize;
+        if (isRadius) return size * 2;
+        return maxSize * 1.5 * size;
     }
 
     getDistance(target) {
