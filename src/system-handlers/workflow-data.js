@@ -73,7 +73,7 @@ export default class AAHandler {
         if (data.hit && !this.hitTargets) this.hitTargets = data.targets;
         this.hitTargets ??= [];
         this.hitTargetsId = Array.from(this.hitTargets.filter(actor => actor.id).map(actor => actor.id));
-        this.playOnMiss = data.playOnMiss ?? (game.modules.get('midi-qol')?.active || game.system.id === 'pf2e'  || game.system.id === 'dnd5e' ? game.settings.get("autoanimations", "playonmiss") : false) ?? false;
+        this.playOnMiss = data.playOnMiss ?? (game.modules.get('midi-qol')?.active || game.system.id === 'pf2e'  || game.system.id === 'sf2e' || game.system.id === 'dnd5e' ? game.settings.get("autoanimations", "playonmiss") : false) ?? false;
 
         this.menu = this.animationData.menu;
 
