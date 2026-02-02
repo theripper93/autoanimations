@@ -123,6 +123,7 @@ export async function trafficCop(handler) {
         //sections for Template Hooks.once or straight to function. Systems running the createMeasuredTemplate hook, or those whose workflow runs after template placement, will skip Hooks.once
         switch (game.system.id) {
             case "a5e":
+            case "sf2e":
             case "pf2e":
             case "sw5e":
             case "tormenta20":
