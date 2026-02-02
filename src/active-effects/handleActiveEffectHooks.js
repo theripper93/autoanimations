@@ -10,6 +10,7 @@ const ptuDeletedItems = new Map();
 
 export function registerActiveEffectHooks() {
     switch (game.system.id) {
+        case 'sf2e':
         case 'pf2e':
             Hooks.on("createItem", (item, data, userId) => {
                 if (game.settings.get("autoanimations", "disableAEAnimations")) {
