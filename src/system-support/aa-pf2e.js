@@ -16,14 +16,14 @@ export function systemHooks() {
     Hooks.on("createChatMessage", async (msg) => {
         if (msg.author.id !== game.user.id) { return };
         const playOnDmg = game.settings.get("autoanimations", "playonDamageCore")
-        if (msg.flags.pf2e?.context?.type === "damage-taken") {
+        if (msg.flags.system?.context?.type === "damage-taken") {
             // This can be removed if later A-A can differentiate animations on the same item. I guess.
             debug ("Caught a damage-taken message thats not meant to be animated, exiting main workflow")
             return;
         }
         let compiledData = await getRequiredData({
             item: msg.item,
-            itemId: msg.flags.pf2e?.origin?.uuid,
+            itemId: msg.flags.system?.origin?.uuid,
             token: msg.token?.object,
             tokenId: msg.speaker?.token,
             actorId: msg.speaker?.actor,
@@ -45,7 +45,7 @@ export function systemHooks() {
     Hooks.on("createMeasuredTemplate", async (template, data, userId) => {
         if (userId !== game.user.id) { return };
         let compiledData = await getRequiredData({
-            itemUuid: template.flags?.pf2e?.origin?.uuid,
+            itemUuid: template.flags?.system?.origin?.uuid,
             templateData: template,
             workflow: template,
             isTemplate: true
@@ -71,7 +71,7 @@ async function templateAnimation(input) {
     }
     else {
         // Spell variants can be identified by the template name
-        const templateName = input.templateData.flags?.pf2e?.origin?.name
+        const templateName = input.templateData.flags?.system?.origin?.name
         // If item and template name differ, the variant spell can be created by applying the variants overlay
         if (templateName && input.item.name !== templateName) {
             // Search for the variant overlay by name
@@ -135,7 +135,7 @@ async function checkFeatForAOE(data) {
 function runPF2eWeapons (data) {
     const playOnDamage = data.playOnDamage;
     const msg = data.workflow;
-    const isAttackRoll = msg.flags.pf2e?.context?.type?.includes("attack");
+    const isAttackRoll = msg.flags.system?.context?.type?.includes("attack");
 
     data.extraNames = [];
     if (data.item.type === "weapon") {
@@ -283,7 +283,7 @@ function getWeaponBaseType(item) {
 }
 
 function checkOutcome(input) {
-    let outcome = input.workflow.flags?.pf2e?.context?.outcome;
+    let outcome = input.workflow.flags?.system?.context?.outcome;
     outcome = outcome ? outcome.toLowerCase() : "";
     let hitTargets;
     if (input.targets.length < 2 && !game.settings.get('autoanimations', 'playonDamageCore') && outcome) {
