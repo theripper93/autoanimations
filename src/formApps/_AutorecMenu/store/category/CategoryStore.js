@@ -61,7 +61,7 @@ export class CategoryStore extends WorldArrayObjectStore {
          // This allow setting the current Index of the section for the Video Preview app
          videoIDX: writable(void 0),
 
-         animationSourceOption: game.system.id === "dnd5e" || game.system.id === "pf2e",
+         animationSourceOption: game.system.id === "dnd5e" || game.system.id === "pf2e" || game.system.id === "sf2e",
       };
    }
 

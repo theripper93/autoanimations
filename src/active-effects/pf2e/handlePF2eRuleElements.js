@@ -21,7 +21,7 @@ export async function createRuleElementPF2e(item) {
 
     if (game.settings.get("autoanimations", "disableGrantedAuraEffects")) {
         let tactorId = aeToken.actor.id;
-        let origin = item.flags?.pf2e?.aura?.origin;
+        let origin = item.flags?.system?.aura?.origin;
         if (origin) {
             let idSplit = origin.split('.');
             let id = idSplit[idSplit.length - 1];
