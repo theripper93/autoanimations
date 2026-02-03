@@ -782,8 +782,8 @@ class AAGameSettings extends TJSGameSettingsWithUI {
                   }
                 });
 	break;
-         case 'sf2e':
          case 'pf2e':
+         case 'sf2e':
             settings.push({
                namespace,
                key: 'playonDamageCore',
