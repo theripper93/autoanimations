@@ -23,7 +23,7 @@ export function systemHooks() {
         }
         let compiledData = await getRequiredData({
             item: msg.item,
-            itemId: msg.flags.setting.sf2e?.origin?.uuid,
+            itemId: msg.flags.sf2e?.origin?.uuid,
             token: msg.token?.object,
             tokenId: msg.speaker?.token,
             actorId: msg.speaker?.actor,
