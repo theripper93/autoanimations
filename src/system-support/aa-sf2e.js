@@ -3,7 +3,7 @@ import AAHandler            from "../system-handlers/workflow-data.js";
 import { debug }            from "../constants/constants.js";
 import { getRequiredData }  from "./getRequiredData.js";
 
-const PF2E_SIZE_TO_REACH = {
+const SF2E_SIZE_TO_REACH = {
     tiny: 0,
     sm: 5,
     med: 5,
@@ -40,7 +40,7 @@ export function systemHooks() {
             return;
         }
         compiledData.hitTargets = checkOutcome(compiledData);
-        runPF2e(compiledData)
+        runSF2e(compiledData)
     });
     Hooks.on("createMeasuredTemplate", async (template, data, userId) => {
         if (userId !== game.user.id) { return };
@@ -88,7 +88,7 @@ async function templateAnimation(input) {
     trafficCop(handler)
 }
 
-async function runPF2e(data) {
+async function runSF2e(data) {
     const itemType = data.item.type;
 
     switch (itemType) {
@@ -97,14 +97,14 @@ async function runPF2e(data) {
             debug("This is an Effect or Condition, exiting main workflow in deference to Active Effects")
             break;
         case "spell":
-            runPF2eSpells(data)
+            runSF2eSpells(data)
             break;
         case "weapon":
             if (!data.workflow.isRoll) { return; }
-            runPF2eWeapons(data)
+            runSF2eWeapons(data)
             break;
         case "consumable":
-            playPF2e(data)
+            playSF2e(data)
             break;
         default:
             // Workaround for Feats and Actions not posting the Item UUID to the Template flags.
@@ -112,18 +112,18 @@ async function runPF2e(data) {
             if (data.item?.type === "feat" || data.item.type === "action") {
                 let hasAOE = await checkFeatForAOE(data);
                 if (hasAOE) {
-                    playPF2e(data)
+                    playSF2e(data)
                     return;
                 }
             }
             let hasDamage = itemHasDamage(data.item)
             //hasDamage && data.playOnDamage && data.workflow.isDamageRoll ? playPF2e(data) : !hasDamage && !data.workflow.isDamageRoll ? playPF2e(data) : playPF2e(data)
             if (hasDamage && data.playOnDamage && data.workflow.isDamageRoll) {
-                playPF2e(data)
+                playSF2e(data)
             } else if (!hasDamage && !data.workflow.isDamageRoll) {
-                playPF2e(data)
+                playSF2e(data)
             } else if (hasDamage && !data.playOnDamage && !data.workflow.isDamageRoll) {
-                playPF2e(data)
+                playSF2e(data)
             }
     }
 }
@@ -132,27 +132,27 @@ async function checkFeatForAOE(data) {
     return data.item?.system?.description?.value?.includes("@Template")
 }
 
-function runPF2eWeapons (data) {
+function runSF2eWeapons (data) {
     const playOnDamage = data.playOnDamage;
     const msg = data.workflow;
     const isAttackRoll = msg.flags.sf2e?.context?.type?.includes("attack");
 
     data.extraNames = [];
     if (data.item.type === "weapon") {
-        const baseType = game.i18n.localize(CONFIG.PF2E.baseWeaponTypes[data.item.baseType]);
-        const group = game.i18n.localize(CONFIG.PF2E.weaponGroups[data.item.group]);
+        const baseType = game.i18n.localize(CONFIG.SF2E.baseWeaponTypes[data.item.baseType]);
+        const group = game.i18n.localize(CONFIG.SF2E.weaponGroups[data.item.group]);
         data.extraNames.push(baseType, group);
     }
 
     //debugger
     if (playOnDamage && msg.isDamageRoll) {
-        playPF2e(data);
+        playSF2e(data);
     } else if (!playOnDamage && isAttackRoll) {
-        playPF2e(data);
+        playSF2e(data);
     }
 }
 
-async function runPF2eSpells(data) {
+async function runSF2eSpells(data) {
     const msg = data.workflow;
     const item = data.item;
     const playOnDamage = data.playOnDamage;
@@ -163,44 +163,41 @@ async function runPF2eSpells(data) {
         data.originalItem = item.original;
     }
 
-    if (foundry.utils.isNewerVersion(game.system.version, "5.8.3")) {
-        // pf2e 5.9 removes spellType
-        if (item.system.traits.value.includes("healing"))
-            spellType = "heal"
-        else if (item.system.traits.value.includes("attack"))
-            spellType = "attack"
-        else
-            spellType = "save"
-    }
+    if (item.system.traits.value.includes("healing"))
+        spellType = "heal"
+    else if (item.system.traits.value.includes("attack"))
+        spellType = "attack"
+    else
+        spellType = "save"
 
     switch (spellType) {
         case "utility":
         case "save":
             if (spellHasAOE(item)) { return; }
             if (itemHasDamage(item) && msg.isDamageRoll) {
-                playPF2e(data)
+                playSF2e(data)
             } else if (!itemHasDamage(item)) {
-                playPF2e(data)
+                playSF2e(data)
             }
             break;
         case "attack":
             if (!msg.isRoll) { return; }
             if (playOnDamage && msg.isDamageRoll) {
-                playPF2e(data);
+                playSF2e(data);
             } else if (!playOnDamage && !msg.isDamageRoll) {
-                playPF2e(data);
+                playSF2e(data);
             } else if (!itemHasDamage(item) && !msg.isDamageRoll) {
-                playPF2e(data);
+                playSF2e(data);
             }
             break;
         case "heal":
             if (msg.isDamageRoll) {
-                playPF2e(data);
+                playSF2e(data);
             }
             break;
     }
 }
-async function playPF2e(input) {
+async function playSF2e(input) {
     if (!input.item) {
         debug("No Item could be found")
         return;
@@ -208,7 +205,7 @@ async function playPF2e(input) {
 
     if (input.item.traits) {
         const reachTrait = input.item.traits.find((t) => /^reach-\d+$/.test(t));
-        let reachValue = reachTrait ? Number(reachTrait.replace("reach-", "")) : PF2E_SIZE_TO_REACH[input.item.actor?.size ?? "med"];
+        let reachValue = reachTrait ? Number(reachTrait.replace("reach-", "")) : SF2E_SIZE_TO_REACH[input.item.actor?.size ?? "med"];
         if (!reachTrait && input.item.traits.has("reach")) {
             reachValue += 5;
         }
