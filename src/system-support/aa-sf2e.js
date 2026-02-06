@@ -84,6 +84,11 @@ async function templateAnimation(input) {
         }
     }
 
+    if (data.item.type === "weapon") {
+        const baseType = game.i18n.localize(CONFIG.PF2E.baseWeaponTypes[input.item.system?.baseType]);
+        const group = game.i18n.localize(CONFIG.PF2E.weaponGroups[input.item.system?.group]);
+        input.extraNames.push(baseType, group);
+    }
     const handler = await AAHandler.make(input)
     trafficCop(handler)
 }
@@ -139,8 +144,8 @@ function runSF2eWeapons (data) {
 
     data.extraNames = [];
     if (data.item.type === "weapon") {
-        const baseType = game.i18n.localize(CONFIG.SF2E.baseWeaponTypes[data.item.baseType]);
-        const group = game.i18n.localize(CONFIG.SF2E.weaponGroups[data.item.group]);
+        const baseType = game.i18n.localize(CONFIG.PF2E.baseWeaponTypes[data.item.baseType]);
+        const group = game.i18n.localize(CONFIG.PF2E.weaponGroups[data.item.group]);
         data.extraNames.push(baseType, group);
     }
 
