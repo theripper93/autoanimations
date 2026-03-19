@@ -105,7 +105,7 @@ export class AnimationStore extends CategoryStore.EntryStore {
          this._data.label = data.label;
       }
 
-      this._updateSubscribers();
+      if (game.user.isGM) this._updateSubscribers();
    }
 
    async selectCustom(section, section02 = "video") {
