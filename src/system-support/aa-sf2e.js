@@ -84,7 +84,7 @@ async function templateAnimation(input) {
         }
     }
 
-    if (data.item.type === "weapon") {
+    if (input.item.type === "weapon") {
         const baseType = game.i18n.localize(CONFIG.PF2E.baseWeaponTypes[input.item.system?.baseType]);
         const group = game.i18n.localize(CONFIG.PF2E.weaponGroups[input.item.system?.group]);
         input.extraNames.push(baseType, group);
