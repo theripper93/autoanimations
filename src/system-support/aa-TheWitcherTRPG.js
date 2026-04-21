@@ -7,12 +7,11 @@ export function systemHooks() {
 }
 
 async function checkMessage(msg) {
-    if (msg.user.id !== game.user.id) { 
-        return 
+    if (msg.author.id !== game.user.id) {
+       return;
     };
 
-    let data = msg.system ?? msg.flags?.TheWitcherTRPG
-    console.log(data)
+    let data = msg.system
     let compiledData = await getRequiredData({
         itemUuid: data?.attack?.itemUuid,
         attackSkill: data?.attack?.attackSkill ?? data?.attack?.skill,
