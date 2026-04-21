@@ -139,7 +139,7 @@ function extactData(msg) {
 
 function getDistance(token, target) {
     if (token.document) token = token.document;
-    const a = canvas.grid.measureDistance(token, target, {
+    const a = canvas.grid.measurePath(token, target, {
         gridSpaces: true,
     });
 

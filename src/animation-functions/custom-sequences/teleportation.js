@@ -72,8 +72,8 @@ export async function teleportation(handler, animationData) {
     
                 let topLeft = canvas.grid.getTopLeft(pos.x, pos.y);
     
-                if (canvas.grid.measureDistance(sourceToken, { x: topLeft[0], y: topLeft[1] }, { gridSpaces: true }) <= data.options.range) {
-                    //console.log(canvas.grid.measureDistance(sourceToken, { x: topLeft[0], y: topLeft[1] }, {gridSpaces: true}))
+                if (canvas.grid.measurePath(sourceToken, { x: topLeft[0], y: topLeft[1] }, { gridSpaces: true }) <= data.options.range) {
+                    //console.log(canvas.grid.measurePath(sourceToken, { x: topLeft[0], y: topLeft[1] }, {gridSpaces: true}))
                     if (data.options.checkCollision && testCollision(pos)) {
                         ui.notifications.error("Your Path is Blocked!! Try Again")
                         return getPositionFrom3D();
@@ -96,8 +96,8 @@ export async function teleportation(handler, animationData) {
 
         let topLeft = canvas.grid.getTopLeft(pos.x, pos.y);
 
-        if (canvas.grid.measureDistance(sourceToken, { x: topLeft[0], y: topLeft[1] }, { gridSpaces: true }) <= data.options.range) {
-            //console.log(canvas.grid.measureDistance(sourceToken, { x: topLeft[0], y: topLeft[1] }, {gridSpaces: true}))
+        if (canvas.grid.measurePath(sourceToken, { x: topLeft[0], y: topLeft[1] }, { gridSpaces: true }) <= data.options.range) {
+            //console.log(canvas.grid.measurePath(sourceToken, { x: topLeft[0], y: topLeft[1] }, {gridSpaces: true}))
             if (data.options.checkCollision && testCollision(pos)) {
                 ui.notifications.error("Your Path is Blocked!! Try Again")
             } else {
@@ -110,10 +110,7 @@ export async function teleportation(handler, animationData) {
     });
 
     function testCollision(pos) {
-        let pointerCenter = {
-            x: canvas.grid.getCenter(pos.x, pos.y)[0],
-            y: canvas.grid.getCenter(pos.x, pos.y)[1],
-        };
+        let pointerCenter = canvas.grid.getCenterPoint({x: pos.x, y: pos.y});
         return sourceToken.checkCollision(pointerCenter)
     }
 
@@ -124,7 +121,8 @@ export async function teleportation(handler, animationData) {
         if (canvas.scene.gridType === 0) {
             centerPos = [gridPos[0] + sourceToken.w, gridPos[1] + sourceToken.w];
         } else {
-            centerPos = canvas.grid.getCenter(pos.x, pos.y);
+            const center = canvas.grid.getCenterPoint({x: pos.x, y: pos.y});
+            centerPos = [center.x, center.y];
         }
 
         Sequencer.EffectManager.endEffects({ name: "teleportation" })
