@@ -44,7 +44,7 @@ export function systemHooks() {
         await gurpsWorkflow(parsedData);
     });
 
-    Hooks.on("createMeasuredTemplate", async (templateDocument, context, userId) => {
+    Hooks.on("createRegion", async (templateDocument, context, userId) => {
         if (userId !== game.user.id) return;
 
         if (pendingGurpsInput) {

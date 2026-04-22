@@ -38,7 +38,7 @@ export function systemHooks() {
             useItem(await getRequiredData({item, actor: item.actor, workflow: item}))
         })
     }
-    Hooks.on("createMeasuredTemplate", async (template, data, userId) => {
+    Hooks.on("createRegion", async (template, data, userId) => {
         if (userId !== game.user.id) { return };
         templateAnimation(await getRequiredData({itemUuid: template.flags?.sw5e?.origin, templateData: template, workflow: template, isTemplate: true}))
     })

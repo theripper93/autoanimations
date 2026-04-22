@@ -92,7 +92,7 @@ export function systemHooks() {
         runWarhammer(compiledData)
     });
     
-    Hooks.on("createMeasuredTemplate", async (template, data, userId) => {
+    Hooks.on("createRegion", async (template, data, userId) => {
         if (userId !== game.user.id) { return };
         if (template.flags?.wfrp4e?.itemuuid) {
             const uuid = template.flags.wfrp4e.itemuuid;

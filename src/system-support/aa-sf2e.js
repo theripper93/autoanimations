@@ -42,7 +42,7 @@ export function systemHooks() {
         compiledData.hitTargets = checkOutcome(compiledData);
         runSF2e(compiledData)
     });
-    Hooks.on("createMeasuredTemplate", async (template, data, userId) => {
+    Hooks.on("createRegion", async (template, data, userId) => {
         if (userId !== game.user.id) { return };
         let compiledData = await getRequiredData({
             itemUuid: template.flags?.sf2e?.origin?.uuid,

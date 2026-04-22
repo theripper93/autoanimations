@@ -21,7 +21,7 @@ export function systemHooks() {
         checkCrit(flags.rollData)
     });
     Hooks.on("AutomatedAnimations-WorkflowStart", onWorkflowStart);
-    Hooks.on("createMeasuredTemplate", async (template, data, userId) => {
+    Hooks.on("createRegion", async (template, data, userId) => {
         if (userId !== game.user.id) { return };
         templateAnimation(await getRequiredData({itemUuid: template.flags?.["dark-heresy"]?.origin, templateData: template, workflow: template, isTemplate: true}))
     })

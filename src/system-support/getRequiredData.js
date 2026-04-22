@@ -41,7 +41,7 @@ export async function getRequiredData(data) {
 
     // set up template
     if (!data.templateData && data.templateDataId) {
-        data.templateData = canvas.scene.templates.get(data.templateDataId);
+        data.templateData = canvas.scene.regions.get(data.templateDataId);
     }
     if (data.templateData) {
         data.isTemplate = true;

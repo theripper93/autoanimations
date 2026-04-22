@@ -46,24 +46,10 @@ export async function templatefx(handler, animationData, templateDocument) {
     })
 
     if (data.options.persistent && (data.options.persistType === 'overheadtile' || data.options.persistType === 'groundtile')) {
-
-        let trueSize;
-        if (templateType === 'rect') {
-            trueSize = template.width;
-        } else {
-            trueSize = template.distance * 2;
-        }
-
-        const templateLength = canvas.grid.size * (trueSize / canvas.dimensions.distance);
+        
+        const { x, y, width, height } = template.shapes[0].bounds;
         const isOverhead = data.options.persistType === 'overheadtile' ? true : false;
-
-        const tileWidth = templateLength * data.options.scale.x;
-        const tileHeight = templateLength * data.options.scale.y;
-
-        const tileX = templateType === 'circle' ? (template.x - (tileWidth / 2)) : (template.x + ((templateLength - tileWidth) / 2));
-        const tileY = templateType === 'circle' ? (template.y - (tileHeight / 2)) : (template.y + ((templateLength - tileHeight) / 2));
-
-        const templateObject = buildTile(tileX, tileY, isOverhead, tileWidth, tileHeight);
+        const templateObject = buildTile(x + width / 2, y + height / 2, isOverhead, width, height);
 
         if(data.options.tint && data.options.tintColor) templateObject.texture.tint = data.options.tintColor;
 
@@ -221,16 +207,29 @@ export async function templatefx(handler, animationData, templateDocument) {
     }
 
     function buildTile(tileX, tileY, isOverhead, tileWidth, tileHeight) {
+        const occlusionMapping = {
+            "3": CONST.TILE_OCCLUSION_MODES.RADIAL,
+            "1": CONST.TILE_OCCLUSION_MODES.FADE,
+            "2": CONST.TILE_OCCLUSION_MODES.FADE,
+            "0": CONST.TILE_OCCLUSION_MODES.NONE,
+        }
+        const isRoofOcclusion = data.options.occlusionMode === "2";
+        const bottom = Number.isFinite(canvas.level.elevation.bottom) ? canvas.level.elevation.bottom : 0;
+        const top = Number.isFinite(canvas.level.elevation.top) ? canvas.level.elevation.top : bottom + canvas.dimensions.distance * 4;
+        const elevation = isOverhead ? top : bottom;
         return {
             alpha: data.options.opacity,
             width: tileWidth,
             height: tileHeight,
-            img: data.path.filePath,
-            texture: { src: data.path.filePath }, // v12 uses this instead of img:
-            overhead: isOverhead, // false sets Tile in canvas.background. true sets Tile to canvas.foreground
+            texture: { src: data.path.filePath },
+            elevation: elevation,
             occlusion: {
                 alpha: `${data.options.occlusionAlpha}`,
-                mode: data.options.occlusionMode,
+                modes: [occlusionMapping[data.options.occlusionMode ?? "0"]],
+                restrictions: {
+                    light: isRoofOcclusion,
+                    weather: isRoofOcclusion
+                }
             },
             video: {
                 autoplay: true,

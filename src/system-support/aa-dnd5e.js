@@ -52,7 +52,7 @@ export function systemHooks() {
                 if (activityCache[activity.uuid]) delete activityCache[activity.uuid];
             }, 60000);
         });
-        Hooks.on("createMeasuredTemplate", async (template, data, userId) => {
+        Hooks.on("createRegion", async (template, data, userId) => {
             if (userId !== game.user.id) { return };
             const activity = fromUuidSync(template.flags?.dnd5e?.origin) ?? activityCache[template.flags?.dnd5e?.origin];
             if (!activity) return;

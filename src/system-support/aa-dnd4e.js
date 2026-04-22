@@ -4,7 +4,7 @@ import AAHandler from "../system-handlers/workflow-data.js";
 import { getRequiredData } from "./getRequiredData.js";
 
 export function systemHooks() {
-  Hooks.on("createMeasuredTemplate", async (template, data, userId) => {
+  Hooks.on("createRegion", async (template, data, userId) => {
     if (userId !== game.user.id) {
       return;
     }

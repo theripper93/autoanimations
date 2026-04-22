@@ -189,20 +189,14 @@ class AAGameSettings extends TJSGameSettingsWithUI {
 
       settings.push({
          namespace,
-         key: "hideTemplateGrid",
+         key: "forceRegionLayerOnly",
          options: {
-            name: 'autoanimations.settings.hideTemplate_name',
-            hint: 'autoanimations.settings.hideTemplate_hint',
-            scope: scope.client,
+            name: 'autoanimations.settings.forceRegionLayerOnly_name',
+            hint: 'autoanimations.settings.forceRegionLayerOnly_hint',
+            scope: scope.world,
             config: true,
-            type: String,
-            choices: {
-               off: 'autoanimations.settings.OFF',
-               templateLayer: 'autoanimations.settings.hoverInTemplateLayer',
-               full: 'autoanimations.settings.hoverInTemplate',
-            },
-            default: "off",
-            requiresReload: true
+            type: Boolean,
+            default: false,
          },
       })
 
@@ -219,17 +213,6 @@ class AAGameSettings extends TJSGameSettingsWithUI {
          }
       });
 
-      settings.push({
-         namespace,
-         key: 'debug',
-         options: {
-            name: 'autoanimations.settings.debugging',
-            scope: scope.world,
-            config: true,
-            default: false,
-            type: Boolean
-         }
-      });
       switch (game.system.id) {
          case "cyphersystem":
             settings.push({
@@ -1013,6 +996,17 @@ class AAGameSettings extends TJSGameSettingsWithUI {
          */
       }
 
+      settings.push({
+         namespace,
+         key: 'debug',
+         options: {
+            name: 'autoanimations.settings.debugging',
+            scope: scope.world,
+            config: true,
+            default: false,
+            type: Boolean
+         }
+      });
 
       // Selectively register settings w/ core Foundry based on whether the user is GM.
       this.registerAll(settings, !game.user.isGM);

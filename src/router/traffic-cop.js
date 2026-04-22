@@ -31,8 +31,7 @@ export async function trafficCop(handler) {
                 case "a5e":
                 case "sw5e":
                 case "tormenta20":
-                    aaTemplateHook = Hooks.once("createMeasuredTemplate", async (template) => {
-                        //Hooks.callAll("aa.preAnimationStart", sanitizedData, data);
+                    aaTemplateHook = Hooks.once("createRegion", async (template) => {
                         await wait(500)
                         handler.templateData = template;
                         playMacro()
@@ -41,7 +40,7 @@ export async function trafficCop(handler) {
                     break;
                 default:
                     await wait(500)
-                    handler.templateData = canvas.templates?.placeables?.[canvas.templates.placeables.length - 1]?.document;
+                    handler.templateData = canvas.scene.regions.contents.at(-1);
                     playMacro()
                 }
         } else {
@@ -49,9 +48,6 @@ export async function trafficCop(handler) {
         }
         function playMacro() {
             handler.runMacro(sanitizedData.macro)
-            //new Sequence()
-            //.macro(sanitizedData.macro.name, handler.workflow, handler, sanitizedData.macro.args)
-            //.play()
         }
         return;
     }
@@ -95,31 +91,6 @@ export async function trafficCop(handler) {
             animate[animationType](handler, sanitizedData);
             return;
         }
-        // In place specifically for using Warpgate to spawn a Template thru a Macro
-        if (sanitizedData?.macro && sanitizedData?.macro?.args?.warpgateTemplate) {
-            // Play Macro if it is for using Crosshairs to create a Template
-            if (foundry.utils.isNewerVersion(game.version, 11)) {
-                new Sequence()
-                    .macro(sanitizedData.macro.name, { args: [handler.workflow, handler, sanitizedData.macro.args] })
-                    .play()
-            } else {
-                if (game.modules.get("advanced-macros")?.active) {
-                    new Sequence()
-                        .macro(sanitizedData.macro.name, handler.workflow, handler, sanitizedData.macro.args)
-                        .play()
-                } else {
-                    new Sequence()
-                        .macro(sanitizedData.macro.name)
-                        .play()
-                }
-            }
-            aaTemplateHook = Hooks.once("createMeasuredTemplate", async (template) => {
-                await wait(500)
-                animate[animationType](handler, sanitizedData, template);
-            });
-            setTimeout(killHook, 30000)
-            return;
-        }
         //sections for Template Hooks.once or straight to function. Systems running the createMeasuredTemplate hook, or those whose workflow runs after template placement, will skip Hooks.once
         switch (game.system.id) {
             case "a5e":
@@ -127,8 +98,7 @@ export async function trafficCop(handler) {
             case "pf2e":
             case "sw5e":
             case "tormenta20":
-                aaTemplateHook = Hooks.once("createMeasuredTemplate", async (template) => {
-                    //Hooks.callAll("aa.preAnimationStart", sanitizedData, data);
+                aaTemplateHook = Hooks.once("createRegion", async (template) => {
                     await wait(500)
                     animate[animationType](handler, sanitizedData, template);
                 });
@@ -136,7 +106,7 @@ export async function trafficCop(handler) {
                 break;
             default:
                 await wait(500)
-                let template = canvas.templates?.placeables?.[canvas.templates.placeables.length - 1]?.document
+                let template = canvas.scene.regions.contents.at(-1);
                 if (!template) {
                     debug("No template found for the Template animaiton, existing early")
                     return;
@@ -151,11 +121,10 @@ export async function trafficCop(handler) {
             return;
         }
         debug(`${animationType} Animation Start"`, sanitizedData)
-        //Hooks.callAll("aa.preAnimationStart", sanitizedData, data);
         animate[animationType](handler, sanitizedData);
         return;
     }
     function killHook() {
-        Hooks.off("createMeasuredTemplate", aaTemplateHook)
+        Hooks.off("createRegion", aaTemplateHook)
     }
 }

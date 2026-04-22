@@ -2,6 +2,7 @@
 	"id": "autoanimations",
 	"title": "Automated Animations",
 	"description": "This will automatically run most JB2A Animations such as Melee/Ranged Attacks, Spell Attacks, and Instant Spells",
+	"version": "8.0.0",
 	"authors": [
 		{
 			"name": "theripper93",
@@ -14,11 +15,6 @@
 		}
 	],
 	"url": "https://github.com/theripper93/autoanimations",
-	"version": "6.0.0",
-	"compatibility": {
-		"minimum": "13",
-		"verified": "13"
-	},
 	"scripts": [],
 	"esmodules": [
 		"dist/autoanimations.js"
@@ -51,6 +47,11 @@
 				"type": "module"
 			}
 		]
+	},
+	"compatibility": {
+		"minimum": "14",
+		"verified": "14",
+		"maximum": "14"
 	},
 	"socket": true,
 	"manifest": "https://github.com/otigon/automated-jb2a-animations/releases/latest/download/module.json",

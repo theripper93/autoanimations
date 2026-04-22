@@ -36,7 +36,7 @@ export function systemHooks() {
         runSwade(SwadeTokenOrActor, SwadeTokenOrActor, SwadeItem);
     });
 
-    Hooks.on("createMeasuredTemplate", async (template, data, userId) => {
+    Hooks.on("createRegion", async (template, data, userId) => {
         if (userId !== game.user.id || !template.flags?.swade?.origin) return;
         templateAnimation(await getRequiredData({ itemUuid: template.flags?.swade?.origin, templateData: template, workflow: template, isTemplate: true }))
     });
