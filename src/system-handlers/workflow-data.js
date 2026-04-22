@@ -159,7 +159,7 @@ export default class AAHandler {
                 y2 += (target.document.height - 1) * gridSize;
             }
 
-            const ray = new Ray({ x: x1, y: y1 }, { x: x2, y: y2 });
+            const ray = new foundry.canvas.geometry.Ray({ x: x1, y: y1 }, { x: x2, y: y2 });
             const distance = canvas.grid.grid.measurePath([{ ray }], { gridSpaces: true })[0];
             return distance / canvas.dimensions.distance;
         } else {
@@ -186,7 +186,7 @@ export default class AAHandler {
                     for (x1 = t2StartX; x1 < target.document.width; x1++) {
                         for (y1 = t2StartY; y1 < target.document.height; y1++) {
                             const dest = new PIXI.Point(canvas.grid.getCenterPoint({x: Math.round(target.document.x + (canvas.dimensions.size * x1)), y: Math.round(target.document.y + (canvas.dimensions.size * y1))}));
-                            const r = new Ray(origin, dest);
+                            const r = new foundry.canvas.geometry.Ray(origin, dest);
                             segments.push({ ray: r });
                         }
                     }
