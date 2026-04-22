@@ -195,15 +195,10 @@ export async function teleportation(handler, animationData) {
         }
 
         // Move Token
-        let animSeq = aaSeq.animation()
-        animSeq.on(sourceToken)
-        //animSeq.opacity(data.start.options.alpha)
-        animSeq.delay(data.options.delayMove)
-        //animSeq.fadeOut(data.start.options.tokenOut)
-        if (data.options.teleport) {
-            // animSeq.thenDo(() => sourceToken.document.move([{x: gridPos.x, y: gridPos.y}], {animate: false}));
-            animSeq.teleportTo({ x: gridPos.x, y: gridPos.y, elevation: pos.elevation } ,{ relativeToCenter: !canvas.scene.grid.type })
-        } else {
+        if (!data.options.teleport) {
+            let animSeq = aaSeq.animation()
+            animSeq.on(sourceToken)
+            animSeq.delay(data.options.delayMove)
             animSeq.moveTowards({ x: gridPos.x, y: gridPos.y, elevation: pos.elevation }, { relativeToCenter: !canvas.scene.grid.type })
             animSeq.moveSpeed(data.options.speed)
         }
@@ -227,7 +222,14 @@ export async function teleportation(handler, animationData) {
             handler.complileMacroSection(aaSeq, macro)
         }
 
-        aaSeq.play()
+        // Play Sequence
+        aaSeq.play().then(() => {
+            // Teleport Token
+            if (!data.options.teleport) return;
+            setTimeout(() => {
+                sourceToken.document.move([{ x: gridPos.x, y: gridPos.y }], { animate: false });
+            }, data.options.delayMove ?? 0);
+        });
 
     };
 }

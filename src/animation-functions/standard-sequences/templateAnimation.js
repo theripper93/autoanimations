@@ -6,9 +6,9 @@ export async function templatefx(handler, animationData, templateDocument) {
 
     const sourceToken = handler.sourceToken;
 
-    const template = handler.templateData ? handler.templateData : templateDocument //? templateDocument : canvas.templates.placeables[canvas.templates.placeables.length - 1].document;
-    //const templateData = template ? template || {}: template.document || {};;
-    const templateType = template?.t;
+    const template = handler.templateData ? handler.templateData : templateDocument;
+    const templateType = template?.shapes?.[0]?.type;
+    const templateDistance = template?.shapes?.[0]?.measuredSegments?.[0]?.distance;
 
     const data = animationData.primary;
     const secondary = animationData.secondary;
@@ -65,10 +65,10 @@ export async function templatefx(handler, animationData, templateDocument) {
 
         const templateSeq = aaSeq.effect();
         if (templateType === 'cone' || templateType === 'ray') {
-            const trueHeight = templateType === 'cone' ? template.distance : template.width * 2;
+            const trueHeight = templateType === 'cone' ? templateDistance : template.width * 2;
             setPrimary(templateSeq)
             templateSeq.size({
-                width: (canvas.grid.size * (template.distance / canvas.dimensions.distance)) * data.options.scale.x,
+                width: (canvas.grid.size * (templateDistance / canvas.dimensions.distance)) * data.options.scale.x,
                 height: (canvas.grid.size * (trueHeight / canvas.dimensions.distance)) * data.options.scale.y,
             })
             if (data.options.isMasked) {
@@ -93,12 +93,12 @@ export async function templatefx(handler, animationData, templateDocument) {
             }
         }
 
-        if (templateType === 'circle' || templateType === 'rect') {
+        if (templateType === 'circle' || templateType === 'rectangle') {
             let trueSize;
-            if (templateType === 'rect') {
-                trueSize = Math.sqrt(Math.pow(template.distance, 2) / 2)
+            if (templateType === 'rectangle') {
+                trueSize = Math.sqrt(Math.pow(templateDistance, 2) / 2)
             } else {
-                trueSize = template.distance * 2;
+                trueSize = templateDistance * 2;
             }
             setPrimary(templateSeq)
             templateSeq.size({
@@ -188,8 +188,8 @@ export async function templatefx(handler, animationData, templateDocument) {
         }
         function convertToXY(input) {
             let menuType = data.video.menuType;
-            let templateType = template.t;
-            let defaultAnchor = templateType === "circle" || templateType === "rect" ? { x: 0.5, y: 0.5 } : { x: 0, y: 0.5 };
+            let templateType = template.shapes?.[0]?.type;
+            let defaultAnchor = templateType === "circle" || templateType === "rectangle" ? { x: 0.5, y: 0.5 } : { x: 0, y: 0.5 };
             if (!input) { return defaultAnchor }
             let dNum = menuType === "cone" || menuType === "ray"
                 ? input || "0, 0.5"
