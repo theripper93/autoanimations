@@ -195,7 +195,7 @@ export default class AAHandler {
             if (segments.length === 0) {
                 return noResult;
             }
-            rdistance = segments.map(ray => canvas.grid.measurePath([ray], { gridSpaces: true })[0]);
+            rdistance = segments.map(ray => canvas.grid.measurePath([ray], { gridSpaces: true }).distance);
             distance = rdistance[0];
             rdistance.forEach(d => {
                 if (d < distance)
