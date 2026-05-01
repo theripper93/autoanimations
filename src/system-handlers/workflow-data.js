@@ -159,8 +159,7 @@ export default class AAHandler {
                 y2 += (target.document.height - 1) * gridSize;
             }
 
-            const ray = new foundry.canvas.geometry.Ray({ x: x1, y: y1 }, { x: x2, y: y2 });
-            const distance = canvas.grid.grid.measurePath([{ ray }], { gridSpaces: true })[0];
+            const distance = canvas.grid.grid.measurePath([{ x: x1, y: y1 }, { x: x2, y: y2 }], { gridSpaces: true })[0];
             return distance / canvas.dimensions.distance;
         } else {
             // This code was written by TPosney for Midi-QOL. It is adapated here for A-A
@@ -182,12 +181,11 @@ export default class AAHandler {
             var x, x1, y, y1, d, r, segments = [], rdistance, distance;
             for (x = t1StartX; x < t1.document.width; x++) {
                 for (y = t1StartY; y < t1.document.height; y++) {
-                    const origin = new PIXI.Point(canvas.grid.getCenterPoint({x :Math.round(t1.document.x + (canvas.dimensions.size * x)), y: Math.round(t1.document.y + (canvas.dimensions.size * y))}));
+                    const origin = canvas.grid.getCenterPoint({x :Math.round(t1.document.x + (canvas.dimensions.size * x)), y: Math.round(t1.document.y + (canvas.dimensions.size * y))});
                     for (x1 = t2StartX; x1 < target.document.width; x1++) {
                         for (y1 = t2StartY; y1 < target.document.height; y1++) {
-                            const dest = new PIXI.Point(canvas.grid.getCenterPoint({x: Math.round(target.document.x + (canvas.dimensions.size * x1)), y: Math.round(target.document.y + (canvas.dimensions.size * y1))}));
-                            const r = new foundry.canvas.geometry.Ray(origin, dest);
-                            segments.push({ ray: r });
+                            const dest = canvas.grid.getCenterPoint({x: Math.round(target.document.x + (canvas.dimensions.size * x1)), y: Math.round(target.document.y + (canvas.dimensions.size * y1))});
+                            segments.push([origin, dest]);
                         }
                     }
                 }
@@ -195,7 +193,7 @@ export default class AAHandler {
             if (segments.length === 0) {
                 return noResult;
             }
-            rdistance = segments.map(ray => canvas.grid.measurePath([ray], { gridSpaces: true }).distance);
+            rdistance = segments.map(segment => canvas.grid.measurePath(segment, { gridSpaces: true }).distance);
             distance = rdistance[0];
             rdistance.forEach(d => {
                 if (d < distance)
