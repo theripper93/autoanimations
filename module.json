@@ -17,7 +17,8 @@
 	"version": "6.0.0",
 	"compatibility": {
 		"minimum": "13",
-		"verified": "13"
+		"verified": "13",
+		"maximum": "13"
 	},
 	"scripts": [],
 	"esmodules": [
