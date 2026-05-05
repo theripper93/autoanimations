@@ -61,15 +61,13 @@ export async function templatefx(handler, animationData, templateDocument) {
 
     } else {
 
-        //const templateType = templateData.t;
-
         const templateSeq = aaSeq.effect();
-        if (templateType === 'cone' || templateType === 'ray') {
-            const trueHeight = templateType === 'cone' ? templateDistance : template.width * 2;
+        if (templateType === 'cone' || templateType === 'line') {
+            const trueHeight = templateType === 'cone' ? templateDistance : template.shapes[0].width * 2 / canvas.dimensions.distancePixels;
             setPrimary(templateSeq)
             templateSeq.size({
-                width: (canvas.grid.size * (templateDistance / canvas.dimensions.distance)) * data.options.scale.x,
-                height: (canvas.grid.size * (trueHeight / canvas.dimensions.distance)) * data.options.scale.y,
+                width: templateDistance * canvas.dimensions.distancePixels * data.options.scale.x,
+                height: trueHeight * canvas.dimensions.distancePixels * data.options.scale.y,
             })
             if (data.options.isMasked) {
                 templateSeq.mask(template)

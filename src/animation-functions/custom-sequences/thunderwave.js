@@ -3,21 +3,23 @@ const wait = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 export async function thunderwave(handler, animationData, config) {
 
     const sourceToken = handler.sourceToken;
+    
+    const template = handler.templateData ? handler.templateData : config;
+    // const templateData = config ? config || {} : template.document || {};
+    const templateDistance = template?.shapes?.[0]?.measuredSegments?.[0]?.distance;
+    const trueSize = Math.sqrt(Math.pow(templateDistance, 2) / 2);
+
     const data = animationData.primary;
     const sourceFX = animationData.sourceFX;
     const macro = animationData.macro;
 
     let color = data.color;
 
-    const template = config ? config : canvas.templates.placeables[canvas.templates.placeables.length - 1];
-    const templateData = config ? config || {} : template.document || {};
-    const trueSize = Math.sqrt(Math.pow(templateData.distance, 2) / 2)
-
-    const getPosition = getRelativePosition(sourceToken, templateData)
+    const getPosition = getRelativePosition(sourceToken, template)
     const angle = getPosition.angle;
     const databasePath = color === "random"
         ? `autoanimations.templatefx.square.thunderwave.${getPosition.type}`
-        : `autoanimations.templatefx.square.thunderwave.${getPosition.type}.${color}`
+        : `autoanimations.templatefx.square.thunderwave.${getPosition.type}.${color}`;
 
     const gridSize = canvas.scene.dimensions.size;
 
@@ -74,50 +76,47 @@ export async function thunderwave(handler, animationData, config) {
     Hooks.callAll("aa.animationEnd", sourceToken, "no-target")
 
     function getRelativePosition(token, template) {
-        const xPos = token.x;
-        const yPos = token.y;
-        const tempY = template.y;
-        const tempX = template.x;
+        const tokenX = token.x;
+        const tokenY = token.y;
+        const tokenW = token.w;
+        const tokenH = token.h;
+        const spellX = template.bounds.x;
+        const spellY = template.bounds.y;
+        const spellW = template.bounds.width;
+        const spellH = template.bounds.height;
         const gridSize = canvas.scene.dimensions.size;
         let type;
         let angle;
-        switch (true) {
-            case ((xPos >= tempX && xPos <= (tempX + (gridSize * 2))) && (yPos >= tempY && yPos <= (tempY + (gridSize * 2)))):
-                type = 'center';
-                angle = 0;
-                break;
-            case ((xPos >= (tempX - gridSize)) && (xPos <= (tempX - (gridSize * 0.5)))) && ((yPos >= (tempY - gridSize)) && (yPos <= (tempY - (gridSize * 0.5)))):
-                type = 'left';
-                angle = 270;
-                break;
-            case ((xPos >= (tempX + (gridSize * 2.5))) && (xPos <= (tempX + (gridSize * 3)))) && ((yPos >= (tempY - gridSize)) && (yPos <= (tempY - (gridSize * 0.5)))):
-                type = 'left';
-                angle = 180;
-                break;
-            case (((xPos >= (tempX + (gridSize * 2.5))) && xPos <= (tempX + (gridSize * 3))) && ((yPos <= (tempY + (gridSize * 3))) && (yPos >= (tempY + (gridSize * 2.5))))):
-                type = 'left';
-                angle = 90;
-                break;
-            case ((xPos <= (tempX - (gridSize * 0.5))) && (xPos >= (tempX - gridSize))) && ((yPos <= (tempY + (gridSize * 3))) && (yPos >= (tempY + (gridSize * 2.5)))):
-                type = 'left';
-                angle = 0;
-                break;
-            case (xPos >= (tempX + (gridSize * 2.5))) && ((yPos >= tempY) && yPos <= (tempY + (gridSize * 2))):
-                type = 'mid';
-                angle = 90;
-                break;
-            case ((xPos >= tempX) && (xPos <= (tempX + (gridSize * 2)))) && ((yPos >= (tempY - gridSize)) && (yPos <= (tempY - (gridSize * 0.5)))):
-                type = 'mid';
-                angle = 180;
-                break;
-            case ((xPos >= (tempX - gridSize)) && (xPos <= (tempX - (gridSize * 0.5)))) && ((yPos >= tempY) && yPos <= (tempY + (gridSize * 2))):
-                type = 'mid';
-                angle = 270;
-                break;
-            default:
-                type = 'mid';
-                angle = 0;
-        }
-        return { type, angle }
+
+        const leftOfToken = () => tokenX + tokenW / 2 >= spellX + spellW;
+        const rightOfToken = () => tokenX + tokenW / 2 <= spellX;
+        const aboveToken = () => tokenY + tokenH / 2 >= spellY + spellH;
+        const belowToken = () => tokenY + tokenH / 2 <= spellY;
+
+        const tokenInSpellX = () => tokenX + tokenW / 2 >= spellX && tokenX + tokenW / 2 <= spellX + spellW;
+        const tokenInSpellY = () => tokenY + tokenH / 2 >= spellY && tokenY + tokenH / 2 <= spellY + spellH;
+
+        // Centered on Token
+        if (tokenInSpellX() && tokenInSpellY()) return { type: "center", angle: 0 };
+
+        // Left of Token
+        if (tokenInSpellY() && leftOfToken()) return { type: "mid", angle: 90 };
+        // Right of Token
+        if (tokenInSpellY() && rightOfToken()) return { type: "mid", angle: 270 };
+        // Top of Token
+        if (tokenInSpellX() && aboveToken()) return { type: "mid", angle: 0 };
+        // Bottom of Token
+        if (tokenInSpellX() && belowToken()) return { type: "mid", angle: 180 };
+
+        // Top Left of Token
+        if (leftOfToken() && aboveToken()) return { type: "left", angle: 90 };
+        // Top Right of Token
+        if (rightOfToken() && aboveToken()) return { type: "left", angle: 0 };
+        // Bottom Left of Token
+        if (leftOfToken() && belowToken()) return { type: "left", angle: 180 };
+        // Bottom Right of Token
+        if (rightOfToken() && belowToken()) return { type: "left", angle: 270 };
+
+        return { type: "center", angle: 0 };
     }
 }
