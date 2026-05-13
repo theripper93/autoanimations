@@ -94,7 +94,7 @@ export async function templatefx(handler, animationData, templateDocument) {
         if (templateType === 'circle' || templateType === 'rectangle') {
             let trueSize;
             if (templateType === 'rectangle') {
-                trueSize = Math.sqrt(Math.pow(templateDistance, 2) / 2)
+                trueSize = templateDistance;
             } else {
                 trueSize = templateDistance * 2;
             }
