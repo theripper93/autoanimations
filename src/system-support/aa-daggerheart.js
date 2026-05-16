@@ -47,7 +47,7 @@ async function handleChatMessageCreation(msg, _options, _userId) {
    const item = actor?.items.get(itemId);
    if (!actor) {
       return console.warn(`Daggerheart Workflow: Could not find Actor (${actorUuid}) for ChatMessage.`, { msg });
-   } else if (!item && action) {
+   } else if (!item && !action) {
       return console.warn(`Daggerheart Workflow: Could not find Item (${itemId}) or action for ChatMessage.`, {
          msg,
          actor,
