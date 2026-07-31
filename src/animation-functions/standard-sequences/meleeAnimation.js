@@ -26,7 +26,7 @@ export async function melee(handler, animationData) {
     if (data.meleeSwitch.options.switchType === "on") {
         range = aaRangeWeapons.includes(data.video.animation) && !data.video.customPath ? await buildFile("range", data.video, false, { isReturnable: true }) : {};
     } else if (data.meleeSwitch.options.switchType === "custom") {
-        range = data.meleeSwitch?.video?.customPath ? await buildFile("range", data.meleeSwitch.video, data.meleeSwitch.video.customPath, { isReturnable: true }) : {};
+        range = await buildFile("range", data.meleeSwitch.video, data.meleeSwitch.video.customPath, { isReturnable: true });
     }
 
     let switchDistance = 5;
