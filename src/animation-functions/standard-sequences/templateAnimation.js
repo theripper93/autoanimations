@@ -173,12 +173,11 @@ export async function templatefx(handler, animationData, templateDocument) {
         seq.origin(handler.itemUuid)
         if (data.options.elevation === 0) {
             seq.belowTokens(true)
-            // seq.elevation(sourceToken.document.elevation, { absolute: true })
         } else {
             const sourceLevel = (token?.document ?? token)?.level ?? canvas.level;
             seq.onLevels(sourceLevel);
         }
-        // seq.zIndex(data.options.zIndex)
+        seq.zIndex(data.options.zIndex)
         seq.rotate(data.options.rotate)
         if (data.options.isMasked) {
             seq.mask(template)
