@@ -92,10 +92,14 @@ export async function templatefx(handler, animationData, templateDocument) {
             }
         }
 
-        if (templateType === 'circle' || templateType === 'rectangle') {
+        if (templateType === 'circle' || templateType === 'rectangle' || templateType === 'emanation') {
             let trueSize;
+            let offset = { x: 0, y: 0 };
             if (templateType === 'rectangle') {
                 trueSize = templateDistance;
+            } else if (templateType === 'emanation') {
+                trueSize = templateDistance + (2 * template?.shapes?.[0]?.radius) / canvas.dimensions.distancePixels;
+                offset.x = -trueSize * canvas.dimensions.distancePixels / 2;
             } else {
                 trueSize = templateDistance * 2;
             }
@@ -108,7 +112,7 @@ export async function templatefx(handler, animationData, templateDocument) {
                 templateSeq.persist(true)
                 if (data.options.persistType === 'attachtemplate') {
                     const belowToken = data.options.elevation === 0;
-                    templateSeq.attachTo(template, { bindRotation: true, bindElevation: !belowToken })
+                    templateSeq.attachTo(template, { bindRotation: true, bindElevation: !belowToken, offset: offset })
                     if (belowToken) {
                         templateSeq.belowTokens(true)
                         templateSeq.elevation(sourceToken.document.elevation, { absolute: true })
