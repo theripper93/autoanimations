@@ -88,7 +88,7 @@ function shouldPlayAnimation(item, hookName) {
   let aaHookToUse;
   if (foundry.utils.isNewerVersion(game.system.version, "0.9.2")) {
     aaHookToUse = itemData.autoanimationsHook || false; 
-  } else if (foundry.utils.isNewerVersion(game.system.version, "0.8.8") {
+  } else if (foundry.utils.isNewerVersion(game.system.version, "0.8.8")) {
     aaHookToUse = false;
   } else {
     aaHookToUse = itemData.macro?.autoanimationHook
