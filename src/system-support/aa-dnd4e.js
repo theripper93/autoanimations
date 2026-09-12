@@ -85,9 +85,16 @@ export function systemHooks() {
 
 function shouldPlayAnimation(item, hookName) {
   const itemData = item.system ? item.system : item;
-  const aaHookToUse = itemData.macro?.autoanimationHook
-    ? itemData.macro.autoanimationHook
-    : false;
+  let aaHookToUse;
+  if (foundry.utils.isNewerVersion(game.system.version, "0.9.2")) {
+    aaHookToUse = itemData.autoanimationsHook || false; 
+  } else if (foundry.utils.isNewerVersion(game.system.version, "0.8.8")) {
+    aaHookToUse = false;
+  } else {
+    aaHookToUse = itemData.macro?.autoanimationHook
+      ? itemData.macro.autoanimationHook
+      : false;
+  }
 
   console.log(`should play animation for hook ${hookName}?`);
 
