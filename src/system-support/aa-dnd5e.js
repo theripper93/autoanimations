@@ -54,7 +54,7 @@ export function systemHooks() {
         });
         Hooks.on("createRegion", async (template, data, userId) => {
             if (userId !== game.user.id) { return };
-            const activity = fromUuidSync(template.flags?.dnd5e?.origin) ?? activityCache[template.flags?.dnd5e?.origin];
+            const activity = fromUuidSync(template.flags?.dnd5e?.activity) ?? activityCache[template.flags?.dnd5e?.activity];
             if (!activity) return;
             if (activity?.description?.chatFlavor?.includes("[noaa]")) return;
             const item = activity?.item;
