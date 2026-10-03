@@ -127,7 +127,7 @@ export async function templatefx(handler, animationData, templateDocument) {
                     templateSeq.persist()
                 }
             } else {
-                templateSeq.atLocation(template, { cacheLocation: true })
+                templateSeq.atLocation(template, { cacheLocation: true, offset: offset })
                 templateSeq.repeats(data.options.repeat, data.options.repeatDelay)
             }
             if (!data.options.isWait) {
