@@ -69,8 +69,6 @@ export async function templatefx(handler, animationData, templateDocument) {
 
         } else {
 
-            const shapeLocation = { x: shape.bounds.center.x, y: shape.bounds.center.y };
-
             const templateSeq = aaSeq.effect();
             if (shapeType === 'cone' || shapeType === 'line') {
                 const trueHeight = shapeType === 'cone' ? shapeDistance : shape.width * 2 / canvas.dimensions.distancePixels;
@@ -85,16 +83,16 @@ export async function templatefx(handler, animationData, templateDocument) {
                 if (data.options.persistent) {
                     templateSeq.persist(true)
                     if (data.options.persistType === 'attachtemplate') {
-                        templateSeq.attachTo(shape)
-                        templateSeq.rotateTowards(shape, { attachTo: true })
+                        templateSeq.attachTo(template)
+                        templateSeq.rotateTowards(template, { attachTo: true })
                     } else {
-                        templateSeq.atLocation(shapeLocation, { cacheLocation: true })
-                        templateSeq.rotateTowards(shape, { cacheLocation: true })
+                        templateSeq.atLocation(template, { cacheLocation: true })
+                        templateSeq.rotateTowards(template, { cacheLocation: true })
                     }
                 } else {
-                    templateSeq.atLocation(shapeLocation, { cacheLocation: true })
+                    templateSeq.atLocation(template, { cacheLocation: true })
                     templateSeq.repeats(data.options.repeat, data.options.repeatDelay)
-                    templateSeq.rotateTowards(shape, { cacheLocation: true })
+                    templateSeq.rotateTowards(template, { cacheLocation: true })
                 }
                 if (!data.options.isWait) {
                     templateSeq.delay(data.options.delay)
@@ -102,6 +100,8 @@ export async function templatefx(handler, animationData, templateDocument) {
             }
 
             if (shapeType === 'circle' || shapeType === 'rectangle' || shapeType === 'emanation') {
+                const shapeLocation = { x: shape.bounds.center.x, y: shape.bounds.center.y };
+
                 let trueSize;
                 let offset = { x: 0, y: 0 };
                 if (shapeType === 'rectangle') {
