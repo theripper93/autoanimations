@@ -77,9 +77,6 @@ export async function templatefx(handler, animationData, templateDocument) {
                     width: shapeDistance * canvas.dimensions.distancePixels * data.options.scale.x,
                     height: trueHeight * canvas.dimensions.distancePixels * data.options.scale.y,
                 })
-                if (data.options.isMasked) {
-                    templateSeq.mask(shape)
-                }
                 if (data.options.persistent) {
                     templateSeq.persist(true)
                     if (data.options.persistType === 'attachtemplate') {
@@ -102,35 +99,51 @@ export async function templatefx(handler, animationData, templateDocument) {
             if (shapeType === 'circle' || shapeType === 'rectangle' || shapeType === 'emanation') {
                 const shapeLocation = { x: shape.bounds.center.x, y: shape.bounds.center.y };
 
-                let trueSize;
-                let offset = { x: 0, y: 0 };
-                if (shapeType === 'rectangle') {
-                    trueSize = shapeDistance;
-                } else if (shapeType === 'emanation') {
-                    trueSize = shapeDistance + (2 * shape?.radius) / canvas.dimensions.distancePixels;
-                    offset.x = -trueSize * canvas.dimensions.distancePixels / 2;
-                } else {
-                    trueSize = shapeDistance * 2;
-                }
+                const effectSize = {
+                    width: shape.bounds.width * data.options.scale.x,
+                    height: shape.bounds.height * data.options.scale.y,
+                };
+                const offset = shapeType === 'emanation'
+                    ? { x: -effectSize.width / 2, y: 0 }
+                    : { x: 0, y: 0 };
+
                 setPrimary(templateSeq, sourceToken);
-                templateSeq.size({
-                    width: canvas.grid.size * (trueSize / canvas.dimensions.distance) * data.options.scale.x,
-                    height: canvas.grid.size * (trueSize / canvas.dimensions.distance) * data.options.scale.y,
-                })
-                if (data.options.persistent) {
-                    // templateSeq.persist(true)
-                    if (data.options.persistType === 'attachtemplate') {
-                        const belowToken = data.options.elevation === 0;
-                        templateSeq.attachTo(template, { bindRotation: true, bindElevation: !belowToken, offset: offset })
-                        if (belowToken) {
-                            templateSeq.belowTokens(true)
-                            templateSeq.elevation(sourceToken.document.elevation, { absolute: true })
+                templateSeq.size(effectSize)
+                const attached = data.options.persistent
+                    && data.options.persistType === 'attachtemplate';
+                if (attached) {
+                    const belowToken = data.options.elevation === 0;
+                    const regionOffset = shapes.length > 1
+                        ? {
+                            x: shapeLocation.x - template.bounds.center.x,
+                            y: shapeLocation.y - template.bounds.center.y,
                         }
+                        : { x: 0, y: 0 };
+                    templateSeq.attachTo(template, {
+                        bindRotation: true,
+                        bindElevation: !belowToken,
+                        offset: {
+                            x: offset.x + regionOffset.x,
+                            y: offset.y + regionOffset.y,
+                        },
+                    })
+                    if (belowToken) {
+                        templateSeq.belowTokens(true)
+                        templateSeq.elevation(sourceToken.document.elevation, { absolute: true })
                     }
                     templateSeq.persist()
+                } else {
+                    templateSeq.atLocation(shapeLocation, {
+                        cacheLocation: true,
+                        offset: offset,
+                    })
+                    if (data.options.persistent) {
+                        templateSeq.tieToDocuments(template)
+                        templateSeq.persist()
+                    } else {
+                        templateSeq.repeats(data.options.repeat, data.options.repeatDelay)
+                    }
                 }
-                templateSeq.atLocation(shapeLocation, { cacheLocation: true, offset: offset })
-                templateSeq.repeats(data.options.repeat, data.options.repeatDelay)
                 if (!data.options.isWait) {
                     templateSeq.delay(data.options.delay)
                 }
@@ -190,7 +203,7 @@ export async function templatefx(handler, animationData, templateDocument) {
             seq.zIndex(data.options.zIndex)
             seq.rotate(data.options.rotate)
             if (data.options.isMasked) {
-                seq.mask(shape)
+                seq.mask(template)
             }
             seq.playbackRate(data.options.playbackRate)
             seq.name(handler.rinsedName)
