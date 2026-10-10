@@ -56,7 +56,7 @@ async function handleChatMessageCreation(msg, _options, _userId) {
       });
    }
 
-   let aaItem = item ?? { name: action.name };
+   let aaItem = item ? { ...item } : { name: action.name };
 
    if (item?.system.actionsList.size > 1) {
       aaItem.name = item.name + ": " + action.name;
