@@ -46,8 +46,6 @@ export async function proToTemp(handler, animationData, templateDocument) {
 
     if (data.projectile.options.elevation === 0) {
         effect1.belowTokens(true)
-    } else {
-        effect1.elevation(handler.elevation(sourceToken, data.projectile.options.isAbsolute, data.projectile.options.elevation), { absolute: data.projectile.options.isAbsolute })
     }
     if (data.preExplosion.sound) {
         aaSeq.addSequence(data.preExplosion.sound)
@@ -65,7 +63,7 @@ export async function proToTemp(handler, animationData, templateDocument) {
         if (data.preExplosion.options.elevation === 0) {
             effectExplode.belowTokens(true)
         } else {
-            effectExplode.elevation(handler.elevation(sourceToken, data.preExplosion.options.isAbsolute, data.preExplosion.options.elevation), { absolute: data.preExplosion.options.isAbsolute })
+            effectExplode.onLevels(sourceLevel);
         }
     }
     if (data.explosion.sound) {
@@ -85,8 +83,6 @@ export async function proToTemp(handler, animationData, templateDocument) {
 
     if (data.explosion.options.elevation === 0) {
         effect2.belowTokens(true)
-    } else {
-        effect2.elevation(handler.elevation(sourceToken, data.explosion.options.isAbsolute, data.explosion.options.elevation), { absolute: data.explosion.options.isAbsolute })
     }
     if (data.afterImage.customPath) {
         const effectAfterImage = aaSeq.effect()
@@ -101,7 +97,7 @@ export async function proToTemp(handler, animationData, templateDocument) {
         if (data.afterImage.options.elevation === 0) {
             effectAfterImage.belowTokens(true)
         } else {
-            effectAfterImage.elevation(handler.elevation(sourceToken, data.afterImage.options.isAbsolute, data.afterImage.options.elevation), { absolute: data.afterImage.options.isAbsolute })
+            effectAfterImage.onLevels(sourceLevel);
         }
     }
 

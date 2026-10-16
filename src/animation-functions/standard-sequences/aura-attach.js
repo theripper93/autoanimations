@@ -150,7 +150,8 @@ export async function aura(handler, animationData) {
         if (data.options.elevation === 0) {
             seq.belowTokens(true)
         } else {
-            seq.elevation(handler.elevation(token, data.options.isAbsolute, data.options.elevation), { absolute: data.options.isAbsolute })
+            const sourceLevel = (token?.document ?? token)?.level ?? canvas.level;
+            seq.onLevels(sourceLevel);
         }
         seq.attachTo(token, { bindAlpha: data.options.unbindAlpha, bindVisibility: data.options.unbindVisibility })
         seq.opacity(data.options.opacity)

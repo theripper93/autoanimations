@@ -47,13 +47,11 @@ export async function dualattach(handler, animationData) {
                     .playbackRate(data.options.playbackRate)
                     .origin(handler.itemUuid)
 
-                const targetLevel = (target?.token?.document ?? target?.token)?.level ?? canvas.level;
+                const targetLevel = (target?.document ?? target)?.level ?? canvas.level;
                 effect.onLevels([sourceLevel, targetLevel]);
 
                 if (data.options.elevation === 0) {
                     effect.belowTokens(true)
-                } else {
-                    effect.elevation(handler.elevation(sourceToken, data.options.isAbsolute, data.options.elevation), { absolute: data.options.isAbsolute })
                 }
             }
         }
