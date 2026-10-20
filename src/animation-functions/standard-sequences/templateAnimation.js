@@ -199,6 +199,10 @@ export async function templatefx(handler, animationData, templateDocument) {
             } else {
                 const sourceLevel = (token?.document ?? token)?.level ?? canvas.level;
                 seq.onLevels(sourceLevel);
+                // Template effects are placed at a bare point, which carries no elevation,
+                // so without this they sort under the level background and tiles on V14.
+                const elevation = (token?.document ?? token)?.elevation ?? template?.elevation ?? 0;
+                seq.elevation(elevation, { absolute: true })
             }
             seq.zIndex(data.options.zIndex)
             seq.rotate(data.options.rotate)
