@@ -9,6 +9,11 @@ export async function templatefx(handler, animationData, templateDocument) {
     const template = handler.templateData ? handler.templateData : templateDocument;
 
     const shapes = template?.shapes;
+
+    // Template regions are usually unbounded, which Sequencer resolves to elevation 0 for cached locations
+    // and to the topmost Level for attached effects: use the region's bottom, else the caster's Level
+    const templateBottom = template?.elevation?.bottom ?? template?.elevation;
+    const groundElevation = Number.isFinite(templateBottom) ? templateBottom : handler.levelElevation(sourceToken);
     for (const shape of shapes) {
 
         const shapeType = shape.type;
@@ -80,7 +85,7 @@ export async function templatefx(handler, animationData, templateDocument) {
                 if (data.options.persistent) {
                     templateSeq.persist(true)
                     if (data.options.persistType === 'attachtemplate') {
-                        templateSeq.attachTo(template)
+                        templateSeq.attachTo(template, { bindElevation: false })
                         templateSeq.rotateTowards(template, { attachTo: true })
                     } else {
                         templateSeq.atLocation(template, { cacheLocation: true })
@@ -121,7 +126,7 @@ export async function templatefx(handler, animationData, templateDocument) {
                         : { x: 0, y: 0 };
                     templateSeq.attachTo(template, {
                         bindRotation: true,
-                        bindElevation: !belowToken,
+                        bindElevation: false,
                         offset: {
                             x: offset.x + regionOffset.x,
                             y: offset.y + regionOffset.y,
@@ -129,7 +134,6 @@ export async function templatefx(handler, animationData, templateDocument) {
                     })
                     if (belowToken) {
                         templateSeq.belowTokens(true)
-                        templateSeq.elevation(sourceToken.document.elevation, { absolute: true })
                     }
                     templateSeq.persist()
                 } else {
@@ -200,6 +204,7 @@ export async function templatefx(handler, animationData, templateDocument) {
                 const sourceLevel = (token?.document ?? token)?.level ?? canvas.level;
                 seq.onLevels(sourceLevel);
             }
+            seq.elevation(groundElevation, { absolute: true })
             seq.zIndex(data.options.zIndex)
             seq.rotate(data.options.rotate)
             if (data.options.isMasked) {

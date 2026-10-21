@@ -118,6 +118,14 @@ export default class AAHandler {
         return abs ? level : level - 1;
     }
 
+    // Bottom elevation of the token's Level, for effects placed at a bare location (e.g. on a template)
+    levelElevation(token = this.sourceToken) {
+        const levelId = (token?.document ?? token)?.level;
+        const level = canvas.scene?.levels?.get(levelId) ?? canvas.level;
+        const bottom = level?.elevation?.bottom;
+        return Number.isFinite(bottom) ? bottom : 0;
+    }
+
     // Sets the Size of the effect
     getSize(isRadius = false, size = 1, token, addToken = false) {
         const td = token.document;
