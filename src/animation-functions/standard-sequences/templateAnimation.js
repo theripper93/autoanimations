@@ -11,9 +11,8 @@ export async function templatefx(handler, animationData, templateDocument) {
     const shapes = template?.shapes;
 
     // Template regions are usually unbounded, which Sequencer resolves to elevation 0 for cached locations
-    // and to the topmost Level for attached effects: use the region's bottom, else the caster's Level
-    const templateBottom = template?.elevation?.bottom ?? template?.elevation;
-    const groundElevation = Number.isFinite(templateBottom) ? templateBottom : handler.levelElevation(sourceToken);
+    // and to the topmost Level for attached effects: use the region's bottom, else its Level, else the caster's
+    const groundElevation = handler.targetElevation(template, sourceToken);
     for (const shape of shapes) {
 
         const shapeType = shape.type;
@@ -201,8 +200,7 @@ export async function templatefx(handler, animationData, templateDocument) {
             if (data.options.elevation === 0) {
                 seq.belowTokens(true)
             } else {
-                const sourceLevel = (token?.document ?? token)?.level ?? canvas.level;
-                seq.onLevels(sourceLevel);
+                seq.onLevels(handler.targetLevel(template, token));
             }
             seq.elevation(groundElevation, { absolute: true })
             seq.zIndex(data.options.zIndex)

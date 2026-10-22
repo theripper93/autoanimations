@@ -126,6 +126,30 @@ export default class AAHandler {
         return Number.isFinite(bottom) ? bottom : 0;
     }
 
+    // Elevation for an effect placed on a target: the target's own elevation, else its Level's bottom,
+    // else the source token's elevation, else the source token's Level's bottom
+    targetElevation(target, token = this.sourceToken) {
+        const doc = target?.document ?? target;
+        const own = typeof doc?.elevation === "object" ? doc.elevation?.bottom : doc?.elevation;
+        if (Number.isFinite(own)) return own;
+        const levelBottom = canvas.scene?.levels?.get(this.#levelOf(doc))?.elevation?.bottom;
+        if (Number.isFinite(levelBottom)) return levelBottom;
+        const sourceElevation = (token?.document ?? token)?.elevation;
+        return Number.isFinite(sourceElevation) ? sourceElevation : this.levelElevation(token);
+    }
+
+    // Level to show an effect placed on a target on: the target's Level, else the source token's
+    targetLevel(target, token = this.sourceToken) {
+        return this.#levelOf(target) ?? (token?.document ?? token)?.level ?? canvas.level;
+    }
+
+    // Level id of a token (its level) or a region (its only entry in levels)
+    #levelOf(target) {
+        const doc = target?.document ?? target;
+        const levels = doc?.levels ? [...doc.levels] : [];
+        return doc?.level ?? (levels.length === 1 ? levels[0] : undefined);
+    }
+
     // Sets the Size of the effect
     getSize(isRadius = false, size = 1, token, addToken = false) {
         const td = token.document;

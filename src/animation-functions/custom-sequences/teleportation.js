@@ -48,7 +48,7 @@ export async function teleportation(handler, animationData) {
         .fadeOut(500)
         .atLocation(sourceToken, borderLocation)
         .shape(borderType, borderData)
-        .elevation(sourceToken?.document?.elevation + 1)
+        .elevation(1)
         .forUsers(hideBorder)
         .name("teleportation")
         .opacity(0.75)
@@ -140,6 +140,10 @@ export async function teleportation(handler, animationData) {
         let startX = sourceToken.center?.x;
         let startY = sourceToken.center?.y;
 
+        // Effects at a bare location have no elevation of their own
+        const startElevation = handler.targetElevation(sourceToken);
+        const endElevation = handler.targetElevation(pos);
+
         if (data.sound) {
             aaSeq.addSequence(data.sound)
         }
@@ -155,6 +159,7 @@ export async function teleportation(handler, animationData) {
             startEffect.delay(data.start.options.delay)
             startEffect.playbackRate(data.start.options.playbackRate)
             startEffect.onLevels(sourceLevel);
+            startEffect.elevation(startElevation, { absolute: true })
             if (data.start.options.elevation === 0) {
                 startEffect.belowTokens(true)
             }
@@ -175,6 +180,7 @@ export async function teleportation(handler, animationData) {
             betweenEffect.stretchTo({ x: centerPos[0], y: centerPos[1] })
             betweenEffect.playbackRate(data.between.options.playbackRate)
             betweenEffect.onLevels(sourceLevel);
+            betweenEffect.elevation(startElevation, { absolute: true })
             if (data.between.options.elevation === 0) {
                 betweenEffect.belowTokens(true)
             }
@@ -191,6 +197,7 @@ export async function teleportation(handler, animationData) {
             endEffect.fadeOut(data.end.options.fadeOut)
             endEffect.playbackRate(data.end.options.playbackRate)
             endEffect.onLevels(sourceLevel);
+            endEffect.elevation(endElevation, { absolute: true })
             if (data.end.options.elevation === 0) {
                 endEffect.belowTokens(true)
             }
