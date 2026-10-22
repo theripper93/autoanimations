@@ -1002,19 +1002,34 @@ class AAGameSettings extends TJSGameSettingsWithUI {
                 }
              });
 
-             settings.push({
-                namespace,
-                key: 'CriticalAnimation',
-                folder: game.system.title || game.system.name,
-                options: {
-                   name: 'autoanimations.settings.crithitAnim_name',
-                   scope: scope.world,
-                   config: true,
-                   type: String,
-                   default: "",
-                   filePicker: 'imagevideo'
-                }
-             });
+              settings.push({
+                 namespace,
+                 key: 'CriticalAnimation',
+                 folder: game.system.title || game.system.name,
+                 options: {
+                    name: 'autoanimations.settings.crithitAnim_name',
+                    scope: scope.world,
+                    config: true,
+                    type: String,
+                    default: "",
+                    filePicker: 'imagevideo'
+                 }
+              });
+
+              settings.push({
+                 namespace,
+                 key: 'CriticalAudio',
+                 folder: game.system.title || game.system.name,
+                 options: {
+                    name: 'autoanimations.settings.critAudio_name',
+                    hint: 'autoanimations.settings.critAudio_hint',
+                    scope: scope.world,
+                    config: true,
+                    type: String,
+                    default: "",
+                    filePicker: 'audio'
+                 }
+              });
 
              settings.push({
                 namespace,
@@ -1030,20 +1045,35 @@ class AAGameSettings extends TJSGameSettingsWithUI {
                 }
              });
 
-             settings.push({
-                namespace,
-                key: 'CriticalMissAnimation',
-                folder: game.system.title || game.system.name,
-                options: {
-                   name: 'autoanimations.settings.critmissAnim_name',
-                   scope: scope.world,
-                   config: true,
-                   type: String,
-                   default: "",
-                   filePicker: 'imagevideo'
-                }
-             });
-             break;
+              settings.push({
+                 namespace,
+                 key: 'CriticalMissAnimation',
+                 folder: game.system.title || game.system.name,
+                 options: {
+                    name: 'autoanimations.settings.critmissAnim_name',
+                    scope: scope.world,
+                    config: true,
+                    type: String,
+                    default: "",
+                    filePicker: 'imagevideo'
+                 }
+              });
+
+              settings.push({
+                 namespace,
+                 key: 'CriticalMissAudio',
+                 folder: game.system.title || game.system.name,
+                 options: {
+                    name: 'autoanimations.settings.critmissAudio_name',
+                    hint: 'autoanimations.settings.critmissAudio_hint',
+                    scope: scope.world,
+                    config: true,
+                    type: String,
+                    default: "",
+                    filePicker: 'audio'
+                 }
+              });
+              break;
          /* Considering options for changing 5e options on "How To Play" Animations
       default:
          settings.push({

@@ -147,12 +147,15 @@ function criticalCheckBlackFlag(roll, item = {}) {
 
     const critAnim = game.settings.get("autoanimations", "CriticalAnimation");
     const critMissAnim = game.settings.get("autoanimations", "CriticalMissAnimation");
+    const critAudio = game.settings.get("autoanimations", "CriticalAudio");
+    const critMissAudio = game.settings.get("autoanimations", "CriticalMissAudio");
 
     switch (true) {
         case (game.settings.get("autoanimations", "EnableCritical") && critical):
             new Sequence({moduleName: "Automated Animations", softFail: !game.settings.get("autoanimations", "debug")})
                 .effect()
                 .file(critAnim)
+                .sound(critAudio)
                 .atLocation(token)
                 .play()
             break;
@@ -160,6 +163,7 @@ function criticalCheckBlackFlag(roll, item = {}) {
             new Sequence({moduleName: "Automated Animations", softFail: !game.settings.get("autoanimations", "debug")})
                 .effect()
                 .file(critMissAnim)
+                .sound(critMissAudio)
                 .atLocation(token)
                 .play()
             break;
