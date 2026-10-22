@@ -15,12 +15,53 @@ export function systemHooks() {
         const overrideNames = activity?.name && !["heal", "summon"].includes(activity?.name?.trim()) ? [activity.name] : []
         
         debug("Attack rolled, checking for animations");
+        
+        const playOnMiss = game.settings.get("autoanimations", "playonmiss");
+        
+        const hitTargets = [];
+        const missTargets = [];
+        
+        // Check each target for a hit or miss and add them to the appropriate array
+        // Note that each attack roll contains targets within the flags.black-flag.targets field
+        // These contain the following data: ac, img, name, uuid
+        for (const roll of rolls) {
+            const rollTargets = roll.parent?.flags?.["black-flag"]?.targets;
+            if (!rollTargets?.length) {
+                continue;
+            }
+            
+            for (const targetData of rollTargets) {
+                const uuidParts = targetData.uuid.split(".");
+                const tokenId = uuidParts[uuidParts.length - 3];
+                const target = canvas.tokens.get(tokenId);
+                if (!target) {
+                    warn("Target not found on canvas:", tokenId);
+                    continue;
+                }
+                
+                if (roll.total >= targetData.ac) {
+                    hitTargets.push(target);
+                } else {
+                    missTargets.push(target);
+                }
+            }
+        }
+        
+        const targets = [...hitTargets, ...missTargets];
+        
+        if (!playOnMiss && missTargets.length > 0) {
+            hitTargets.push(...missTargets);
+        }
+        
         const handler = await AAHandler.make(await getRequiredData({
             item,
             actor: item.parent,
             activity,
             roll: activity,
-            overrideNames
+            overrideNames,
+            hitTargets: hitTargets,
+            targets: targets,
+            playOnMiss: playOnMiss
         }))
         
         if (!handler?.item || !handler?.sourceToken) {

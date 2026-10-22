@@ -9,6 +9,8 @@
             "midionhit_hint":"Requires Midi-QOL Workflow settings to Check if Attacks hit",
             "midionmiss_name": "Play Animations on Hits and Misses",
             "midionmiss_hint": "On a Miss, the Animation will veer off target. Requires MIDI Workflow to check for hits",
+            "onmiss_name": "Animate misses separately",
+            "onmiss_hint": "When an attack misses, the Animation will veer off target. Requires the attack to have a target.",
             "midiondmg_name":"Only play animations on Damage Rolls",
             "midiondmg_hint":"When Enabled, this will ONLY play the animations on the Damage Roll if one is present on the item",
             "demonlordtrigger_name":"Trigger to play animations",
