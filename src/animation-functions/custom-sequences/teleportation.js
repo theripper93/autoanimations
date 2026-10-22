@@ -148,7 +148,6 @@ export async function teleportation(handler, animationData) {
             let startEffect = aaSeq.effect()
             startEffect.file(startFile.file)
             startEffect.atLocation({x: startX, y: startY})
-            startEffect.elevation(handler.elevation(sourceToken, data.start.options.isAbsolute, data.start.options.elevation), {absolute: data.start.options.isAbsolute})
             startEffect.size(sourceTokenGS * 1.5 * data.start.options.size, { gridUnits: true })
             startEffect.opacity(data.start.options.opacity)
             startEffect.fadeIn(data.start.options.fadeIn)
@@ -156,6 +155,9 @@ export async function teleportation(handler, animationData) {
             startEffect.delay(data.start.options.delay)
             startEffect.playbackRate(data.start.options.playbackRate)
             startEffect.onLevels(sourceLevel);
+            if (data.start.options.elevation === 0) {
+                startEffect.belowTokens(true)
+            }
             //startEffect.randomRotation()
             if (data.start.options.isMasked) {
                 startEffect.mask(sourceToken)
@@ -169,11 +171,13 @@ export async function teleportation(handler, animationData) {
             betweenEffect.file(betweenFile.file)
             betweenEffect.atLocation({x: startX, y: startY})
             betweenEffect.delay(data.between.options.delay)
-            betweenEffect.elevation(handler.elevation(sourceToken, data.between.options.isAbsolute, data.between.options.elevation), {absolute: data.between.options.isAbsolute})
             betweenEffect.opacity(data.between.options.opacity)
             betweenEffect.stretchTo({ x: centerPos[0], y: centerPos[1] })
             betweenEffect.playbackRate(data.between.options.playbackRate)
             betweenEffect.onLevels(sourceLevel);
+            if (data.between.options.elevation === 0) {
+                betweenEffect.belowTokens(true)
+            }
         }
 
         // End Animation
@@ -182,12 +186,14 @@ export async function teleportation(handler, animationData) {
             endEffect.file(endFile.file)
             endEffect.atLocation({ x: centerPos[0], y: centerPos[1] })
             endEffect.delay(data.end.options.delay)
-            endEffect.elevation(handler.elevation(sourceToken, data.end.options.isAbsolute, data.end.options.elevation), {absolute: data.end.options.isAbsolute})
             endEffect.size(sourceTokenGS * 1.5 * data.end.options.size, { gridUnits: true })
             endEffect.fadeIn(data.end.options.fadeIn)
             endEffect.fadeOut(data.end.options.fadeOut)
             endEffect.playbackRate(data.end.options.playbackRate)
             endEffect.onLevels(sourceLevel);
+            if (data.end.options.elevation === 0) {
+                endEffect.belowTokens(true)
+            }
             //endEffect.randomRotation()
             if (data.end.options.isMasked) {
                 endEffect.mask(sourceToken)

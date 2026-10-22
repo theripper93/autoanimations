@@ -53,11 +53,10 @@ export async function thunderwave(handler, animationData, config) {
 
     const sourceLevel = (sourceToken?.document ?? sourceToken)?.level ?? canvas.level;
     effect.onLevels(sourceLevel);
+    effect.elevation(handler.levelElevation(sourceToken), { absolute: true })
 
     if (data.options.elevation === 0) {
         effect.belowTokens(true)
-    } else {
-        effect.elevation(handler.elevation(sourceToken, data.options.isAbsolute, data.options.elevation), { absolute: data.options.isAbsolute })
     }
 
     if (macro && macro.playWhen === "0") {

@@ -17,7 +17,8 @@ export function sourceEffect(sourceFX, seq, handler) {
     if (options.elevation === 0) {
         thisSeq.belowTokens(true)
     } else {
-        thisSeq.elevation(options.isAbsolute ? options.elevation : options.elevation - 1, { absolute: options.isAbsolute })
+        const sourceLevel = (handler.sourceToken?.document ?? handler.sourceToken)?.level ?? canvas.level;
+        thisSeq.onLevels(sourceLevel);
     }
     if (options.tint) {
         thisSeq.tint(options.tintColor)
@@ -69,7 +70,8 @@ export function secondaryEffect(secondary, seq, targetArray, targetEnabled = fal
         if (options.elevation === 0) {
             thisSeq.belowTokens(true)
         } else {
-            thisSeq.elevation(handler.elevation(currentTarget, options.isAbsolute, options.elevation), { absolute: options.isAbsolute })
+            const targetLevel = (currentTarget?.document ?? currentTarget)?.level ?? canvas.level;
+            thisSeq.onLevels(targetLevel);
         }
         if (options.tint) {
             thisSeq.tint(options.tintColor)
@@ -115,7 +117,8 @@ export function targetEffect(targetFX, seq, targetArray, missable = false, handl
         if (options.elevation === 0) {
             thisSeq.belowTokens(true)
         } else {
-            thisSeq.elevation(handler.elevation(currentTarget, options.isAbsolute, options.elevation), { absolute: options.isAbsolute })
+            const targetLevel = (currentTarget?.document ?? currentTarget)?.level ?? canvas.level;
+            thisSeq.onLevels(targetLevel);
         }
         if (options.tint) {
             thisSeq.tint(options.tintColor)
