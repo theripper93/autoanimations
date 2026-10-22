@@ -152,20 +152,30 @@ function criticalCheckBlackFlag(roll, item = {}) {
 
     switch (true) {
         case (game.settings.get("autoanimations", "EnableCritical") && critical):
-            new Sequence({moduleName: "Automated Animations", softFail: !game.settings.get("autoanimations", "debug")})
-                .effect()
-                .file(critAnim)
-                .sound(critAudio)
-                .atLocation(token)
-                .play()
+            const critSeq = new Sequence({moduleName: "Automated Animations", softFail: !game.settings.get("autoanimations", "debug")});
+            if (critAnim) {
+                critSeq.effect()
+                    .file(critAnim)
+                    .atLocation(token);
+            }
+            if (critAudio) {
+                critSeq.sound()
+                    .file(critAudio);
+            }
+            critSeq.play();
             break;
         case (game.settings.get("autoanimations", "EnableCriticalMiss") && fumble):
-            new Sequence({moduleName: "Automated Animations", softFail: !game.settings.get("autoanimations", "debug")})
-                .effect()
-                .file(critMissAnim)
-                .sound(critMissAudio)
-                .atLocation(token)
-                .play()
+            const critMissSeq = new Sequence({moduleName: "Automated Animations", softFail: !game.settings.get("autoanimations", "debug")});
+            if (critMissAnim) {
+                critMissSeq.effect()
+                    .file(critMissAnim)
+                    .atLocation(token);
+            }
+            if (critMissAudio) {
+                critMissSeq.sound()
+                    .file(critMissAudio);
+            }
+            critMissSeq.play();
             break;
     }
 

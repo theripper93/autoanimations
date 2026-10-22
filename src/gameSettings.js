@@ -1021,8 +1021,7 @@ class AAGameSettings extends TJSGameSettingsWithUI {
                  key: 'CriticalAudio',
                  folder: game.system.title || game.system.name,
                  options: {
-                    name: 'autoanimations.settings.critAudio_name',
-                    hint: 'autoanimations.settings.critAudio_hint',
+                    name: 'autoanimations.settings.crithitAudio_name',
                     scope: scope.world,
                     config: true,
                     type: String,
@@ -1065,7 +1064,6 @@ class AAGameSettings extends TJSGameSettingsWithUI {
                  folder: game.system.title || game.system.name,
                  options: {
                     name: 'autoanimations.settings.critmissAudio_name',
-                    hint: 'autoanimations.settings.critmissAudio_hint',
                     scope: scope.world,
                     config: true,
                     type: String,
