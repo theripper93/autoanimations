@@ -42,9 +42,10 @@ export async function proToTemp(handler, animationData, templateDocument) {
         .waitUntilFinished(data.projectile.options.wait)
 
     const sourceLevel = (sourceToken?.document ?? sourceToken)?.level ?? canvas.level;
-    effect1.onLevels(sourceLevel);
     // Effects at the template's cached location have no elevation of their own
-    const templateElevation = handler.levelElevation(sourceToken);
+    const templateElevation = handler.targetElevation(template, sourceToken);
+    const templateLevel = handler.targetLevel(template, sourceToken);
+    effect1.onLevels([sourceLevel, templateLevel]);
 
     if (data.projectile.options.elevation === 0) {
         effect1.belowTokens(true)
@@ -66,7 +67,7 @@ export async function proToTemp(handler, animationData, templateDocument) {
         if (data.preExplosion.options.elevation === 0) {
             effectExplode.belowTokens(true)
         } else {
-            effectExplode.onLevels(sourceLevel);
+            effectExplode.onLevels(templateLevel);
         }
     }
     if (data.explosion.sound) {
@@ -82,7 +83,7 @@ export async function proToTemp(handler, animationData, templateDocument) {
         .waitUntilFinished(-750 + data.explosion.options.wait)
         .aboveLighting(data.explosion.options.aboveTemplate)
 
-    effect2.onLevels(sourceLevel);
+    effect2.onLevels(templateLevel);
 
     effect2.elevation(templateElevation, { absolute: true })
     if (data.explosion.options.elevation === 0) {
@@ -102,7 +103,7 @@ export async function proToTemp(handler, animationData, templateDocument) {
         if (data.afterImage.options.elevation === 0) {
             effectAfterImage.belowTokens(true)
         } else {
-            effectAfterImage.onLevels(sourceLevel);
+            effectAfterImage.onLevels(templateLevel);
         }
     }
 
