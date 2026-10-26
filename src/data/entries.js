@@ -491,5 +491,21 @@ export function newEntry(menu, current = {}, subType) {
    for (const key of KEPT_ON_TYPE_CHANGE) {
       if ((key in entry) && (current[key] !== undefined)) { entry[key] = foundry.utils.deepClone(current[key]); }
    }
+   if (entry.primary && current.primary) { keepPrimary(entry.primary, current); }
    return JSON.parse(JSON.stringify(entry));
+}
+
+function keepPrimary(primary, current) {
+   const { sound, video = {}, options = {} } = current.primary;
+   if (sound) { primary.sound = foundry.utils.deepClone(sound); }
+   for (const key of ["enableCustom", "customPath"]) {
+      if (video[key] !== undefined) { primary.video[key] = video[key]; }
+   }
+   const subType = current.menu === "aefx" ? current.activeEffectType : current.presetType;
+   const defaults = current.menu ? newEntry(current.menu, {}, subType).primary?.options ?? {} : {};
+   for (const [key, value] of Object.entries(options)) {
+      if ((key in primary.options) && (value !== undefined) && (value !== defaults[key])) {
+         primary.options[key] = foundry.utils.deepClone(value);
+      }
+   }
 }
