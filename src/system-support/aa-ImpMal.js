@@ -5,7 +5,7 @@ import { getRequiredData }  from "./getRequiredData.js";
 export function systemHooks() {
     Hooks.on("createChatMessage", async (msg) => {
  		if (msg.author.id !== game.user.id) { return };
-        const systemName = 'impmal';
+        if (!msg.system?.context) { return; }
 
         if (msg.system.class =="WeaponTest") {
             let compiledData = await getRequiredData({
@@ -14,8 +14,9 @@ export function systemHooks() {
                 itemId: msg.system.context.weaponId,
                 workflow: msg,
             })	
-            if (msg.system.data.burst == true) compiledData.overrideRepeat=3
-            if (msg.system.data.rapidFire == true) compiledData.overrideRepeat=6
+            const fireMode = msg.system.data?.fireMode;
+            if (fireMode == "burst" || msg.system.data?.burst == true) compiledData.overrideRepeat=3
+            if (fireMode?.startsWith("rapidFire") || msg.system.data?.rapidFire == true) compiledData.overrideRepeat=6
         
             if (!compiledData.item) { return; }
             runImpMal(compiledData)
@@ -53,7 +54,7 @@ async function runImpMal(input) {
 }
 
 async function checkCrit(msg) {
-    if(!msg.system.result.critical) return;
+    if(!(msg.system.test?.result ?? msg.system.result)?.critical) return;
     
     let critAnim = game.settings.get("autoanimations", "criticalAnimation");
     if(!critAnim) return;

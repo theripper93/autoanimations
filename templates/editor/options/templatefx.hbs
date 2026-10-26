@@ -1,0 +1,20 @@
+{{> aa-elevation}}
+{{formGroup f.repeat value=o.repeat disabled=o.persistent}}
+{{formGroup f.repeatDelay value=o.repeatDelay disabled=o.persistent}}
+{{formGroup f.isMasked value=o.isMasked}}
+{{formGroup f.scale value=o.scale dataset=(object hint=(localize "autoanimations.hints.templateScale"))}}
+{{formGroup f.removeTemplate value=o.removeTemplate disabled=(and o.persistent (eq o.persistType "attachtemplate"))}}
+{{formGroup f.opacity value=o.opacity step=0.01}}
+{{formGroup f.zIndex value=o.zIndex}}
+{{formGroup f.rotate value=o.rotate min=0 max=360 step=1}}
+{{formGroup f.playbackRate value=o.playbackRate step=0.01}}
+{{formGroup f.aboveTemplate value=o.aboveTemplate}}
+{{formGroup f.anchor value=o.anchor placeholder=anchorPlaceholder}}
+{{formGroup f.xray value=o.xray}}
+{{> aa-delay}}
+{{formGroup f.persistent value=o.persistent}}
+{{formGroup f.persistType value=o.persistType choices=persistTypes blank=false disabled=(not o.persistent)}}
+{{#if (and o.persistent (eq o.persistType "overheadtile"))}}
+  {{formGroup f.occlusionMode value=o.occlusionMode choices=@root.choices.occlusion blank=false}}
+  {{formGroup f.occlusionAlpha value=o.occlusionAlpha min=0 max=1 step=0.01}}
+{{/if}}

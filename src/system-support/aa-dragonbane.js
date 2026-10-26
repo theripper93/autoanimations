@@ -2,34 +2,17 @@ import { trafficCop }       from "../router/traffic-cop.js"
 import AAHandler            from "../system-handlers/workflow-data.js";
 import { getRequiredData }  from "./getRequiredData.js";
 
-const idLocations = [
-    ['.magic-roll', 'data-spell-id'],
-    ['.weapon-roll', 'data-weapon-id'],
-    ['.skill-roll', 'data-skill-id'],
-    ['.ability-use', 'data-ability-id'],
-];
-
 export function systemHooks() {
     Hooks.on("createChatMessage", async (msg) => {
         if (msg.author.id !== game.user.id) { return };
 
-        // Extract the item id from the Roll Damage button.
-        // The item id is only available on successful spells casts, weapon attacks, and ability uses.
-        function extractItemId(content) {
-            const wrappedContent = "<div>" + content + "</div>"
-            try {
-                return idLocations.reduce(
-                    (id, location) => id || $(wrappedContent).find(location[0]).attr(location[1]),
-                    null
-                );
-            } catch (exception) {
-                console.log("COULD NOT GET ITEM ID")
-                return null;
-            }
-        }
+        const itemUuid = getItemUuid(msg);
+        const itemId = itemUuid ? undefined : extractAbilityId(msg.content);
+        if (!itemUuid && !itemId) { return; }
 
         let compiledData = await getRequiredData({
-            itemId: extractItemId(msg.content),
+            itemUuid,
+            itemId,
             actorId: msg.speaker?.actor,
             tokenId: msg.speaker?.token,
             workflow: msg,
@@ -37,6 +20,25 @@ export function systemHooks() {
         if (!compiledData.item) { return; }
         runDragonbane(compiledData);
     });
+}
+
+function getItemUuid(msg) {
+    const system = msg.system ?? {};
+    switch (msg.type) {
+        case "weaponTest":
+            return system.success ? system.weaponUuid : undefined;
+        case "spellTest":
+            return system.success ? system.spellUuid : undefined;
+        case "skillTest":
+            return system.skillUuid;
+    }
+}
+
+function extractAbilityId(content) {
+    if (!content?.includes("ability-use")) { return; }
+    const div = document.createElement("div");
+    div.innerHTML = content;
+    return div.querySelector(".ability-use")?.dataset.abilityId;
 }
 
 async function runDragonbane(input) {

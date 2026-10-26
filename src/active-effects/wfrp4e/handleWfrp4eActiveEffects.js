@@ -1,7 +1,7 @@
 import { trafficCop }       from "../../router/traffic-cop.js";
 import AAHandler            from "../../system-handlers/workflow-data.js";
-import { debug }            from "../../constants/constants.js";
-import { AnimationState }   from "../../AnimationState.js";
+import { debug }            from "../../constants.js";
+import { AnimationState }   from "../../constants.js";
 import { DataSanitizer }    from "../../aa-classes/DataSanitizer.js";
 
 /**

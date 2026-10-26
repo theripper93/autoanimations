@@ -1,0 +1,44 @@
+{{#> aa-group groupKey="primary-video" groupLabel=(localize "autoanimations.menus.animation")}}
+  {{> aa-video video}}
+{{/aa-group}}
+
+{{#> aa-group groupKey="primary-options" groupLabel=(localize "autoanimations.menus.options")}}
+  {{> (concat "aa-options-" options)}}
+{{/aa-group}}
+
+{{#if (eq options "aura")}}
+  {{#> aa-group groupKey="aura-tint" groupLabel=(localize "autoanimations.menus.colorTint") groupToggle=f.tint.fieldPath groupChecked=o.tint}}
+    {{formGroup f.hue value=o.hue min=-180 max=180 step=1}}
+    {{formGroup f.tintSaturate value=o.tintSaturate min=-1 max=1 step=0.01}}
+    {{formGroup f.tintColor value=o.tintColor}}
+  {{/aa-group}}
+  {{#> aa-group groupKey="aura-breath" groupLabel="Breath Effect" groupToggle=f.breath.fieldPath groupChecked=o.breath}}
+    {{formGroup f.breathMin value=o.breathMin step=0.01}}
+    {{formGroup f.breathMax value=o.breathMax step=0.01}}
+    {{formGroup f.breathDuration value=o.breathDuration}}
+  {{/aa-group}}
+  {{#> aa-group groupKey="aura-alpha" groupLabel="Alpha Effect" groupToggle=f.alpha.fieldPath groupChecked=o.alpha}}
+    {{formGroup f.alphaMin value=o.alphaMin step=0.01}}
+    {{formGroup f.alphaMax value=o.alphaMax step=0.01}}
+    {{formGroup f.alphaDuration value=o.alphaDuration}}
+  {{/aa-group}}
+{{else}}
+  {{> aa-tint}}
+{{/if}}
+
+{{#> aa-group groupKey="primary-sound" groupLabel=(localize "autoanimations.menus.sound") groupToggle=sound.f.enable.fieldPath groupChecked=sound.o.enable}}
+  {{> aa-sound sound}}
+{{/aa-group}}
+
+{{#with meleeSwitch}}
+{{#> aa-group groupKey="melee-switch" groupLabel=(localize "autoanimations.menus.rangeSwitch")}}
+  {{formGroup f.switchType value=o.switchType choices=@root.choices.switchType blank=false}}
+  {{> aa-video video}}
+  {{formGroup f.detect value=o.detect choices=@root.choices.detect blank=false disabled=off}}
+  {{formGroup f.range value=o.range label=(localize "autoanimations.menus.gridSquares") disabled=(or off (eq o.detect "automatic"))}}
+  {{formGroup f.isReturning value=o.isReturning disabled=(not canReturn)}}
+{{/aa-group}}
+{{#> aa-group groupKey="melee-switch-sound" groupLabel=(concat (localize "autoanimations.menus.rangeSwitch") ": " (localize "autoanimations.menus.sound")) groupToggle=sound.f.enable.fieldPath groupChecked=sound.o.enable groupDim=off}}
+  {{> aa-sound sound}}
+{{/aa-group}}
+{{/with}}

@@ -1,9 +1,9 @@
 // Support added by Wibble199
 // With thanks to @dodgepong (Lancer Weapon FX) for help
 
-import AAHandler from "../system-handlers/workflow-data";
-import { getRequiredData } from "./getRequiredData";
-import { trafficCop } from "../router/traffic-cop";
+import AAHandler from "../system-handlers/workflow-data.js";
+import { getRequiredData } from "./getRequiredData.js";
+import { trafficCop } from "../router/traffic-cop.js";
 
 export function systemHooks() {
 	// The Lancer system does not expose any hooks for rolling items, so have to rely on reading the chat messages.

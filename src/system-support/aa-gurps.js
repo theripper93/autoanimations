@@ -1,17 +1,19 @@
 import { trafficCop } from "../router/traffic-cop.js";
 import AAHandler from "../system-handlers/workflow-data.js";
 
+// AA template shapes to region shape types
 const SHAPE_MAP = {
     'circle': 'circle',
     'vines': 'circle',
     'cone': 'cone',
-    'square': 'rect',
-    'rect': 'rect',
-    'ray': 'ray',
-    'line': 'ray'
+    'square': 'rectangle',
+    'rect': 'rectangle',
+    'ray': 'line',
+    'line': 'line'
 };
 
 let pendingGurpsInput = null;
+let lastUserRegion = null;
 
 /**
  * Cleans and converts GURPS Reach string to a numeric value.
@@ -46,11 +48,12 @@ export function systemHooks() {
 
     Hooks.on("createRegion", async (templateDocument, context, userId) => {
         if (userId !== game.user.id) return;
+        lastUserRegion = templateDocument;
 
         if (pendingGurpsInput) {
             const pending = pendingGurpsInput;
 
-            if (pending.expectedShape && templateDocument.t !== pending.expectedShape) return;
+            if (pending.expectedShape && templateDocument.shapes[0]?.type !== pending.expectedShape) return;
 
             setTimeout(async () => {
                 const input = pending.input;
@@ -70,7 +73,7 @@ export function systemHooks() {
     Hooks.on("renderSceneControls", (controls) => {
         if (pendingGurpsInput) {
             if (Date.now() - pendingGurpsInput.timestamp < 1000) return;
-            if (ui.controls.control.name !== "measure") {
+            if (ui.controls.control?.name !== "regions") {
                 pendingGurpsInput = null;
             }
         }
@@ -141,13 +144,12 @@ async function gurpsWorkflow(data) {
             expectedFoundryShape = SHAPE_MAP[aaShape] || 'circle';
         }
 
-        const lastTemplate = canvas.templates.placeables[canvas.templates.placeables.length - 1];
+        const lastTemplate = lastUserRegion?.parent === canvas.scene && canvas.scene.regions.has(lastUserRegion.id) ? lastUserRegion : null;
         const isValidTemplate = lastTemplate &&
-            lastTemplate.document.author.id === game.user.id &&
-            (!expectedFoundryShape || lastTemplate.document.t === expectedFoundryShape);
+            (!expectedFoundryShape || lastTemplate.shapes[0]?.type === expectedFoundryShape);
 
         if (isValidTemplate) {
-            input.templateData = lastTemplate.document;
+            input.templateData = lastTemplate;
             const finalHandler = await AAHandler.make(input);
             finalHandler.reachCheck = finalReachCheck;
             trafficCop(finalHandler);
@@ -155,7 +157,7 @@ async function gurpsWorkflow(data) {
         }
 
         const shapeName = expectedFoundryShape ? expectedFoundryShape.toLowerCase() : "any";
-        ui.notifications.info(`"${data.attackName}": Add ${shapeName} template...`);
+        ui.notifications.info(game.i18n.format("autoanimations.ui.notify.gurpsTemplate", { attack: data.attackName, shape: shapeName }));
 
         pendingGurpsInput = {
             input: input,
@@ -164,11 +166,7 @@ async function gurpsWorkflow(data) {
             forcedReachCheck: finalReachCheck
         };
 
-        if (canvas.templates.activate) canvas.templates.activate();
-        const toolToSelect = expectedFoundryShape || "circle";
-        if (ui.controls) {
-            ui.controls.render(true, { control: "measure", tool: toolToSelect }); 
-        }
+        ui.controls?.activate({ control: "regions", tool: expectedFoundryShape || "circle" });
 
         const myTimestamp = pendingGurpsInput.timestamp;
         setTimeout(() => {
@@ -179,7 +177,7 @@ async function gurpsWorkflow(data) {
 
         return;
     } else if (isTeleportPreset) {
-        ui.notifications.info(`"${data.attackName}": Click on a destination...`);
+        ui.notifications.info(game.i18n.format("autoanimations.ui.notify.gurpsDestination", { attack: data.attackName }));
     }
 
     trafficCop(probeHandler);

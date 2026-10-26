@@ -7,13 +7,19 @@ export function systemHooks() {
         if (msg.author?.id !== game.user.id) { return };
 
         let compiledData = await getRequiredData({
-            itemId: msg.flags?.itemID,
+            itemId: getItemId(msg),
             actorId: msg.speaker?.actor,
             tokenId: msg.speaker?.token,
             workflow: msg,
         })
         runCypherSystem(compiledData)
     });
+}
+
+function getItemId(msg) {
+    if (msg.flavor?.includes("reroll-recovery")) return "recovery-roll";
+    const id = msg.flags?.data?.itemID ?? msg.flags?.itemID;
+    return typeof id === "string" ? id : undefined;
 }
 
 async function runCypherSystem(input) {

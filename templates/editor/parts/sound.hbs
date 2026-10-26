@@ -1,0 +1,13 @@
+<div class="form-group">
+  <label>{{f.file.label}}</label>
+  <div class="form-fields">
+    {{formInput f.file value=o.file}}
+    <button type="button" class="icon fa-solid fa-play" data-action="playSound" data-path="{{path}}" data-tooltip="autoanimations.ui.common.playSound"></button>
+    <button type="button" class="icon fa-solid fa-file-import" data-action="filePicker" data-path="{{path}}.file" data-type="audio" data-tooltip="autoanimations.ui.common.filePicker"></button>
+  </div>
+</div>
+{{formGroup f.startTime value=o.startTime step=0.01}}
+{{formGroup f.volume value=o.volume step=0.01}}
+{{formGroup f.delay value=o.delay step=0.01}}
+{{formGroup f.repeat value=o.repeat}}
+{{formGroup f.repeatDelay value=o.repeatDelay}}

@@ -1,6 +1,6 @@
-import { trafficCop }       from "../router/traffic-cop";
+import { trafficCop }       from "../router/traffic-cop.js";
 import AAHandler        from "../system-handlers/workflow-data.js";
-import { debug }            from "../constants/constants.js";
+import { debug }            from "../constants.js";
 import {getRequiredData }   from "./getRequiredData.js";
 
 export function systemHooks() {

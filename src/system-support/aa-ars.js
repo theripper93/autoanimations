@@ -1,4 +1,4 @@
-import { debug }            from "../constants/constants.js";
+import { debug }            from "../constants.js";
 import { trafficCop }       from "../router/traffic-cop.js";
 import AAHandler            from "../system-handlers/workflow-data.js";
 import { getRequiredData }  from "./getRequiredData.js";
@@ -6,6 +6,7 @@ import { getRequiredData }  from "./getRequiredData.js";
 // ARS System hooks provided to run animations
 export function systemHooks() {
 	Hooks.on("createChatMessage", async (msg) => {
+		if (msg.author?.id !== game.user.id) return;
 		// Get context from the new flags structure
 		const context = msg.flags?.world?.context;
 		if (!context) return;

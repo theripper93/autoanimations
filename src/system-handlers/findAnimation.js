@@ -1,6 +1,7 @@
-import { flagMigrations } from "../mergeScripts/items/itemFlagMerge.js";
-import { AAAutorecFunctions } from "../aa-classes/aaAutorecFunctions.js";
-import { debug } from "../constants/constants.js";
+import { AAAutorecFunctions } from "../autorec/search.js";
+import { AAAutorecManager } from "../autorec/manager.js";
+import { getFlags } from "../autorec/flags.js";
+import { debug } from "../constants.js";
 
 export async function handleItem(data) {
 
@@ -15,26 +16,18 @@ export async function handleItem(data) {
     const ammoItem = data.ammoItem;
     const rinsedAmmoName = ammoItem?.name ? AAAutorecFunctions.rinseName(ammoItem.name) : "";
 
-    // Send Item and Activity thru Flag Merge
-    const itemFlags = await flagMigrations.handle(data.item, {activeEffect: data.activeEffect}) || {};
-    const activityFlags = activity ? await flagMigrations.handle(activity, {activeEffect: data.activeEffect}) || {} : null;
-    // If Item has Ammunition send it thru the Flag Merge
-    const ammoFlags = ammoItem ? await flagMigrations.handle(ammoItem, {activeEffect: data.activeEffect}) || {isEnabled: true} : null;
-    
+    const itemFlags = getFlags(item) || {};
+    const activityFlags = activity ? getFlags(activity) || {} : null;
+    const ammoFlags = ammoItem ? getFlags(ammoItem) || {isEnabled: true} : null;
+
     let autorecDisabled = game.settings.get("autoanimations", "disableAutoRec");
     if (autorecDisabled) {
         debug("Global Automatic Recognition menu is Disabled from the Module Settings");
     }
 
-    const autorecSettings = {
-        melee: game.settings.get("autoanimations", "aaAutorec-melee"),
-        range: game.settings.get("autoanimations", "aaAutorec-range"),
-        ontoken: game.settings.get("autoanimations", "aaAutorec-ontoken"),
-        templatefx: game.settings.get("autoanimations", "aaAutorec-templatefx"),
-        aura: game.settings.get("autoanimations", "aaAutorec-aura"),
-        preset: game.settings.get("autoanimations", "aaAutorec-preset"),
-        aefx: data.activeEffect ? game.settings.get("autoanimations", "aaAutorec-aefx") : [],
-    }
+    const autorecSettings = AAAutorecManager.getAutorecEntries();
+    delete autorecSettings.version;
+    if (!data.activeEffect) autorecSettings.aefx = [];
 
     let menus = AAAutorecFunctions.sortAndFilterMenus(autorecSettings);
 

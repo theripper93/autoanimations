@@ -1,3 +1,5 @@
+import { addScreenShake, sourceMotion, targetMotion } from "../../system-handlers/commonSequences.js";
+
 const wait = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 
 export async function thunderwave(handler, animationData, config) {
@@ -12,6 +14,8 @@ export async function thunderwave(handler, animationData, config) {
     const data = animationData.primary;
     const sourceFX = animationData.sourceFX;
     const macro = animationData.macro;
+    const motion = animationData.motion;
+    const screenShake = animationData.screenShake;
 
     let color = data.color;
 
@@ -37,6 +41,7 @@ export async function thunderwave(handler, animationData, config) {
     if (data.sound) {
         aaSeq.addSequence(data.sound)
     }
+    if (motion) { sourceMotion(motion, aaSeq, handler) }
 
     aaSeq.thenDo(function () {
         Hooks.callAll("aa.animationStart", sourceToken, "no-target")
@@ -54,9 +59,12 @@ export async function thunderwave(handler, animationData, config) {
     effect.onLevels(handler.targetLevel(template, sourceToken));
     effect.elevation(handler.targetElevation(template, sourceToken), { absolute: true })
 
-    if (data.options.elevation === 0) {
+    if (data.options.elevation < 1) {
         effect.belowTokens(true)
     }
+
+    if (motion) { targetMotion(motion, aaSeq, handler) }
+    if (screenShake) { addScreenShake(screenShake, aaSeq) }
 
     if (macro && macro.playWhen === "0") {
         handler.runMacro(macro)

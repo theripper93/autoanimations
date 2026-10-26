@@ -1,14 +1,12 @@
-import { Hashing } from "#runtime/util";
-import { debug, custom_notify } from "../constants/constants.js";
+import { debug, custom_notify } from "../constants.js";
 import { handleItem } from "./findAnimation.js";
-// import { endTiming } from "../constants/timings.js";
 import { sourceEffect, secondaryEffect, targetEffect, macroSection } from "./commonSequences.js";
-import { AnimationState } from "../AnimationState.js";
+import { AnimationState } from "../constants.js";
 
 export default class AAHandler {
     static async make(data) {
         if (!AnimationState.enabled) {
-            custom_notify("Animations are Disabled from the Automated Animations Settings", true);
+            custom_notify(game.i18n.localize("autoanimations.ui.notify.animationsDisabled"), true);
             return false;
         }
         // Deep Clones the data sent by the system prep
@@ -66,7 +64,7 @@ export default class AAHandler {
         this.sourceToken = data.token?.isEmbedded ? data.token?.object : data.token;
 
         this.item = data.ammoItem || data.item;
-        this.itemUuid = this.item?.uuid || Hashing.uuidv4();
+        this.itemUuid = this.item?.uuid || foundry.utils.randomID();
         this.itemName = this.item.name ?? this.item.label;
         this.rinsedName = data.rinsedName || this.itemName ? this.itemName.replace(/\s+/g, '').toLowerCase() : "";
 
@@ -111,11 +109,6 @@ export default class AAHandler {
 
     get macroActive() {
         return this.flags.macro?.enable && this.flags.macro?.name
-    }
-
-    // Sets the Elevation of the Effect
-    elevation(token = {}, abs = false, level = 0) {
-        return abs ? level : level - 1;
     }
 
     // Bottom elevation of the token's Level, for effects placed at a bare location (e.g. on a template)
@@ -242,22 +235,9 @@ export default class AAHandler {
         macroSection(seq, macro, handler)
     }
     runMacro(macro, handler = this) {
-        let userData = macro.args;
-        if (foundry.utils.isNewerVersion(game.version, 11)) {
-            new Sequence(handler.sequenceData)
-                .macro(macro.name, {args: [handler.workflow, handler, userData]})
-                .play()
-        } else {
-            if (game.modules.get("advanced-macros")?.active) {
-                new Sequence(handler.sequenceData)
-                    .macro(macro.name, handler.workflow, handler, userData)
-                    .play()
-            } else {
-                new Sequence(handler.sequenceData)
-                    .macro(macro.name)
-                    .play()
-            }
-        }
+        new Sequence(handler.sequenceData)
+            .macro(macro.name, {args: [handler.workflow, handler, macro.args]})
+            .play()
     }
     compileSourceEffect(sourceFX, seq, handler = this) {
         sourceEffect(sourceFX, seq, handler)

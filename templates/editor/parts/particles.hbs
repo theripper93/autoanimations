@@ -1,0 +1,14 @@
+{{formGroup f.speed value=o.speed step=0.01 dataset=(object hint=(localize "autoanimations.hints.particleSpeed"))}}
+{{#if repeat}}
+  {{formGroup f.repeat value=o.repeat step=0.01}}
+  {{formGroup f.delay value=o.delay step=0.01}}
+{{/if}}
+{{formGroup f.scale value=o.scale step=0.01 dataset=(object hint=(localize "autoanimations.hints.particleScale"))}}
+{{formGroup f.alpha value=o.alpha step=0.01 label=(localize "autoanimations.menus.alpha") dataset=(object hint=(localize "autoanimations.hints.particleAlpha"))}}
+{{formGroup f.gravity value=o.gravity step=0.01 label=(localize "autoanimations.menus.gravity")}}
+{{formGroup f.duration value=o.duration step=0.01 label=(localize "autoanimations.menus.duration")}}
+{{formGroup f.life value=o.life step=0.01 label=(localize "autoanimations.menus.life")}}
+{{formGroup f.emittersize value=o.emittersize step=0.0001 label=(localize "autoanimations.menus.emiterSize")}}
+{{formGroup f.rate value=o.rate step=0.01 label=(localize "autoanimations.menus.rate")}}
+{{formGroup f.autoSize value=(ne o.autoSize false) label=(localize "autoanimations.menus.autoSize")}}
+{{formGroup f.onCenter value=o.onCenter label=(localize "autoanimations.menus.onCenter")}}

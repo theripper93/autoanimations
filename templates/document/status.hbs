@@ -1,0 +1,41 @@
+<div class="aa-status">
+  <div class="form-group">
+    <label>{{enabledLabel}}</label>
+    <div class="form-fields"><input type="checkbox" name="isEnabled" {{checked entry.isEnabled}}></div>
+  </div>
+  <div class="form-group {{#unless customizable}}aa-disabled{{/unless}}">
+    <label>{{customizeLabel}}</label>
+    <div class="form-fields"><input type="checkbox" name="isCustomized" {{checked entry.isCustomized}}></div>
+  </div>
+  <div class="form-group {{#unless typeEnabled}}aa-disabled{{/unless}}">
+    <label>{{localize "autoanimations.menus.animation"}} {{localize "autoanimations.menus.type"}}</label>
+    <div class="form-fields"><select name="animationType">{{#each typeOptions}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select></div>
+  </div>
+  <div class="form-group {{#unless customizable}}aa-disabled{{/unless}}">
+    <label>{{localize "autoanimations.menus.recognition"}}</label>
+    <div class="form-fields">
+      <span class="aa-match {{#if matched}}aa-green{{else}}aa-red{{/if}}">{{status}}</span>
+      <button type="button" class="icon fas fa-ellipsis-v aa-copy-menu" data-tooltip="autoanimations.ui.document.copyToFrom"></button>
+    </div>
+  </div>
+  <ul class="aa-info">
+  {{#if info.enabled}}
+    {{#if info.customized}}
+    <li><i class="fas fa-pen aa-green"></i> {{localize "autoanimations.ui.document.statusCustom"}}</li>
+    {{else}}
+    <li><i class="fas fa-check aa-green"></i> {{localize "autoanimations.ui.document.statusGlobal"}}</li>
+    {{/if}}
+    {{#if info.autorec}}
+    <li><i class="fas fa-check aa-green"></i> {{localize "autoanimations.ui.document.globalMatch" menu=info.autorec.menu label=info.autorec.label}}</li>
+    {{/if}}
+    {{#if info.aefx}}
+    <li><i class="fas fa-check aa-green"></i> {{localize "autoanimations.ui.document.effectMatch" menu=info.aefx.menu label=info.aefx.label}}</li>
+    {{/if}}
+    {{#unless info.autorec}}{{#unless info.aefx}}
+    <li><i class="fas fa-xmark aa-red"></i> {{localize "autoanimations.ui.document.noMatch"}}</li>
+    {{/unless}}{{/unless}}
+  {{else}}
+    <li><i class="fas fa-xmark aa-red"></i> {{localize "autoanimations.ui.document.disabled"}}</li>
+  {{/if}}
+  </ul>
+</div>

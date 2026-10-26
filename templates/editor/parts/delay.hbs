@@ -1,0 +1,7 @@
+<div class="form-group">
+  <label>{{f.delay.label}}</label>
+  <div class="form-fields">
+    <select name="{{f.isWait.fieldPath}}">{{selectOptions @root.choices.delayMode selected=(ifThen o.isWait "true" "false")}}</select>
+    {{formInput f.delay value=o.delay step=1}}
+  </div>
+</div>

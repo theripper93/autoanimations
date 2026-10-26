@@ -1,0 +1,12 @@
+{{> aa-elevation}}
+{{formGroup f.repeat value=o.repeat}}
+{{formGroup f.repeatDelay value=o.repeatDelay}}
+{{formGroup f.opacity value=o.opacity step=0.01}}
+{{formGroup f.zIndex value=o.zIndex}}
+{{formGroup f.onlyX value=o.onlyX disabled=(not video.v.enableCustom)}}
+{{formGroup f.isReturning value=o.isReturning disabled=(not canReturn)}}
+{{formGroup f.randomOffset value=o.randomOffset}}
+{{formGroup f.reverse value=o.reverse}}
+{{formGroup f.playbackRate value=o.playbackRate step=0.01}}
+{{> aa-delay}}
+{{#if animationSource}}{{formGroup f.animationSource value=o.animationSource}}{{/if}}

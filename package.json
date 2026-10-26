@@ -5,35 +5,18 @@
   "private": true,
   "type": "module",
   "author": "Otigon (https://github.com/otigon)",
-  "contributors": [
-    "Otigon (https://github.com/otigon)",
-    "Michael Leahy <support@typhonjs.io> (https://github.com/typhonrt)"
-  ],
-  "imports": {
-    "#runtime/*": "@typhonjs-fvtt/runtime/*",
-    "#standard/*": "@typhonjs-fvtt/standard/*",
-    "#constants": "./src/constants.js",
-    "#gameSettings": "./src/gameSettings.js",
-    "#sessionStorage": "./src/sessionStorage.js"
-  },
-  "dependencies": {
-    "@typhonjs-fvtt/runtime": "^0.3.0-next.4",
-    "@typhonjs-fvtt/standard": "^0.3.0-next.4",
-    "svelte": "^4.2.20"
-  },
   "devDependencies": {
-    "vite": "^5"
+    "css-loader": "^7.1.2",
+    "esbuild-loader": "^4.2.2",
+    "mini-css-extract-plugin": "^2.9.4",
+    "sass": "^1.97.1",
+    "sass-loader": "^16.0.6",
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4"
   },
-  "browserslist": [
-    ">5%",
-    "not IE 11"
-  ],
   "scripts": {
     "translate": "node translate-all.js",
-    "build": "vite build",
-    "watch": "vite build --watch",
-    "dev": "vite",
-    
-    "eslint": "eslint ."
+    "build": "webpack --config webpack.config.cjs",
+    "watch": "webpack --config webpack.config.cjs --watch"
   }
 }

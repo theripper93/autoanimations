@@ -1,0 +1,20 @@
+{{#each sides}}
+{{#> aa-group groupKey=(concat "motion-" key) groupLabel=label groupToggle=f.enable.fieldPath groupChecked=o.enable}}
+  {{formGroup f.type value=o.type choices=types blank=false dataset=(object hint=(localize "autoanimations.hints.motionType"))}}
+  {{#if (eq o.type "shake")}}{{formGroup f.strength value=o.strength}}{{/if}}
+  {{#if (or (eq o.type "knockback") (eq o.type "lunge") (eq o.type "recoil"))}}{{formGroup f.distance value=o.distance step=0.05}}{{/if}}
+  {{#if (eq o.type "flash")}}{{formGroup f.color value=o.color label=(localize "autoanimations.menus.color") dataset=(object hint=(localize "autoanimations.hints.motionColor"))}}{{/if}}
+  {{#if (eq o.type "pulse")}}{{formGroup f.scale value=o.scale step=0.05 dataset=(object hint=(localize "autoanimations.hints.motionScale"))}}{{/if}}
+  {{#if (eq o.type "float")}}{{formGroup f.height value=o.height}}{{/if}}
+  {{#if (eq o.type "fade")}}{{formGroup f.opacity value=o.opacity label=(localize "autoanimations.menus.opacity") step=0.01 dataset=(object hint=(localize "autoanimations.hints.motionOpacity"))}}{{/if}}
+  {{formGroup f.duration value=o.duration}}
+  {{formGroup f.delay value=o.delay}}
+  {{#if f.onlyOnHit}}{{formGroup f.onlyOnHit value=o.onlyOnHit}}{{/if}}
+{{/aa-group}}
+{{/each}}
+
+{{#> aa-group groupKey="screen-shake" groupLabel=(localize "autoanimations.menus.screenShake") groupToggle=shake.f.enable.fieldPath groupChecked=shake.o.enable}}
+  {{formGroup shake.f.strength value=shake.o.strength label=(localize "autoanimations.menus.strengthPx")}}
+  {{formGroup shake.f.duration value=shake.o.duration}}
+  {{formGroup shake.f.delay value=shake.o.delay}}
+{{/aa-group}}

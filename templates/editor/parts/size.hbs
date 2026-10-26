@@ -1,0 +1,7 @@
+<div class="form-group">
+  <label>{{localize "autoanimations.menus.size"}}</label>
+  <div class="form-fields">
+    <select name="{{f.isRadius.fieldPath}}">{{selectOptions @root.choices.sizeMode selected=(ifThen o.isRadius "true" "false")}}</select>
+    {{formInput f.size value=o.size step=0.01}}
+  </div>
+</div>

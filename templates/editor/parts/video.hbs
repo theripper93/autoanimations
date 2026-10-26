@@ -1,0 +1,13 @@
+{{formGroup f.menuType value=v.menuType choices=choices.menuType blank=false disabled=locked classes=dimmed dataset=(object cascade="menuType" video=path db=section)}}
+{{formGroup f.animation value=v.animation choices=choices.animation blank=false disabled=locked classes=dimmed dataset=(object cascade="animation" video=path db=section)}}
+{{formGroup f.variant value=v.variant choices=choices.variant blank=false disabled=locked classes=dimmed dataset=(object cascade="variant" video=path db=section)}}
+{{formGroup f.color value=v.color choices=choices.color blank=false disabled=locked classes=dimmed dataset=(object cascade="color" video=path db=section)}}
+{{formGroup f.enableCustom value=v.enableCustom disabled=locked}}
+<div class="form-group {{#if (or locked (not v.enableCustom))}}aa-disabled{{/if}}">
+  <label>{{f.customPath.label}}</label>
+  <div class="form-fields">
+    {{formInput f.customPath value=v.customPath disabled=(or locked (not v.enableCustom))}}
+    <button type="button" class="icon fa-solid fa-file-import" data-action="filePicker" data-path="{{path}}.customPath" data-type="imagevideo" data-tooltip="autoanimations.ui.common.filePicker"></button>
+    <button type="button" class="icon fa-solid fa-database" data-action="dbViewer" data-tooltip="autoanimations.ui.common.databaseViewer"></button>
+  </div>
+</div>

@@ -1,4 +1,4 @@
-import { debug }            from "../constants/constants.js";
+import { debug }            from "../constants.js";
 import { trafficCop }       from "../router/traffic-cop.js";
 import AAHandler            from "../system-handlers/workflow-data.js";
 import { getRequiredData }  from "./getRequiredData.js";
@@ -7,7 +7,7 @@ const activityCache = {};
 
 // DnD5e System hooks provided to run animations
 export function systemHooks() {
-    if(!foundry.utils.isNewerVersion(game.system.version, 3.9)) return ui.notifications.error(`Automated Animations: This version of Automated Animations requires DnD5e 4.3 or higher, please downgrade to Automated Animations 5.0.10 or update your game system.`, {permanent: true});
+    if(!foundry.utils.isNewerVersion(game.system.version, 3.9)) return ui.notifications.error(game.i18n.localize("autoanimations.ui.notify.dnd5eVersion"), {permanent: true});
     
     if (foundry.utils.isNewerVersion(game.system.version, 6.0)) {
 

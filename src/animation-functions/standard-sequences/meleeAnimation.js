@@ -1,5 +1,7 @@
 import { buildFile } from "../file-builder/build-filepath.js"
-import { aaReturnWeapons, aaRangeWeapons } from "../../database/jb2a-menu-options.js";
+import { menuOptions } from "../../database/databaseSort.js";
+import { addScreenShake, sourceMotion, targetMotion } from "../../system-handlers/commonSequences.js";
+import { applyColorTint } from "../color-tint.js";
 
 export async function melee(handler, animationData) {
     const data = animationData.primary;
@@ -7,6 +9,8 @@ export async function melee(handler, animationData) {
     const sourceFX = animationData.sourceFX;
     const targetFX = animationData.targetFX;
     const macro = animationData.macro;
+    const motion = animationData.motion;
+    const screenShake = animationData.screenShake;
 
     const sourceToken = handler.sourceToken;
     let sourceTokenGS = (sourceToken.w / canvas.grid.size) * 5;
@@ -16,15 +20,15 @@ export async function melee(handler, animationData) {
 
     const switchDisabled = game.settings.get("autoanimations", "rangeSwitch")
 
-    const switchReturn = data.meleeSwitch.options.switchType === "on" && aaReturnWeapons.includes(data.video.animation)
+    const switchReturn = data.meleeSwitch.options.switchType === "on" && menuOptions.returnWeapons.includes(data.video.animation)
         ? data.meleeSwitch.options.isReturning
-        : data.meleeSwitch.options.switchType === "custom" && aaReturnWeapons.includes(data.meleeSwitch.video.animation)
+        : data.meleeSwitch.options.switchType === "custom" && menuOptions.returnWeapons.includes(data.meleeSwitch.video.animation)
             ? data.meleeSwitch.options.isReturning
             : false;
 
     let range = {};
     if (data.meleeSwitch.options.switchType === "on") {
-        range = aaRangeWeapons.includes(data.video.animation) && !data.video.customPath ? await buildFile("range", data.video, false, { isReturnable: true }) : {};
+        range = menuOptions.rangeWeapons.includes(data.video.animation) && !data.video.customPath ? await buildFile("range", data.video, false, { isReturnable: true }) : {};
     } else if (data.meleeSwitch.options.switchType === "custom") {
         range = await buildFile("range", data.meleeSwitch.video, data.meleeSwitch.video.customPath, { isReturnable: true });
     }
@@ -69,6 +73,7 @@ export async function melee(handler, animationData) {
     if (sourceFX) {
         handler.compileSourceEffect(sourceFX, aaSeq)
     }
+    if (motion) { sourceMotion(motion, aaSeq, handler) }
     // Primary Sound
     if (data.sound && meleeArray.length > 0) {
         aaSeq.addSequence(data.sound)
@@ -97,7 +102,7 @@ export async function melee(handler, animationData) {
             meleeSeq.randomizeMirrorY()
             meleeSeq.missed(!currentTarget.hit)
             meleeSeq.name("spot" + ` ${currentTarget.token.id}`)
-            if (data.options.elevation === 0) {
+            if (data.options.elevation < 1) {
                 meleeSeq.belowTokens(true)
             } else {
                 const sourceLevel = (sourceToken?.document ?? sourceToken)?.level ?? canvas.level;
@@ -106,8 +111,7 @@ export async function melee(handler, animationData) {
             }
             meleeSeq.zIndex(data.options.zIndex)
             if (data.options.tint) {
-                meleeSeq.tint(data.options.tintColor)
-                meleeSeq.filter("ColorMatrix", { contrast: data.options.contrast, saturate: data.options.saturation })
+                applyColorTint(meleeSeq, data.options.tintColor, { hue: data.options.hue, contrast: data.options.contrast, saturate: data.options.saturation })
             }
             if (i === meleeArray.length - 1 && data.options.isWait) {
                 meleeSeq.waitUntilFinished(data.options.delay)
@@ -144,7 +148,7 @@ export async function melee(handler, animationData) {
             rangeSeq.repeats(data.options.repeat, data.options.repeatDelay)
             rangeSeq.missed(!currentTarget.hit)
             rangeSeq.name("spot" + ` ${currentTarget.token.id}`)
-            if (data.options.elevation === 0) {
+            if (data.options.elevation < 1) {
                 rangeSeq.belowTokens(true)
             } else {
                 const sourceLevel = (sourceToken?.document ?? sourceToken)?.level ?? canvas.level;
@@ -153,8 +157,7 @@ export async function melee(handler, animationData) {
             }
             rangeSeq.playbackRate(data.options.playbackRate)
             if (data.options.tint) {
-                rangeSeq.tint(data.options.tintColor)
-                rangeSeq.filter("ColorMatrix", { contrast: data.options.contrast, saturate: data.options.saturation })
+                applyColorTint(rangeSeq, data.options.tintColor, { hue: data.options.hue, contrast: data.options.contrast, saturate: data.options.saturation })
             }
             if (i === rangeArray.length - 1 && data.options.isWait) {
                 rangeSeq.waitUntilFinished(data.options.delay)
@@ -174,11 +177,17 @@ export async function melee(handler, animationData) {
                 returnSeq.atLocation(sourceToken)
                 returnSeq.repeats(data.options.repeat, data.options.repeatDelay)
                 returnSeq.stretchTo("spot" + ` ${currentTarget.id}`)
+                if (data.options.elevation < 1) {
+                    returnSeq.belowTokens(true)
+                } else {
+                    const sourceLevel = (sourceToken?.document ?? sourceToken)?.level ?? canvas.level;
+                    const targetLevel = (currentTarget?.document ?? currentTarget)?.level ?? canvas.level;
+                    returnSeq.onLevels([sourceLevel, targetLevel]);
+                }
                 returnSeq.zIndex(data.options.zIndex)
                 returnSeq.playbackRate(data.options.playbackRate)
                 if (data.options.tint) {
-                    returnSeq.tint(data.options.tintColor)
-                    returnSeq.filter("ColorMatrix", { contrast: data.options.contrast, saturate: data.options.saturation })
+                    applyColorTint(returnSeq, data.options.tintColor, { hue: data.options.hue, contrast: data.options.contrast, saturate: data.options.saturation })
                 }
             }
         }
@@ -189,6 +198,10 @@ export async function melee(handler, animationData) {
             handler.compileTargetEffect(targetFX, aaSeq, rangeArray.map(e => e.token), true)
         }
     }
+
+    // Token reactions and screen shake
+    if (motion) { targetMotion(motion, aaSeq, handler) }
+    if (screenShake) { addScreenShake(screenShake, aaSeq) }
 
     // Macro if Concurrent
     if (macro && macro.playWhen === "0") {

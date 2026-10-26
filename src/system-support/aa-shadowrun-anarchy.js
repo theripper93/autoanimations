@@ -1,75 +1,55 @@
-import { AnimationState }   from "../AnimationState.js";
-import { debug }            from "../constants/constants.js";
+import { AnimationState }   from "../constants.js";
 import { trafficCop }       from "../router/traffic-cop.js";
 import AAHandler            from "../system-handlers/workflow-data.js";
 import { getRequiredData }  from "./getRequiredData.js";
+import { getFlags }         from "../autorec/flags.js";
 
 export function systemHooks() {
-    Hooks.on("renderChatMessage", async (msg) => {
-        let rawDataMsg = msg.getFlag('anarchy','message-data');
-        if (!rawDataMsg){
-            return;
-        }
-        const anarchyData = JSON.parse(msg.getFlag('anarchy','message-data'));
-        checkChatMessageAnarchy(msg, anarchyData);
-    });
+    Hooks.on("createChatMessage", async (msg) => { checkChatMessageAnarchy(msg) });
 }
 
-async function checkChatMessageAnarchy(msg, anarchyData) {
-    if (msg.author?.id !== game.user.id || !AnimationState.enabled) { 
+async function checkChatMessageAnarchy(msg) {
+    if (msg.author?.id !== game.user.id || !AnimationState.enabled) {
         return;
     }
 
-    const compiledData = await computeCompiledDataAnarchy(msg, anarchyData);
-    if (!compiledData) { 
+    let roll = msg.getFlag("anarchy", "message-data");
+    if (typeof roll === "string") {
+        roll = JSON.parse(roll);
+    }
+    if (!roll || !["weapon", "skill"].includes(roll.mode)) {
         return;
     }
 
-    if (await tryAnnimationWith(compiledData)) {
-        return;
-    }
+    const token = canvas.scene?.tokens.get(roll.tokenId)?.object
+        ?? canvas.scene?.tokens.get(roll.targeting?.attackerTokenId)?.object;
+    const actor = token?.actor ?? game.actors.get(roll.actor?.id);
+    const weapon = actor?.items.get(roll.weapon?.id);
+    const skill = actor?.items.get(roll.skill?.id);
 
-    // Depending on the type of the attack (e.g., ranged, melee), you can add more cases
-    switch (anarchyData.attackRoll.mode) {
-        case "weapon":
-            const weaponName = anarchyData.attackRoll.weapon.id; // Assuming the weapon id is a good fallback
-            if (weaponName && await tryAnnimationWith(compiledData, weaponName)) {
-                return;
-            }
-            break;
-        // Add cases for other modes if needed
-    }
-
-    // If no specific mode matches, try using the skill name for animation
-    const skill = anarchyData.attackRoll.skill.id;
-    if (skill && await tryAnnimationWith(compiledData, skill)) {
-        return;
-    }
-}
-
-async function computeCompiledDataAnarchy(msg, anarchyData) {
-    let actor = game.actors.get(anarchyData?.attackRoll?.actor?.id);
-    debug('Anarchy actor', actor);
-    let weaponId = anarchyData?.attackRoll?.weapon.id;
-    let item = {
-        id: weaponId,
-        name: actor?.items?.get(weaponId)?.name,
-    };
-    
-    debug('Anarchy content to  getRequiredData:', {
-        item: item,
-        actorId: actor,
-    });
     const compiledData = await getRequiredData({
-        item: item,
-        actorId: msg.speaker?.actor,
+        item: weapon ?? skill,
+        token,
+        actor,
+        targetIds: roll.targeting?.targetedTokenIds,
         workflow: msg,
     });
 
-    return compiledData;
+    if (compiledData.item && await tryAnimationWith(compiledData)) {
+        return;
+    }
+
+    const flags = getFlags(compiledData.item);
+    if (flags?.killAnim || flags?.isEnabled === false) {
+        return;
+    }
+
+    if (weapon && skill) {
+        await tryAnimationWith(compiledData, skill.name);
+    }
 }
 
-async function tryAnnimationWith(compiledData, itemNameOverride) {
+async function tryAnimationWith(compiledData, itemNameOverride) {
     if (itemNameOverride) {
         compiledData.item = {
             name: itemNameOverride
@@ -77,7 +57,7 @@ async function tryAnnimationWith(compiledData, itemNameOverride) {
     }
 
     const handler = await AAHandler.make(compiledData);
-    if (handler?.item && handler.sourceToken) { 
+    if (handler?.item && handler.sourceToken) {
         trafficCop(handler);
         return true;
     }

@@ -1,0 +1,22 @@
+<nav class="sheet-tabs tabs">
+  {{#each tabs}}
+  <a data-action="tab" data-group="aa" data-tab="{{id}}" class="{{#if active}}active{{/if}} {{#if disabled}}aa-disabled{{/if}}">{{label}}</a>
+  {{/each}}
+</nav>
+{{#each tabs}}
+<section class="tab aa-tab {{#if active}}active{{/if}}" data-group="aa" data-tab="{{id}}">
+  <div class="aa-tab-main">
+    {{#if html}}{{{html}}}{{else}}
+    {{#if enablePath}}
+    <label class="checkbox aa-enable"><input type="checkbox" name="{{enablePath}}" {{checked enabled}}> {{localize "autoanimations.menus.enabled"}}</label>
+    {{/if}}
+    <div class="aa-tab-body {{#unless enabled}}aa-disabled{{/unless}}">{{> (concat "aa-tab-" template)}}</div>
+    {{/if}}
+  </div>
+  {{#unless html}}
+  <aside class="aa-previews">
+    {{#each previews}}{{> aa-preview}}{{else}}<p class="hint">{{localize "autoanimations.ui.preview.none"}}</p>{{/each}}
+  </aside>
+  {{/unless}}
+</section>
+{{/each}}

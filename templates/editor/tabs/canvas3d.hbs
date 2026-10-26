@@ -1,0 +1,47 @@
+{{#> aa-group groupKey="3d-effect" groupLabel=(localize "autoanimations.menus.animation")}}
+  {{formGroup top.f.type value=top.o.type choices=types blank=false label=(localize "autoanimations.menus.type") dataset=(object cascade="levels3dType" hint=(localize "autoanimations.hints.particleType"))}}
+  {{#if isToken}}
+    {{formGroup data.f.animationType value=data.o.animationType choices=tokenAnimations blank=false label=(localize "autoanimations.menus.type")}}
+    {{formGroup data.f.playOn value=data.o.playOn choices=@root.choices.playOn blank=false label=(localize "autoanimations.menus.playOn")}}
+    {{formGroup data.f.repeat value=data.o.repeat step=0.01}}
+    {{formGroup data.f.resetTime value=data.o.resetTime label=(localize "autoanimations.menus.resetTime")}}
+  {{else}}
+    {{> aa-sprite data}}
+    {{> aa-particle-colors data two=(not isSprite)}}
+  {{/if}}
+{{/aa-group}}
+
+{{#unless isToken}}
+{{#> aa-group groupKey="3d-options" groupLabel=(localize "autoanimations.menus.options")}}
+  {{> aa-particles data repeat=true}}
+  {{formGroup data.f.arc value=data.o.arc step=0.01 label=(localize "autoanimations.menus.arc")}}
+  {{formGroup data.f.rotateTowards value=data.o.rotateTowards label=(localize "autoanimations.menus.rotateTowards")}}
+  {{#if isSprite}}
+    {{formGroup data.f.rotationX value=data.o.rotationX label=(concat (localize "autoanimations.menus.rotation") " X")}}
+    {{formGroup data.f.rotationY value=data.o.rotationY label=(concat (localize "autoanimations.menus.rotation") " Y")}}
+    {{formGroup data.f.rotationZ value=data.o.rotationZ label=(concat (localize "autoanimations.menus.rotation") " Z")}}
+  {{/if}}
+{{/aa-group}}
+{{/unless}}
+
+{{#> aa-group groupKey="3d-sound" groupLabel=(localize "autoanimations.menus.sound") groupToggle=sound.f.enable.fieldPath groupChecked=sound.o.enable}}
+  {{> aa-sound sound}}
+{{/aa-group}}
+
+{{#unless isToken}}
+{{#> aa-group groupKey="3d-secondary" groupLabel=(localize "autoanimations.animations.explosion") groupToggle=secondary.f.enable.fieldPath groupChecked=secondary.o.enable}}
+  {{formGroup secondary.data.f.type value=secondary.data.o.type choices=secondaryTypes blank=false label=(localize "autoanimations.menus.type") dataset=(object hint=(localize "autoanimations.hints.particleType"))}}
+  {{> aa-sprite secondary.data}}
+  {{> aa-particle-colors secondary.data two=true}}
+  {{> aa-particles secondary.data}}
+{{/aa-group}}
+
+{{#> aa-group groupKey="3d-tokens" groupLabel=(concat (localize "autoanimations.menus.token") " " (localize "autoanimations.menus.animation")) groupToggle=tokens.f.enable.fieldPath groupChecked=tokens.o.enable}}
+  {{formGroup tokens.f.source value=tokens.o.source label=(concat (localize "autoanimations.menus.source") " " (localize "autoanimations.menus.token"))}}
+  {{formGroup tokens.f.sourceType value=tokens.o.sourceType choices=tokenAnimations blank=false label=(localize "autoanimations.menus.type") disabled=(not tokens.o.source)}}
+  {{formGroup tokens.f.sourcePlay value=tokens.o.sourcePlay choices=@root.choices.playWhen3d blank=false label=(localize "autoanimations.menus.playOn") disabled=(not tokens.o.source)}}
+  {{formGroup tokens.f.target value=tokens.o.target label=(concat (localize "autoanimations.menus.target") " " (localize "autoanimations.menus.token"))}}
+  {{formGroup tokens.f.targetType value=tokens.o.targetType choices=tokenAnimations blank=false label=(localize "autoanimations.menus.type") disabled=(not tokens.o.target)}}
+  {{formGroup tokens.f.targetPlay value=tokens.o.targetPlay choices=@root.choices.playWhen3d blank=false label=(localize "autoanimations.menus.playOn") disabled=(not tokens.o.target)}}
+{{/aa-group}}
+{{/unless}}

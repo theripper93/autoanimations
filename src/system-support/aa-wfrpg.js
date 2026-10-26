@@ -1,8 +1,8 @@
 
-import ItemMenuApp          from "../formApps/_ItemMenu/ItemMenuApp.js";
+import { openAnimationMenu } from "../apps/DocumentMenu.js";
 import { trafficCop }       from "../router/traffic-cop.js"
 import AAHandler            from "../system-handlers/workflow-data.js";
-import { debug }            from "../constants/constants.js";
+import { debug }            from "../constants.js";
 import { getRequiredData }  from "./getRequiredData.js";
 
 export function systemHooks() {
@@ -15,7 +15,7 @@ export function systemHooks() {
     });
 
     BaseWFRP4eItemSheet.DEFAULT_OPTIONS.actions.aaItemSettings = function () {
-        new ItemMenuApp(this.item, {}).render(true, { focus: true });
+        openAnimationMenu(this.item);
     };
     
     Hooks.on("wfrp4e:rollWeaponTest", async (data, info) => {
@@ -34,7 +34,7 @@ export function systemHooks() {
         if (data.result.outcome != "success" && game.settings.get('autoanimations', 'castOnlyOnSuccess')) { return }
         let compiledData = await getRequiredData({
             item: data.prayer,
-            targets: compileTargets(data.context?.targets),
+            targets: compileTargets(data.context?._targets ?? data.context?.targets),
             tokenId: info.speaker?.token,
             actorId: info.speaker?.actor,
             workflow: data
@@ -46,23 +46,10 @@ export function systemHooks() {
         if (data.result.castOutcome != "success" && game.settings.get('autoanimations', 'castOnlyOnSuccess')) { return }
         let compiledData = await getRequiredData({
             item: data.spell,
-            targets: compileTargets(data.context?.targets),
+            targets: compileTargets(data.context?._targets ?? data.context?.targets),
             tokenId: info.speaker?.token,
             actorId: info.speaker?.actor,
             workflow: data
-        })
-        runWarhammer(compiledData)
-    });
-
-    Hooks.on("wfrp4e:applyDamage", async (scriptArgs) => {
-        if (!game.user.isGM) { return }
-        if (scriptArgs.opposedTest.attackerTest.result.castOutcome != "success" || !scriptArgs.opposedTest.attackerTest.spell?.system?.magicMissile?.value) { return }
-        let compiledData = await getRequiredData({
-            item: scriptArgs.opposedTest.attackerTest.spell,
-            targets: game.canvas.tokens.getDocuments().filter(x=>x.actorId == scriptArgs.opposedTest.defenderTest.data.context.speaker.actor),
-            tokenId: game.canvas.tokens.getDocuments().find(x=>x.actorId == scriptArgs.opposedTest.attackerTest.data.context.speaker.actor).id,
-            actorId: scriptArgs.attacker.id,
-            workflow: scriptArgs.opposedTest.attackerTest
         })
         runWarhammer(compiledData)
     });
@@ -95,8 +82,9 @@ export function systemHooks() {
     Hooks.on("createRegion", async (template, data, userId) => {
         if (userId !== game.user.id) { return };
         if (template.flags?.wfrp4e?.itemuuid) {
-            const uuid = template.flags.wfrp4e.itemuuid;
-            const input = await getRequiredData({itemUuid: uuid, templateData: template, workflow: template, isTemplate: true});
+            const flags = template.flags.wfrp4e;
+            const input = await getRequiredData({itemUuid: flags.itemuuid, templateData: template, workflow: template, isTemplate: true});
+            input.item ||= game.messages.get(flags.messageId)?.system?.test?.item;
             if (!input.item) {
                 return;
             }
@@ -114,8 +102,7 @@ export function systemHooks() {
                 handler.templateData.hidden = true;
             }
             await trafficCop(handler);
-            const templateObj = game.scenes.current.templates.get(template.id);
-            await templateObj.update({hidden: true});
+            await template.update({visibility: CONST.REGION_VISIBILITY.GAMEMASTER});
         } else if (template.flags?.wfrp4e?.auraToken) {
             const effectUuid = template.flags.wfrp4e.effectUuid;
             const effect = await fromUuid(effectUuid)

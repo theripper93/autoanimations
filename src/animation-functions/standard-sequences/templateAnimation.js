@@ -1,5 +1,7 @@
-import { socketlibSocket } from "../../socketset.js";
-import { howToDelete } from "../../constants/constants.js";
+import { socketlibSocket } from "../../socket.js";
+import { howToDelete } from "../../constants.js";
+import { addScreenShake, sourceMotion, targetMotion } from "../../system-handlers/commonSequences.js";
+import { applyColorTint } from "../color-tint.js";
 const wait = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 
 export async function templatefx(handler, animationData, templateDocument) {
@@ -28,6 +30,8 @@ export async function templatefx(handler, animationData, templateDocument) {
         const sourceFX = animationData.sourceFX;
         const targetFX = animationData.targetFX;
         const macro = animationData.macro;
+        const motion = animationData.motion;
+        const screenShake = animationData.screenShake;
 
         let aaSeq = await new Sequence(handler.sequenceData)
 
@@ -48,6 +52,7 @@ export async function templatefx(handler, animationData, templateDocument) {
         if (sourceFX) {
             handler.compileSourceEffect(sourceFX, aaSeq)
         }
+        if (motion && shape === shapes[0]) { sourceMotion(motion, aaSeq, handler) }
         // Primary Sound
         if (data.sound) {
             aaSeq.addSequence(data.sound)
@@ -116,7 +121,7 @@ export async function templatefx(handler, animationData, templateDocument) {
                 const attached = data.options.persistent
                     && data.options.persistType === 'attachtemplate';
                 if (attached) {
-                    const belowToken = data.options.elevation === 0;
+                    const belowToken = data.options.elevation < 1;
                     const regionOffset = shapes.length > 1
                         ? {
                             x: shapeLocation.x - template.bounds.center.x,
@@ -164,6 +169,10 @@ export async function templatefx(handler, animationData, templateDocument) {
             handler.compileTargetEffect(targetFX, aaSeq, handler.allTargets, false)
         }
 
+        // Token reactions and screen shake
+        if (motion && shape === shapes[0]) { targetMotion(motion, aaSeq, handler) }
+        if (screenShake && shape === shapes[0]) { addScreenShake(screenShake, aaSeq) }
+
         if (macro && macro.playWhen === "0" && !macro?.args?.warpgateTemplate) {
             handler.runMacro(macro)
         }
@@ -197,7 +206,7 @@ export async function templatefx(handler, animationData, templateDocument) {
             seq.file(data.path.file)
             seq.opacity(data.options.opacity)
             seq.origin(handler.itemUuid)
-            if (data.options.elevation === 0) {
+            if (data.options.elevation < 1) {
                 seq.belowTokens(true)
             } else {
                 seq.onLevels(handler.targetLevel(template, token));
@@ -213,8 +222,7 @@ export async function templatefx(handler, animationData, templateDocument) {
             seq.aboveLighting(data.options.aboveTemplate)
             seq.xray(data.options.xray)
             if (data.options.tint) {
-                seq.tint(data.options.tintColor)
-                seq.filter("ColorMatrix", { contrast: data.options.contrast, saturate: data.options.saturation })
+                applyColorTint(seq, data.options.tintColor, { hue: data.options.hue, contrast: data.options.contrast, saturate: data.options.saturation })
             }
             function convertToXY(input) {
                 let menuType = data.video.menuType;
@@ -244,8 +252,10 @@ export async function templatefx(handler, animationData, templateDocument) {
                 "0": CONST.TILE_OCCLUSION_MODES.NONE,
             }
             const isRoofOcclusion = data.options.occlusionMode === "2";
-            const bottom = Number.isFinite(canvas.level.elevation.bottom) ? canvas.level.elevation.bottom : 0;
-            const top = Number.isFinite(canvas.level.elevation.top) ? canvas.level.elevation.top : bottom + canvas.dimensions.distance * 4;
+            const occlusionMode = occlusionMapping[data.options.occlusionMode ?? "0"];
+            const level = canvas.scene.levels?.get(handler.targetLevel(template, sourceToken)) ?? canvas.level;
+            const bottom = Number.isFinite(level.elevation.bottom) ? level.elevation.bottom : 0;
+            const top = Number.isFinite(level.elevation.top) ? level.elevation.top : bottom + canvas.dimensions.distance * 4;
             const elevation = isOverhead ? top : bottom;
             return {
                 alpha: data.options.opacity,
@@ -253,13 +263,14 @@ export async function templatefx(handler, animationData, templateDocument) {
                 height: tileHeight,
                 texture: { src: data.path.filePath },
                 elevation: elevation,
+                levels: [level.id],
                 occlusion: {
                     alpha: `${data.options.occlusionAlpha}`,
-                    modes: [occlusionMapping[data.options.occlusionMode ?? "0"]],
-                    restrictions: {
-                        light: isRoofOcclusion,
-                        weather: isRoofOcclusion
-                    }
+                    modes: occlusionMode ? [occlusionMode] : [],
+                },
+                restrictions: {
+                    light: isRoofOcclusion,
+                    weather: isRoofOcclusion
                 },
                 video: {
                     autoplay: true,

@@ -1,8 +1,8 @@
 import { DataSanitizer } from "../aa-classes/DataSanitizer.js";
-import { debug } from "../constants/constants.js";
-import { AAAutorecFunctions } from "../aa-classes/aaAutorecFunctions.js";
+import { debug } from "../constants.js";
+import { AAAutorecFunctions } from "../autorec/search.js";
 
-import * as animate from "../animation-functions"
+import * as animate from "../animation-functions/index.js"
 
 const wait = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 
@@ -72,7 +72,7 @@ export async function trafficCop(handler) {
         return;
     }
 
-    if (data.levels3d?.type && game.Levels3DPreview?._active) {
+    if (data.levels3d?.enable && game.Levels3DPreview?._active) {
         animate.particleEffects(handler, data)
         return;
     }

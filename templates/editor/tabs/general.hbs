@@ -1,0 +1,59 @@
+{{#> aa-group groupKey="general-entry" groupLabel=(localize "autoanimations.menus.general")}}
+  {{#if autorec}}
+    {{formGroup top.f.label value=top.o.label placeholder=(localize "autoanimations.menus.itemName")}}
+    {{formGroup top.f.menu value=top.o.menu choices=@root.choices.menus blank=false label=(localize "autoanimations.menus.type")}}
+  {{/if}}
+  {{#if isPreset}}
+    {{formGroup top.f.presetType value=top.o.presetType choices=@root.choices.presetTypes blank=false label=(concat (localize "autoanimations.menus.preset") " " (localize "autoanimations.menus.type"))}}
+  {{/if}}
+  {{#if isEffect}}
+    {{formGroup top.f.activeEffectType value=top.o.activeEffectType choices=@root.choices.effectTypes blank=false label=(concat (localize "autoanimations.menus.animation") " " (localize "autoanimations.menus.type"))}}
+  {{/if}}
+{{/aa-group}}
+
+{{#> aa-group groupKey="general-sound-only" groupLabel=(concat (localize "autoanimations.menus.sound") " " (localize "autoanimations.menus.only")) groupToggle=soundOnly.f.enable.fieldPath groupChecked=soundOnly.o.enable}}
+  {{> aa-sound soundOnly}}
+{{/aa-group}}
+
+{{#> aa-group groupKey="general-macro" groupLabel=(localize "autoanimations.menus.macro") groupToggle=macro.f.enable.fieldPath groupChecked=macro.o.enable}}
+  <div class="form-group">
+    <label>{{localize "autoanimations.menus.macro"}}</label>
+    <div class="form-fields">
+      {{formInput macro.f.name value=macro.o.name placeholder=(localize "autoanimations.menus.insertMacro")}}
+      <button type="button" class="icon fa-solid fa-edit" data-action="openMacro" data-tooltip="autoanimations.ui.common.openMacro"></button>
+    </div>
+  </div>
+  {{formGroup macro.f.playWhen value=macro.o.playWhen choices=@root.choices.macroPlayWhen blank=false}}
+  {{formGroup macro.f.args value=macro.o.args elementType="textarea"}}
+{{/aa-group}}
+
+{{#if autorec}}
+{{#> aa-group groupKey="general-recognition" groupLabel=(localize "autoanimations.menus.recognition")}}
+  {{formGroup advanced.f.exactMatch value=advanced.o.exactMatch}}
+  <div class="form-group {{#if advanced.o.exactMatch}}aa-disabled{{/if}}">
+    <label>{{localize "autoanimations.menus.excludedSearchWords"}}</label>
+    <div class="form-fields aa-terms" data-hint="{{localize "autoanimations.hints.excludedTerms"}}">
+      {{#each advanced.o.excludedTerms}}
+      <div class="form-fields">
+        <input type="text" name="advanced.excludedTerms.{{@index}}" value="{{this}}">
+        <button type="button" class="icon fa-solid fa-trash" data-action="removeTerm" data-index="{{@index}}" data-tooltip="autoanimations.menus.delete"></button>
+      </div>
+      {{/each}}
+      <button type="button" data-action="addTerm"><i class="fa-solid fa-plus"></i> {{localize "autoanimations.menus.add"}}</button>
+    </div>
+  </div>
+  <div class="form-group">
+    <label>{{localize "autoanimations.menus.exclude"}} {{localize "autoanimations.menus.item"}} {{localize "autoanimations.menus.property"}}</label>
+    <div class="form-fields">
+      {{formInput excluded.f.enabled value=excluded.o.enabled}}
+      <span>item.</span>
+      {{formInput excluded.f.path value=excluded.o.path placeholder=(localize "autoanimations.menus.path") disabled=(not excluded.o.enabled)}}
+      {{formInput excluded.f.property value=excluded.o.property placeholder=(localize "autoanimations.menus.property") disabled=(not excluded.o.enabled)}}
+    </div>
+  </div>
+  <div class="form-group">
+    <label></label>
+    <div class="form-fields"><button type="button" data-action="logMetadata"><i class="fa-solid fa-heart-pulse"></i> {{localize "autoanimations.menus.logMetadata"}}</button></div>
+  </div>
+{{/aa-group}}
+{{/if}}

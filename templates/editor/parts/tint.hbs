@@ -1,0 +1,6 @@
+{{#> aa-group groupKey=(concat id "-tint") groupLabel=(localize "autoanimations.menus.colorTint") groupToggle=f.tint.fieldPath groupChecked=o.tint}}
+  {{formGroup f.hue value=o.hue min=-180 max=180 step=1}}
+  {{formGroup f.contrast value=o.contrast min=0 max=1 step=0.01}}
+  {{formGroup f.saturate value=o.saturate min=-1 max=1 step=0.01}}
+  {{formGroup f.tintColor value=o.tintColor}}
+{{/aa-group}}

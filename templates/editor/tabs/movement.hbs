@@ -1,0 +1,16 @@
+{{#> aa-group groupKey="teleport-movement" groupLabel=(localize "autoanimations.menus.movement")}}
+  {{formGroup f.measureType value=o.measureType choices=@root.choices.measureType blank=false}}
+  {{formGroup f.hideFromPlayers value=o.hideFromPlayers disabled=(not isGM)}}
+  {{formGroup f.range value=o.range step=0.01 dataset=(object hint=(localize "autoanimations.hints.teleportRange"))}}
+  {{formGroup f.teleport value=o.teleport}}
+  {{formGroup f.delayMove value=o.delayMove step=0.01 disabled=o.teleport}}
+  {{formGroup f.speed value=o.speed step=0.01 dataset=(object hint=(localize "autoanimations.hints.teleportSpeed"))}}
+  {{formGroup f.alpha value=o.alpha min=0 max=1 step=0.01 dataset=(object hint=(localize "autoanimations.hints.teleportAlpha"))}}
+  {{formGroup f.delayFade value=o.delayFade}}
+  {{formGroup f.delayReturn value=o.delayReturn}}
+  {{formGroup f.checkCollision value=o.checkCollision}}
+{{/aa-group}}
+
+{{#> aa-group groupKey="teleport-sound" groupLabel=(localize "autoanimations.menus.sound") groupToggle=sound.f.enable.fieldPath groupChecked=sound.o.enable}}
+  {{> aa-sound sound}}
+{{/aa-group}}

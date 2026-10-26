@@ -1,0 +1,35 @@
+<div class="aa-diagnostics-body">
+  <p class="hint">{{localize "autoanimations.ui.diagnostics.intro"}}</p>
+  <div class="form-group">
+    <label>{{localize "autoanimations.ui.diagnostics.user"}}</label>
+    <div class="form-fields"><select name="user">{{selectOptions users selected=userId}}</select></div>
+    <p class="hint">{{localize "autoanimations.ui.diagnostics.userHint"}}</p>
+  </div>
+
+  {{#each sections}}
+  <fieldset>
+    <legend>{{title}}</legend>
+    <ul class="aa-checks">
+      {{#each rows}}
+      <li class="aa-{{status}}"><i class="fa-solid {{icon}}" data-tooltip="{{tooltip}}"></i> <span>{{{label}}}</span></li>
+      {{/each}}
+    </ul>
+  </fieldset>
+  {{/each}}
+
+  <fieldset>
+    <legend>{{localize "autoanimations.ui.diagnostics.troubleshooting"}}</legend>
+    <ol class="aa-troubleshooting">
+      <li>{{localize "autoanimations.ui.diagnostics.tip1"}}</li>
+      <li>{{localize "autoanimations.ui.diagnostics.tip2"}}</li>
+      <li>{{localize "autoanimations.ui.diagnostics.tip3"}}</li>
+      <li>{{localize "autoanimations.ui.diagnostics.tip4"}}</li>
+      <li>{{localize "autoanimations.ui.diagnostics.tip5"}}</li>
+      <li>{{localize "autoanimations.ui.diagnostics.tip6"}}</li>
+    </ol>
+  </fieldset>
+
+  <footer class="form-footer">
+    <button type="button" data-action="rerun"><i class="fa-solid fa-rotate"></i> {{localize "autoanimations.ui.diagnostics.rerun"}}</button>
+  </footer>
+</div>

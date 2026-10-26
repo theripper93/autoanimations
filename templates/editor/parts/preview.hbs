@@ -1,0 +1,10 @@
+<figure class="aa-preview">
+  <figcaption>{{label}}</figcaption>
+  {{#if file}}
+  <div class="aa-tint-preview" data-key="{{key}}" data-prefix="{{prefix}}" data-mode="{{mode}}" {{#if (ne saturation "")}}data-saturation="{{saturation}}"{{/if}}>
+    <video data-src="{{file}}" loop muted playsinline></video>
+  </div>
+  {{else}}
+  <p class="hint">{{localize "autoanimations.ui.preview.missing"}}</p>
+  {{/if}}
+</figure>

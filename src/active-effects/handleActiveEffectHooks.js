@@ -2,7 +2,7 @@ import { createActiveEffects, deleteActiveEffects, checkConcentration, toggleAct
 import { createRuleElementPF2e, deleteRuleElementPF2e } from "./pf2e/handlePF2eRuleElements.js";
 import { createActiveEffectsWfrp, deleteActiveEffectsWfrp, toggleActiveEffectsWfrp } from "./wfrp4e/handleWfrp4eActiveEffects.js";
 import AAHandler from "../system-handlers/workflow-data.js";
-import { debug } from "../constants/constants.js";
+import { debug } from "../constants.js";
 import { createRuleElementPtu, deleteRuleElementPtu } from "./ptu/handlePtuRuleElements.js";
 
 const pf2eDeletedItems = new Map();

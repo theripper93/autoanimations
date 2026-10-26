@@ -1,0 +1,16 @@
+{{#> aa-group groupKey="afterImage-video" groupLabel=(localize "autoanimations.menus.animation")}}
+  <div class="form-group">
+    <label>{{image.f.customPath.label}}</label>
+    <div class="form-fields">
+      {{formInput image.f.customPath value=image.o.customPath}}
+      <button type="button" class="icon fa-solid fa-file-import" data-action="filePicker" data-path="data.afterImage.customPath" data-type="imagevideo" data-tooltip="autoanimations.ui.common.filePicker"></button>
+      <button type="button" class="icon fa-solid fa-database" data-action="dbViewer" data-tooltip="autoanimations.ui.common.databaseViewer"></button>
+    </div>
+  </div>
+{{/aa-group}}
+
+{{#> aa-group groupKey="afterImage-options" groupLabel=(localize "autoanimations.menus.options")}}
+  {{> aa-elevation}}
+  {{formGroup f.persistent value=o.persistent}}
+  {{formGroup f.scale value=o.scale step=0.01}}
+{{/aa-group}}

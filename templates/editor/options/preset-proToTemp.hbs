@@ -1,0 +1,10 @@
+{{> aa-elevation}}
+{{formGroup f.repeat value=o.repeat}}
+{{formGroup f.repeatDelay value=o.repeatDelay}}
+{{#if removeTemplate}}{{formGroup f.removeTemplate value=o.removeTemplate}}{{/if}}
+{{#if scale}}{{formGroup f.scale value=o.scale step=0.01}}{{/if}}
+{{formGroup f.wait value=o.wait}}
+{{formGroup f.opacity value=o.opacity step=0.01}}
+{{#if randomOffset}}{{formGroup f.randomOffset value=o.randomOffset}}{{/if}}
+{{#if aboveTemplate}}{{formGroup f.aboveTemplate value=o.aboveTemplate}}{{/if}}
+{{formGroup f.playbackRate value=o.playbackRate step=0.01}}

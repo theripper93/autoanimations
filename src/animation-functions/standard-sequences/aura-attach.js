@@ -1,4 +1,5 @@
-import { howToDelete } from "../../constants/constants.js";
+import { howToDelete } from "../../constants.js";
+import { applyColorTint } from "../color-tint.js";
 
 export async function aura(handler, animationData) {
 
@@ -142,12 +143,11 @@ export async function aura(handler, animationData) {
         seq.persist(true, { persistTokenPrototype: true })
         seq.origin(handler.itemUuid)
         if (data.options.tint) {
-            seq.tint(data.options.tintColor)
-            seq.filter("ColorMatrix", { saturate: data.options.tintSaturate })
+            applyColorTint(seq, data.options.tintColor, { hue: data.options.hue, saturate: data.options.tintSaturate })
             //seq.filter("ColorMatrix", {tint: data.options.tintColor})
         }
         seq.size(size, { gridUnits: true })
-        if (data.options.elevation === 0) {
+        if (data.options.elevation < 1) {
             seq.belowTokens(true)
         } else {
             const sourceLevel = (token?.document ?? token)?.level ?? canvas.level;

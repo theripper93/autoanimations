@@ -1,10 +1,12 @@
 import { buildFile } from "../file-builder/build-filepath.js"
+import { addScreenShake } from "../../system-handlers/commonSequences.js";
 
 export async function teleportation(handler, animationData) {
 
     const sourceToken = handler.sourceToken;
     const data = animationData.primary;
     const macro = animationData.macro;
+    const screenShake = animationData.screenShake;
     //const sourceFX = animationData.sourceFX;
 
 
@@ -79,7 +81,7 @@ export async function teleportation(handler, animationData) {
     
                 if (canvas.grid.measurePath([sourceToken, topLeft], { gridSpaces: true }).distance <= data.options.range) {
                     if (data.options.checkCollision && testCollision(pos)) {
-                        ui.notifications.error("Your Path is Blocked!! Try Again")
+                        ui.notifications.error(game.i18n.localize("autoanimations.ui.notify.pathBlocked"))
                         return getPositionFrom3D();
                     } else {
                         circle3d?.remove();
@@ -94,7 +96,7 @@ export async function teleportation(handler, animationData) {
     }
         
 
-    canvas.app.stage.addListener('pointerdown', event => {
+    const onPick = (event) => {
         if (event.data.button !== 0) { return }
         pos = event.data.getLocalPosition(canvas.app.stage);
 
@@ -102,15 +104,16 @@ export async function teleportation(handler, animationData) {
 
         if (canvas.grid.measurePath([sourceToken, topLeft], { gridSpaces: true }).distance <= data.options.range) {
             if (data.options.checkCollision && testCollision(pos)) {
-                ui.notifications.error("Your Path is Blocked!! Try Again")
+                ui.notifications.error(game.i18n.localize("autoanimations.ui.notify.pathBlocked"))
             } else {
                 deleteTemplatesAndMove();
-                canvas.app.stage.removeListener('pointerdown');    
+                canvas.app.stage.removeListener('pointerdown', onPick);
             }
         } else {
             ui.notifications.error(game.i18n.format("autoanimations.settings.teleport"))
         }
-    });
+    };
+    canvas.app.stage.addListener('pointerdown', onPick);
 
     function testCollision(pos) {
         let pointerCenter = canvas.grid.getCenterPoint({x: pos.x, y: pos.y});
@@ -147,12 +150,13 @@ export async function teleportation(handler, animationData) {
         if (data.sound) {
             aaSeq.addSequence(data.sound)
         }
+        if (screenShake) { addScreenShake(screenShake, aaSeq) }
         // Start Animation
         if (data.start) {
             let startEffect = aaSeq.effect()
             startEffect.file(startFile.file)
             startEffect.atLocation({x: startX, y: startY})
-            startEffect.size(sourceTokenGS * 1.5 * data.start.options.size, { gridUnits: true })
+            startEffect.size(data.start.options.isRadius ? data.start.options.size * 2 : sourceTokenGS * 1.5 * data.start.options.size, { gridUnits: true })
             startEffect.opacity(data.start.options.opacity)
             startEffect.fadeIn(data.start.options.fadeIn)
             startEffect.fadeOut(data.start.options.fadeOut)
@@ -160,7 +164,7 @@ export async function teleportation(handler, animationData) {
             startEffect.playbackRate(data.start.options.playbackRate)
             startEffect.onLevels(sourceLevel);
             startEffect.elevation(startElevation, { absolute: true })
-            if (data.start.options.elevation === 0) {
+            if (data.start.options.elevation < 1) {
                 startEffect.belowTokens(true)
             }
             //startEffect.randomRotation()
@@ -181,7 +185,7 @@ export async function teleportation(handler, animationData) {
             betweenEffect.playbackRate(data.between.options.playbackRate)
             betweenEffect.onLevels(sourceLevel);
             betweenEffect.elevation(startElevation, { absolute: true })
-            if (data.between.options.elevation === 0) {
+            if (data.between.options.elevation < 1) {
                 betweenEffect.belowTokens(true)
             }
         }
@@ -192,13 +196,14 @@ export async function teleportation(handler, animationData) {
             endEffect.file(endFile.file)
             endEffect.atLocation({ x: centerPos[0], y: centerPos[1] })
             endEffect.delay(data.end.options.delay)
-            endEffect.size(sourceTokenGS * 1.5 * data.end.options.size, { gridUnits: true })
+            endEffect.size(data.end.options.isRadius ? data.end.options.size * 2 : sourceTokenGS * 1.5 * data.end.options.size, { gridUnits: true })
+            endEffect.opacity(data.end.options.opacity)
             endEffect.fadeIn(data.end.options.fadeIn)
             endEffect.fadeOut(data.end.options.fadeOut)
             endEffect.playbackRate(data.end.options.playbackRate)
             endEffect.onLevels(sourceLevel);
             endEffect.elevation(endElevation, { absolute: true })
-            if (data.end.options.elevation === 0) {
+            if (data.end.options.elevation < 1) {
                 endEffect.belowTokens(true)
             }
             //endEffect.randomRotation()

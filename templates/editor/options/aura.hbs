@@ -1,0 +1,12 @@
+{{> aa-elevation}}
+{{formGroup f.unbindVisibility value=o.unbindVisibility}}
+{{formGroup f.unbindAlpha value=o.unbindAlpha}}
+{{formGroup f.opacity value=o.opacity step=0.01}}
+{{formGroup f.zIndex value=o.zIndex}}
+{{#unless aefx}}{{formGroup f.playOn value=o.playOn choices=@root.choices.playOn blank=false}}{{/unless}}
+{{formGroup f.size value=o.size step=0.01 label=(localize "autoanimations.menus.radius") dataset=(object hint=(localize "autoanimations.hints.auraRadius"))}}
+{{formGroup f.addTokenWidth value=o.addTokenWidth}}
+{{formGroup f.fadeIn value=o.fadeIn}}
+{{formGroup f.fadeOut value=o.fadeOut}}
+{{> aa-delay}}
+{{formGroup f.playbackRate value=o.playbackRate step=0.01}}

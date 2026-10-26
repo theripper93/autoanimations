@@ -7,13 +7,13 @@ export function systemHooks() {
         const userId = (msg.author ?? msg.user)?.id;
         if (userId !== game.user.id) { return; }
         
-        let success = msg.system.result.isSuccess;
-        if (success == true && msg.system.result.damage.ed.value !== 0) { return };
+        if (msg.type !== "test") { return; }
 
         let compiledData = await getRequiredData({
             actorId: msg.speaker.actor ?? msg.system.context.speaker.actor,
+            tokenId: msg.speaker.token ?? msg.system.context.speaker.token,
             targets: compileTargets(msg.system.context.targets),
-            itemUuid: msg.system.context.itemId,
+            itemUuid: msg.system.testData.itemId,
             workflow: msg,
         })
         if (!compiledData.item) { return; }
@@ -23,11 +23,10 @@ export function systemHooks() {
 
 function compileTargets(targets) {
   if (!targets) { return []; }
-  return Array.from(targets).map(token => canvas.tokens.get(token.token));
+  return Array.from(targets).map(token => canvas.tokens.get(token.token)).filter(t => !!t);
 }
 
 async function runWrathandGlory(input) {
-    console.log(input);
     const handler = await AAHandler.make(input);
     trafficCop(handler);
 }

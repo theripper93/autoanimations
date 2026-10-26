@@ -14,7 +14,8 @@ export function systemHooks() {
         const actorId = flags.rollData.ownerId;
         const rollClass = flags.rollData.rollObject.class;
 
-        if(flags.rollData.flags.isAttack){
+        // Damage rolls carry isAttack too; play once, on the attack
+        if(flags.rollData.flags.isAttack && !flags.rollData.flags.isDamageRoll){
             routeMessage({itemId, tokenId, actorId, workflow: msg, rollClass})
         }
         
@@ -61,10 +62,10 @@ async function runDarkHeresy(data) {
 }
 
 function onWorkflowStart(clonedData, animationData) {
-    // Repeat the animation in case of burst attacks.
-    if (animationData.primary != null && clonedData.workflow.flags["dark-heresy"].rollData.attackType?.maxHits > 1) {
-        animationData.primary.options.repeat = clonedData.workflow.flags["dark-heresy"].rollData.attackType.maxHits;
-        animationData.primary.options.repeatDelay = 500 / clonedData.workflow.flags["dark-heresy"].rollData.attackType.maxHits
+    const maxHits = clonedData.workflow?.flags?.["dark-heresy"]?.rollData?.attackType?.maxHits;
+    if (animationData?.primary != null && maxHits > 1) {
+        animationData.primary.options.repeat = maxHits;
+        animationData.primary.options.repeatDelay = 500 / maxHits;
     }
 }
 

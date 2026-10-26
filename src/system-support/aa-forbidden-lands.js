@@ -7,7 +7,7 @@ export function systemHooks() {
         if (msg.author?.id !== game.user.id) { return };
 
         let compiledData = await getRequiredData({
-            itemId: msg.rolls[0].options?.itemId,
+            itemId: msg.rolls[0]?.options?.itemId,
             actorId: msg.speaker?.actor,
             tokenId: msg.speaker?.token,
             workflow: msg,

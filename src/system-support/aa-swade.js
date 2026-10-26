@@ -1,4 +1,4 @@
-import { debug } from "../constants/constants.js";
+import { debug } from "../constants.js";
 import { trafficCop } from "../router/traffic-cop.js";
 import AAHandler from "../system-handlers/workflow-data.js";
 import { getRequiredData } from "./getRequiredData.js";
@@ -13,27 +13,12 @@ export function systemHooks() {
         if (!SwadeItem.system.damage || //If the item doesn't have damage, we run anims on trait rolls regardless of the playtrigger setting
             (SwadeAction === "damage" && playtrigger === "onDamage") || //This is a damage roll and we want to run on damage rolls
             (SwadeAction === "formula" && playtrigger === "onAttack")) { //This is a trait roll and we want to run on trait rolls
-            const controlledTokens = canvas.tokens.controlled;
-            let token;
-            if (controlledTokens.length > 0) {
-                token = controlledTokens.find(token => token.document.actorId === SwadeTokenOrActor.id);
-            }
-            if (token) { SwadeTokenOrActor = token; }
-            runSwade(SwadeTokenOrActor, SwadeTokenOrActor, SwadeItem);
+            runSwade(findToken(SwadeTokenOrActor), SwadeTokenOrActor, SwadeItem);
         }
     });
 
     Hooks.on("swadeConsumeItem", async (SwadeItem, charges, usage) => {
-        const controlledTokens = canvas.tokens.controlled;
-        let token;
-        let SwadeTokenOrActor = SwadeItem.parent
-        if (controlledTokens.length > 0) {
-            token = controlledTokens.find(token => token.document.actorId === SwadeTokenOrActor.id);
-        }
-        if (token) {
-            SwadeTokenOrActor = token;
-        }
-        runSwade(SwadeTokenOrActor, SwadeTokenOrActor, SwadeItem);
+        runSwade(findToken(SwadeItem.parent), SwadeItem.parent, SwadeItem);
     });
 
     Hooks.on("createRegion", async (template, data, userId) => {
@@ -85,7 +70,11 @@ async function templateAnimation(input) {
     const handler = await AAHandler.make(input);
     trafficCop(handler);
 }
-// TO-DO, CHECK SWADE
+function findToken(actor) {
+    if (actor?.document) return actor;
+    return canvas.tokens.controlled.find(token => token.document.actorId === actor?.id) ?? actor?.getActiveTokens?.()[0];
+}
+
 async function runSwade(token, actor, item) {
     let data = await getRequiredData({ token, actor, item });
     if (!data.item) { return; }

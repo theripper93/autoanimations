@@ -1,5 +1,5 @@
 import { aaDatabase } from "../../database/databaseSort.js";
-import { debug } from "../../constants/constants.js";
+import { debug } from "../../constants.js";
 
 export async function buildFile(dbType, video, custom = true, options = {}) {
     const {menuType, animation, variant, color, customPath} = video;

@@ -4,7 +4,7 @@
 
 import { trafficCop }       from "../router/traffic-cop.js"
 import AAHandler            from "../system-handlers/workflow-data.js";
-import { AnimationState }   from "../AnimationState.js";
+import { AnimationState }   from "../constants.js";
 import { getRequiredData }  from "./getRequiredData.js";
 
 export function systemHooks() {

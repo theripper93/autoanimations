@@ -1,0 +1,17 @@
+{{> aa-elevation}}
+{{formGroup f.repeat value=o.repeat disabled=o.persistent}}
+{{formGroup f.repeatDelay value=o.repeatDelay disabled=o.persistent}}
+{{formGroup f.persistent value=o.persistent}}
+{{formGroup f.unbindVisibility value=o.unbindVisibility disabled=(not o.persistent)}}
+{{formGroup f.unbindAlpha value=o.unbindAlpha disabled=(not o.persistent)}}
+{{formGroup f.isMasked value=o.isMasked}}
+{{formGroup f.opacity value=o.opacity step=0.01}}
+{{formGroup f.zIndex value=o.zIndex}}
+{{> aa-size}}
+{{formGroup f.addTokenWidth value=o.addTokenWidth disabled=(not o.isRadius)}}
+{{formGroup f.fadeIn value=o.fadeIn}}
+{{formGroup f.fadeOut value=o.fadeOut}}
+{{formGroup f.anchor value=o.anchor}}
+{{formGroup f.rotateSource value=o.rotateSource}}
+{{formGroup f.playbackRate value=o.playbackRate step=0.01}}
+{{formGroup f.delay value=o.delay}}

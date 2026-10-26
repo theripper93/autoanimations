@@ -1,6 +1,6 @@
 import { trafficCop }       from "../router/traffic-cop.js"
 import AAHandler            from "../system-handlers/workflow-data.js";
-import { debug }            from "../constants/constants.js";
+import { debug }            from "../constants.js";
 import { getRequiredData }  from "./getRequiredData.js";
 
 const SF2E_SIZE_TO_REACH = {
@@ -23,7 +23,7 @@ export function systemHooks() {
         }
         let compiledData = await getRequiredData({
             item: msg.item,
-            itemId: msg.flags.sf2e?.origin?.uuid,
+            itemUuid: msg.flags.sf2e?.origin?.uuid,
             token: msg.token?.object,
             tokenId: msg.speaker?.token,
             actorId: msg.speaker?.actor,

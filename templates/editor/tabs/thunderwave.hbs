@@ -1,0 +1,15 @@
+{{#> aa-group groupKey="thunderwave-video" groupLabel=(localize "autoanimations.menus.animation")}}
+  {{formGroup color.f.color value=color.o.color choices=colors blank=false}}
+{{/aa-group}}
+
+{{#> aa-group groupKey="thunderwave-options" groupLabel=(localize "autoanimations.menus.options")}}
+  {{> aa-elevation}}
+  {{formGroup f.repeat value=o.repeat}}
+  {{formGroup f.repeatDelay value=o.repeatDelay}}
+  {{formGroup f.opacity value=o.opacity step=0.01}}
+  {{formGroup f.removeTemplate value=o.removeTemplate}}
+{{/aa-group}}
+
+{{#> aa-group groupKey="thunderwave-sound" groupLabel=(localize "autoanimations.menus.sound") groupToggle=sound.f.enable.fieldPath groupChecked=sound.o.enable}}
+  {{> aa-sound sound}}
+{{/aa-group}}

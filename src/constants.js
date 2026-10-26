@@ -1,33 +1,53 @@
-/**
- * Defines the main constants for module name and label.
- *
- * @type {{moduleId: string, moduleLabel: string}}
- */
-const constants = {
-   moduleId: "autoanimations",
-   moduleLabel: "Automated Animations"
-};
+export const MODULE_ID = "autoanimations";
 
-/**
- * @type {AASessionConstants} Defines all the module session storage static constants.
- */
-const sessionConstants = {
-   activeEffectAppState: `${constants.moduleId}.active-effect.app-state`,
-   itemAppState: `${constants.moduleId}.item.app-state`,
-   optionsInfoAppState: `${constants.moduleId}.options-info.app-state`,
-   videoPreviewAppState: `${constants.moduleId}.video-preview.app-state`,
-};
+export const AnimationState = { enabled: true };
 
-export { constants, sessionConstants };
+export const aaDeletedItems = new Map();
 
-/**
- * @typedef {object} AASessionConstants
- *
- * @property {string} activeEffectAppState - Stores the app state / position for AEMenuApp.
- *
- * @property {string} itemAppState - Stores the app state / position for ItemMenuApp.
- *
- * @property {string} optionsInfoAppState - Stores the app state / position of the OptionsInformation dialog.
- *
- * @property {string} videoPreviewAppState - Stores the app state / position of the VideoPreview dialog.
- */
+export function debug(...args) {
+   if (game.settings.get(MODULE_ID, "debug")) {
+      console.log(`DEBUG | Automated Animations |`, ...args);
+   }
+}
+
+export function custom_notify(message, consoleLog = false) {
+   message = `Automated Animations | ${message}`;
+   if (consoleLog) {
+      console.log(`%c${message.replace("<br>", "\n")}`, "color: orange");
+   } else {
+      ui.notifications.info(message);
+   }
+}
+
+export function custom_warning(warning, notify = false, ...args) {
+   warning = `Automated Animations | ${warning}`;
+   if (notify) {
+      ui.notifications.warn(warning);
+   }
+   console.warn(warning.replace("<br>", "\n"), ...args);
+}
+
+export function custom_error(error, notify = true) {
+   error = `Automated Animations | ${error}`;
+   if (notify) {
+      ui.notifications.error(error);
+   }
+   return new Error(error.replace("<br>", "\n"));
+}
+
+export function howToDelete(type) {
+   if (game.settings.get(MODULE_ID, "noTips")) { return; }
+   const n = (key) => game.i18n.localize(`autoanimations.ui.notify.${key}`);
+   const disableTips = n("disableTips");
+   switch (type) {
+      case "overheadtile":
+         custom_notify(`${n("overheadTile")} ${disableTips}`);
+         break;
+      case "groundtile":
+         custom_notify(`${n("groundTile")} ${disableTips}`);
+         break;
+      case "sequencerground":
+         custom_notify(`${n("sequencerEffect")} ${disableTips}`);
+         break;
+   }
+}

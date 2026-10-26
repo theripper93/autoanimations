@@ -1,4 +1,4 @@
-import { debug } from "../constants/constants.js";
+import { debug } from "../constants.js";
 import { trafficCop } from "../router/traffic-cop.js";
 import AAHandler from "../system-handlers/workflow-data.js";
 import { getRequiredData } from "./getRequiredData.js";
@@ -10,6 +10,10 @@ export function systemHooks() {
     }
 
     const item = template.flags?.dnd4e?.item;
+    // Regions not placed by a dnd4e power
+    if (!item) {
+      return;
+    }
     /**
      * We know it has an area target because we're placing a template for it, and the actual Item4e class doesn't
      * transfer over with its getter.

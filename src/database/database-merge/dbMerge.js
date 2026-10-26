@@ -1,6 +1,6 @@
-import * as patreon         from "./patreonDB"
-import { aaDatabase }   from "../databaseSort";
-import { sortDatabase }     from "../databaseSort";
+import * as patreon         from "./patreonDB/index.js"
+import { aaDatabase }   from "../databaseSort.js";
+import { sortDatabase }     from "../databaseSort.js";
 
 export const dbMerge = {
 

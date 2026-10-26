@@ -1,10 +1,13 @@
 import { buildFile } from "../file-builder/build-filepath.js";
+import { addScreenShake, sourceMotion, targetMotion } from "../../system-handlers/commonSequences.js";
 
 export async function dualattach(handler, animationData) {
 
     const data = animationData.primary;
     const sourceFX = animationData.sourceFX;
     const macro = animationData.macro;
+    const motion = animationData.motion;
+    const screenShake = animationData.screenShake;
 
     const animFile = await buildFile("range", data.video, data.video.customPath)
 
@@ -29,6 +32,7 @@ export async function dualattach(handler, animationData) {
         if (data.sound) {
             aaSeq.addSequence(data.sound)
         }
+        if (motion) { sourceMotion(motion, aaSeq, handler) }
         // Animation Start Hook
         aaSeq.thenDo(function () {
             Hooks.callAll("aa.animationStart", sourceToken, handler.allTargets)
@@ -45,16 +49,20 @@ export async function dualattach(handler, animationData) {
                     .stretchTo(target, { attachTo: true, onlyX: onlyX })
                     .persist(true)
                     .playbackRate(data.options.playbackRate)
+                    .opacity(data.options.opacity)
                     .origin(handler.itemUuid)
 
                 const targetLevel = (target?.document ?? target)?.level ?? canvas.level;
                 effect.onLevels([sourceLevel, targetLevel]);
 
-                if (data.options.elevation === 0) {
+                if (data.options.elevation < 1) {
                     effect.belowTokens(true)
                 }
             }
         }
+        if (motion) { targetMotion(motion, aaSeq, handler) }
+        if (screenShake) { addScreenShake(screenShake, aaSeq) }
+
         // Macro if Concurrent
         if (macro && macro.playWhen === "0" && !macro?.args?.warpgateTemplate) {
             handler.runMacro(macro)

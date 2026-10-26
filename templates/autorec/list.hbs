@@ -1,0 +1,14 @@
+<ul class="aa-entries">
+  {{#each entries}}
+  <li class="aa-entry" data-menu="{{menu}}" data-id="{{id}}">
+    <i class="aa-type {{type.icon}}" data-tooltip="{{type.label}}"></i>
+    <span class="aa-label">{{label}}</span>
+    {{#if quickIcon}}<i class="{{quickIcon}}" data-tooltip="{{quickTitle}}"></i>{{/if}}
+    <button type="button" class="icon fas fa-pen-to-square" data-action="editEntry" data-tooltip="autoanimations.menus.edit"></button>
+    <button type="button" class="icon fas fa-clone" data-action="duplicateEntry" data-tooltip="autoanimations.menus.duplicate"></button>
+    <button type="button" class="icon fas fa-trash" data-action="deleteEntry" data-tooltip="autoanimations.menus.delete"></button>
+  </li>
+  {{else}}
+  <li class="aa-empty">{{localize "autoanimations.menus.noEntries"}}</li>
+  {{/each}}
+</ul>

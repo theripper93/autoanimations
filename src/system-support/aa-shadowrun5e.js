@@ -1,8 +1,9 @@
-import { AnimationState }   from "../AnimationState.js";
-import { debug }            from "../constants/constants.js";
+import { AnimationState }   from "../constants.js";
+import { debug }            from "../constants.js";
 import { trafficCop }       from "../router/traffic-cop.js";
 import AAHandler            from "../system-handlers/workflow-data.js";
 import { getRequiredData }  from "./getRequiredData.js";
+import { getFlags }         from "../autorec/flags.js";
 
 export function systemHooks() {
     Hooks.on("createChatMessage", async (msg) => {checkChatMessage(msg) });
@@ -42,6 +43,11 @@ async function checkChatMessage(msg) {
 
     // #2 Evaluate if the item is a match in the AA configuration
     if (await tryAnnimationWith(compiledData)) {
+        return;
+    }
+
+    const flags = getFlags(compiledData.item);
+    if (flags?.killAnim || flags?.isEnabled === false) {
         return;
     }
 

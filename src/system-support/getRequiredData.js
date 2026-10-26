@@ -1,4 +1,4 @@
-import { aaDeletedItems } from "../deletedItems";
+import { aaDeletedItems } from "../constants.js";
 
 export async function getRequiredData(data) {
     //let {item, itemId, itemUuid, itemName, token, tokenId, tokenUuid, targets, targetIds, actorId, actor, templateId, ammoId} = data;

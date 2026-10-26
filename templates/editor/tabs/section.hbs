@@ -1,0 +1,13 @@
+{{#> aa-group groupKey=(concat id "-video") groupLabel=(localize "autoanimations.menus.animation")}}
+  {{> aa-video video}}
+{{/aa-group}}
+
+{{#> aa-group groupKey=(concat id "-options") groupLabel=(localize "autoanimations.menus.options")}}
+  {{> (concat "aa-options-" options)}}
+{{/aa-group}}
+
+{{> aa-tint}}
+
+{{#> aa-group groupKey=(concat id "-sound") groupLabel=(localize "autoanimations.menus.sound") groupToggle=sound.f.enable.fieldPath groupChecked=sound.o.enable}}
+  {{> aa-sound sound}}
+{{/aa-group}}

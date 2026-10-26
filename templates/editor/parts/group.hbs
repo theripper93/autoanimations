@@ -1,0 +1,10 @@
+<details class="aa-group" data-key="{{groupKey}}" {{#if (eq (lookup @root.open groupKey) true)}}open{{else if (ne (lookup @root.open groupKey) false)}}{{#if (or (not groupToggle) groupChecked)}}open{{/if}}{{/if}}>
+  <summary>
+    <i class="aa-chevron fa-solid fa-caret-right"></i>
+    <span>{{groupLabel}}</span>
+    {{#if groupToggle}}<input type="checkbox" name="{{groupToggle}}" {{checked groupChecked}}>{{/if}}
+  </summary>
+  <div class="aa-group-rows {{#if (or groupDim (and groupToggle (not groupChecked)))}}aa-disabled{{/if}}">
+    {{> @partial-block}}
+  </div>
+</details>

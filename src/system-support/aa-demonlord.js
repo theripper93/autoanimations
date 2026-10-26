@@ -15,7 +15,7 @@ export function systemHooks() {
         })
         if (!compiledData.item) { return; }
         if (game.settings.get("autoanimations", "playtrigger") === "hits") {
-            targets = hitTargets;
+            compiledData.targets = compiledData.hitTargets;
         }
 
         const canRunAnimations = () => {

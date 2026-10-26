@@ -1,4 +1,6 @@
-import { howToDelete } from "../../constants/constants.js";
+import { howToDelete } from "../../constants.js";
+import { addScreenShake, sourceMotion, targetMotion } from "../../system-handlers/commonSequences.js";
+import { applyColorTint } from "../color-tint.js";
 
 export async function ontoken(handler, animationData) {
 
@@ -9,6 +11,8 @@ export async function ontoken(handler, animationData) {
     const sourceFX = animationData.sourceFX;
     const targetFX = animationData.targetFX;
     const macro = animationData.macro;
+    const motion = animationData.motion;
+    const screenShake = animationData.screenShake;
     const sourceSize = handler.getSize(data.options.isRadius, data.options.size, sourceToken, data.options.addTokenWidth)
 
     const aaSeq = await new Sequence(handler.sequenceData)
@@ -28,6 +32,7 @@ export async function ontoken(handler, animationData) {
     if (sourceFX) {
         handler.compileSourceEffect(sourceFX, aaSeq)
     }
+    if (motion) { sourceMotion(motion, aaSeq, handler) }
     // Primary Sound
     if (data.sound) {
         aaSeq.addSequence(data.sound)
@@ -58,7 +63,7 @@ export async function ontoken(handler, animationData) {
             }
             setTop(sourceToken, sourceSize, topEffect)
             if (data.options.isWait) {
-                topEffect.waitUntilFinished(data.options.wait)
+                topEffect.waitUntilFinished(data.options.delay)
             }
         } else {
             let aaEffect = aaSeq.effect();
@@ -228,15 +233,17 @@ export async function ontoken(handler, animationData) {
         seq.size(size, { gridUnits: true })
         const sourceLevel = (token?.document ?? token)?.level ?? canvas.level;
         seq.onLevels(sourceLevel);
+        // The bottom half of a shield is drawn under the token.
+        seq.belowTokens(true)
+        seq.zIndex(data.options.zIndex)
         if (data.options.isMasked) {
-            bottomEffect.mask(token)
+            seq.mask(token)
         }
         seq.rotate(180)
         seq.fadeIn(250)
         seq.fadeOut(500)
         if (data.options.tint) {
-            seq.tint(data.options.tintColor)
-            seq.filter("ColorMatrix", { contrast: data.options.contrast, saturate: data.options.saturation })
+            applyColorTint(seq, data.options.tintColor, { hue: data.options.hue, contrast: data.options.contrast, saturate: data.options.saturation })
         }
         if (!data.options.persistent) {
             seq.atLocation(token)
@@ -258,14 +265,14 @@ export async function ontoken(handler, animationData) {
         seq.size(size, { gridUnits: true })
         const sourceLevel = (token?.document ?? token)?.level ?? canvas.level;
         seq.onLevels(sourceLevel);
+        seq.zIndex(data.options.zIndex)
         if (data.options.isMasked) {
             seq.mask(token)
         }
         seq.fadeIn(250)
         seq.fadeOut(500)
         if (data.options.tint) {
-            seq.tint(data.options.tintColor)
-            seq.filter("ColorMatrix", { contrast: data.options.contrast, saturate: data.options.saturation })
+            applyColorTint(seq, data.options.tintColor, { hue: data.options.hue, contrast: data.options.contrast, saturate: data.options.saturation })
         }
         if (!data.options.persistent) {
             seq.atLocation(token)
@@ -285,7 +292,7 @@ export async function ontoken(handler, animationData) {
         seq.file(data.path.file)
         seq.opacity(data.options.opacity)
         seq.size(size, { gridUnits: true })
-        if (data.options.elevation === 0) {
+        if (data.options.elevation < 1) {
             seq.belowTokens(true)
         } else {
             const sourceLevel = (token?.document ?? token)?.level ?? canvas.level;
@@ -296,8 +303,7 @@ export async function ontoken(handler, animationData) {
         }
         seq.zIndex(data.options.zIndex)
         if (data.options.tint) {
-            seq.tint(data.options.tintColor)
-            seq.filter("ColorMatrix", { contrast: data.options.contrast, saturate: data.options.saturation })
+            applyColorTint(seq, data.options.tintColor, { hue: data.options.hue, contrast: data.options.contrast, saturate: data.options.saturation })
         }
         if (!data.options.persistent) {
             seq.atLocation(token)
@@ -321,6 +327,10 @@ export async function ontoken(handler, animationData) {
             seq.tieToDocuments(handler.item)
         }
     }
+    // Token reactions and screen shake
+    if (motion) { targetMotion(motion, aaSeq, handler) }
+    if (screenShake) { addScreenShake(screenShake, aaSeq) }
+
     // Macro if Concurrent
     if (macro && macro.playWhen === "0") {
         handler.runMacro(macro)
