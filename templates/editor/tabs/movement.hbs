@@ -3,6 +3,7 @@
   {{formGroup f.hideFromPlayers value=o.hideFromPlayers disabled=(not isGM)}}
   {{formGroup f.range value=o.range step=0.01 dataset=(object hint=(localize "autoanimations.hints.teleportRange"))}}
   {{formGroup f.teleport value=o.teleport}}
+  {{formGroup f.moveAction value=o.moveAction choices=@root.choices.moveAction blank=false disabled=(not o.teleport)}}
   {{formGroup f.delayMove value=o.delayMove step=0.01 disabled=o.teleport}}
   {{formGroup f.speed value=o.speed step=0.01 dataset=(object hint=(localize "autoanimations.hints.teleportSpeed"))}}
   {{formGroup f.alpha value=o.alpha min=0 max=1 step=0.01 dataset=(object hint=(localize "autoanimations.hints.teleportAlpha"))}}

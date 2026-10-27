@@ -276,6 +276,7 @@ export function choices() {
       switchType: { on: t("settings.ON"), off: t("settings.OFF"), custom: t("custom") },
       detect: { automatic: t("automatic"), manual: t("manual") },
       measureType: { alternating: t("menuTypes.circle"), equidistant: t("menuTypes.square") },
+      moveAction: { blink: game.i18n.localize("TOKEN.MOVEMENT.ACTIONS.blink.label"), displace: game.i18n.localize("TOKEN.MOVEMENT.ACTIONS.displace.label") },
       macroPlayWhen: { 0: t("macroconcurrent"), 1: t("awaitmacro"), 2: t("macroonly"), 3: tt("await", "animation") },
       presetTypes: {
          dualattach: t("presetTypes.dualattach"),

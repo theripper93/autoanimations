@@ -399,6 +399,7 @@ export class TeleportationEntry extends PresetEntry {
             hideFromPlayers: bool(false),
             range: num(30),
             teleport: bool(false),
+            moveAction: choice(["blink", "displace"], "displace"),
             delayMove: num(0),
             speed: num(6, { positive: true }),
             alpha: num(1, { min: 0, max: 1 }),
