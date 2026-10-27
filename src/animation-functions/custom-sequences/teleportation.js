@@ -253,7 +253,7 @@ export async function teleportation(handler, animationData) {
             // Teleport Token
             if (!data.options.teleport) return;
             setTimeout(() => {
-                sourceToken.document.move([{ x: gridPos.x, y: gridPos.y }], { animate: false, constrainOptions: { ignoreWalls: true, ignoreCost: true, ignoreTokens: true } });
+                sourceToken.document.move([{ x: gridPos.x, y: gridPos.y, action: "displace" }], { animate: false, constrainOptions: { ignoreWalls: true, ignoreCost: true, ignoreTokens: true } });
             }, data.options.delayMove ?? 0);
         });
 

@@ -122,12 +122,31 @@ export function systemHooks() {
         });
 
     }
+
+    Hooks.on("dnd5e.postSummon", async (activity, profile, tokens) => {
+        if (activity?.description?.chatFlavor?.includes("[noaa]")) return;
+        const targets = tokens?.map(t => t.object ?? t).filter(Boolean);
+        if (!targets?.length) return;
+        const item = activity?.item;
+        const overrideNames = activity?.name && !["heal", "summon"].includes(activity?.name?.trim()) ? [activity.name] : [];
+        summon(await getRequiredData({item, actor: item.parent, activity, roll: item, targets, hit: true, overrideNames}));
+    });
 }
 
 async function useItem(input) {
     debug("Item used, checking for animations")
     const handler = await AAHandler.make(input)
     if (!handler?.item || !handler?.sourceToken) { console.log("Automated Animations: No Item or Source Token", handler); return;}
+    // Ranged animations of a Summon activity play on the summoned tokens, from dnd5e.postSummon
+    if (input.activity?.type === "summon" && handler.menu === "range") return;
+    trafficCop(handler)
+}
+
+async function summon(input) {
+    debug("Summon placed, checking for animations")
+    const handler = await AAHandler.make(input)
+    if (!handler?.item || !handler?.sourceToken) { console.log("Automated Animations: No Item or Source Token", handler); return;}
+    if (handler.menu !== "range") return;
     trafficCop(handler)
 }
 
