@@ -3,7 +3,23 @@ import AAHandler            from "../system-handlers/workflow-data.js"
 import { getRequiredData }  from "./getRequiredData.js"
 import { debug }            from "../constants/constants.js"
 
+/**
+ * Support for the [Black Flag system](https://github.com/koboldpress/black-flag) from Kobold Press. It supports the following features:
+ * - Attack Animations with range checks
+ * - Animation on template/region placement
+ * - (Optional) Audio and Animation for Critical Hits and Critical Failures on Attacks
+ * - (Optional) PlayOnMiss flag that animates missed attacks separately, requires a target to be selected
+ */
+
 export function systemHooks() {
+    /**
+     * A hook event that fires after an attack has been rolled.
+     * @function blackFlag.postRollAttack
+     * @memberof hookEvents
+     * @param {ChallengeRoll[]} rolls - The resulting rolls.
+     * @param {object} [data]
+     * @param {Activity} [data.subject] - Activity for which the roll was performed.
+     */
     Hooks.on("blackFlag.postRollAttack", async (rolls, data) => {
         if (!rolls?.length) return
         const activity = data.subject
@@ -74,6 +90,13 @@ export function systemHooks() {
         trafficCop(handler)
     })
     
+    /**
+     * A hook event that fires after an activity activation card is created.
+     * @function blackFlag.postCreateActivationMessage
+     * @memberof hookEvents
+     * @param {Activity} activity - Activity for which the card was created.
+     * @param {BlackFlagChatMessage} message - Created chat message.
+     */
     Hooks.on("blackFlag.postCreateActivationMessage", async (activity, message) => {
         if (activity?.description?.chatFlavor?.includes("[noaa]")) return
         
@@ -139,44 +162,52 @@ export function systemHooks() {
 }
 
 function criticalCheckBlackFlag(roll, item = {}) {
-    if (!roll?.isCriticalSuccess && !roll?.isCriticalFailure) { return; }
-    debug("Checking for Crit or Fumble")
+
     const critical = roll?.isCriticalSuccess;
     const fumble = roll?.isCriticalFailure;
+
+    if (!critical && !fumble) { return; }
+
     const token = canvas.tokens.get(roll.tokenId) || getTokenFromItem(item);
 
-    const critAnim = game.settings.get("autoanimations", "CriticalAnimation");
-    const critMissAnim = game.settings.get("autoanimations", "CriticalMissAnimation");
-    const critAudio = game.settings.get("autoanimations", "CriticalAudio");
-    const critMissAudio = game.settings.get("autoanimations", "CriticalMissAudio");
+    const enableCritical = game.settings.get("autoanimations", "EnableCritical");
+    const enableCriticalMiss = game.settings.get("autoanimations", "EnableCriticalMiss");
 
-    switch (true) {
-        case (game.settings.get("autoanimations", "EnableCritical") && critical):
-            const critSeq = new Sequence({moduleName: "Automated Animations", softFail: !game.settings.get("autoanimations", "debug")});
-            if (critAnim) {
-                critSeq.effect()
-                    .file(critAnim)
-                    .atLocation(token);
-            }
-            if (critAudio) {
-                critSeq.sound()
-                    .file(critAudio);
-            }
-            critSeq.play();
-            break;
-        case (game.settings.get("autoanimations", "EnableCriticalMiss") && fumble):
-            const critMissSeq = new Sequence({moduleName: "Automated Animations", softFail: !game.settings.get("autoanimations", "debug")});
-            if (critMissAnim) {
-                critMissSeq.effect()
-                    .file(critMissAnim)
-                    .atLocation(token);
-            }
-            if (critMissAudio) {
-                critMissSeq.sound()
-                    .file(critMissAudio);
-            }
-            critMissSeq.play();
-            break;
+    if (enableCritical && critical) {
+        const critAnim = game.settings.get("autoanimations", "CriticalAnimation");
+        const critAudio = game.settings.get("autoanimations", "CriticalAudio");
+
+        const critSeq = new Sequence({moduleName: "Automated Animations", softFail: !game.settings.get("autoanimations", "debug")});
+        if (critAnim) {
+            critSeq.effect()
+                .file(critAnim)
+                .atLocation(token);
+        }
+        if (critAudio) {
+            critSeq.sound()
+                .file(critAudio);
+        }
+        critSeq.play();
+
+        return;
+    }
+
+    if (enableCriticalMiss && fumble) {
+        const critMissAnim = game.settings.get("autoanimations", "CriticalMissAnimation");
+        const critMissAudio = game.settings.get("autoanimations", "CriticalMissAudio");
+
+        const critMissSeq = new Sequence({moduleName: "Automated Animations", softFail: !game.settings.get("autoanimations", "debug")});
+        if (critMissAnim) {
+            critMissSeq.effect()
+                .file(critMissAnim)
+                .atLocation(token);
+        }
+        if (critMissAudio) {
+            critMissSeq.sound()
+                .file(critMissAudio);
+        }
+        critMissSeq.play();
+        return;
     }
 
     function getTokenFromItem(item) {
