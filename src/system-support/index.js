@@ -38,3 +38,4 @@ export * as daggerheart from "./aa-daggerheart.js"
 export * as fantasticdepths from "./aa-fade.js"
 export * as gurps from "./aa-gurps.js"
 export * as pokerole from "./aa-pokerole.js";
+export * as blackflag from "./aa-black-flag.js";
