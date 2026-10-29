@@ -1,4 +1,5 @@
 import { addScreenShake, sourceMotion, targetMotion } from "../../system-handlers/commonSequences.js";
+import { constrainToRegionWalls } from "../wall-restriction.js";
 
 const wait = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 
@@ -58,6 +59,7 @@ export async function thunderwave(handler, animationData, config) {
 
     effect.onLevels(handler.targetLevel(template, sourceToken));
     effect.elevation(handler.targetElevation(template, sourceToken), { absolute: true })
+    constrainToRegionWalls(effect, template)
 
     if (data.options.elevation < 1) {
         effect.belowTokens(true)

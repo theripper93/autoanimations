@@ -1,5 +1,6 @@
 import { howToDelete } from "../../constants.js";
 import { addScreenShake, sourceMotion, targetMotion } from "../../system-handlers/commonSequences.js";
+import { constrainToRegionWalls } from "../wall-restriction.js";
 
 // Credit goes to Wasp-Sequencer Guy for the structure of the Fireball Sequence
 export async function proToTemp(handler, animationData, templateDocument) {
@@ -71,6 +72,7 @@ export async function proToTemp(handler, animationData, templateDocument) {
             .aboveLighting(data.preExplosion.options.aboveTemplate)
 
         effectExplode.elevation(templateElevation, { absolute: true })
+        constrainToRegionWalls(effectExplode, template)
         if (data.preExplosion.options.elevation < 1) {
             effectExplode.belowTokens(true)
         } else {
@@ -94,6 +96,7 @@ export async function proToTemp(handler, animationData, templateDocument) {
     effect2.onLevels(templateLevel);
 
     effect2.elevation(templateElevation, { absolute: true })
+    constrainToRegionWalls(effect2, template)
     if (data.explosion.options.elevation < 1) {
         effect2.belowTokens(true)
     }
@@ -112,6 +115,7 @@ export async function proToTemp(handler, animationData, templateDocument) {
             .fadeOut(500)
 
         effectAfterImage.elevation(templateElevation, { absolute: true })
+        constrainToRegionWalls(effectAfterImage, template)
         if (data.afterImage.options.elevation < 1) {
             effectAfterImage.belowTokens(true)
         } else {

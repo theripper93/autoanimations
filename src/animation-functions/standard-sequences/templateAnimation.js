@@ -2,7 +2,12 @@ import { socketlibSocket } from "../../socket.js";
 import { howToDelete } from "../../constants.js";
 import { addScreenShake, sourceMotion, targetMotion } from "../../system-handlers/commonSequences.js";
 import { applyColorTint } from "../color-tint.js";
+import { constrainToRegionWalls, isWallRestricted } from "../wall-restriction.js";
 const wait = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
+
+const CENTERED_SHAPES = ['circle', 'rectangle', 'ellipse', 'ring', 'polygon'];
+const AREA_SHAPES = [...CENTERED_SHAPES, 'emanation'];
+const MASKED_SHAPES = ['polygon', 'ring'];
 
 export async function templatefx(handler, animationData, templateDocument) {
 
@@ -105,7 +110,7 @@ export async function templatefx(handler, animationData, templateDocument) {
                 }
             }
 
-            if (shapeType === 'circle' || shapeType === 'rectangle' || shapeType === 'emanation') {
+            if (AREA_SHAPES.includes(shapeType)) {
                 const shapeLocation = { x: shape.bounds.center.x, y: shape.bounds.center.y };
 
                 const effectSize = {
@@ -122,12 +127,11 @@ export async function templatefx(handler, animationData, templateDocument) {
                     && data.options.persistType === 'attachtemplate';
                 if (attached) {
                     const belowToken = data.options.elevation < 1;
-                    const regionOffset = shapes.length > 1
-                        ? {
-                            x: shapeLocation.x - template.bounds.center.x,
-                            y: shapeLocation.y - template.bounds.center.y,
-                        }
-                        : { x: 0, y: 0 };
+                    const attachPoint = shapes.length > 1 ? template.bounds.center : shape.center;
+                    const regionOffset = {
+                        x: shapeLocation.x - attachPoint.x,
+                        y: shapeLocation.y - attachPoint.y,
+                    };
                     templateSeq.attachTo(template, {
                         bindRotation: true,
                         bindElevation: false,
@@ -214,8 +218,14 @@ export async function templatefx(handler, animationData, templateDocument) {
             seq.elevation(groundElevation, { absolute: true })
             seq.zIndex(data.options.zIndex)
             seq.rotate(data.options.rotate)
-            if (data.options.isMasked) {
+            const removesTemplate = data.options.removeTemplate
+                && !(data.options.persistent && data.options.persistType === "attachtemplate");
+            const wallRestricted = isWallRestricted(template);
+            if (data.options.isMasked || MASKED_SHAPES.includes(shape.type) || (wallRestricted && !removesTemplate)) {
                 seq.mask(template)
+            }
+            if (wallRestricted && removesTemplate) {
+                constrainToRegionWalls(seq, template, shape)
             }
             seq.playbackRate(data.options.playbackRate)
             seq.name(handler.rinsedName)
@@ -227,7 +237,7 @@ export async function templatefx(handler, animationData, templateDocument) {
             function convertToXY(input) {
                 let menuType = data.video.menuType;
                 let shapeType = shape.type;
-                let defaultAnchor = shapeType === "circle" || shapeType === "rectangle" ? { x: 0.5, y: 0.5 } : { x: 0, y: 0.5 };
+                let defaultAnchor = CENTERED_SHAPES.includes(shapeType) ? { x: 0.5, y: 0.5 } : { x: 0, y: 0.5 };
                 if (!input) { return defaultAnchor }
                 let dNum = menuType === "cone" || menuType === "ray"
                     ? input || "0, 0.5"
