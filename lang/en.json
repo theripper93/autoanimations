@@ -245,9 +245,11 @@
             "crithit_name": "Critical Hits",
             "crithit_hint": "Enable for Critical Hit Animations to play on Source Token",
             "crithitAnim_name": "Critical Hit Animation",
+            "crithitAudio_name": "Critical Hit Audio",
             "critmiss_name": "Critical Misses",
             "critmiss_hint": "Enable for Critical Miss Animations to play on Source Token",
             "critmissAnim_name": "Critical Miss Animation",
+            "critmissAudio_name": "Critical Miss Audio",
             "disableNested": "Disable Nested Animations",
             "disableNestedHint": "Prevents Animations for Conditions (Rulesets) created by other Conditions",
             "debugging": "Enable Debugging",
@@ -299,7 +301,9 @@
             "cyberPunkCanMiss": "Use forceMiss on miss",
             "cyberPunkCanMiss_hint": "Shows the bullet miss the targeted token if the DV has not been beat. If a DV table cannot be found it will treat the animation as a hit as fallback",
             "cyberPunkElevation": "Use elevation for hit calculation",
-            "cyberPunkElevation_hint": "Uses the elevation between the tokens as additional distance when enabled"
+            "cyberPunkElevation_hint": "Uses the elevation between the tokens as additional distance when enabled",
+            "onmiss_name": "Animate misses separately",
+            "onmiss_hint": "When an attack misses, the Animation will veer off target. Requires the attack to have a target."
         },
         "colors": {
             "lightorange": "Light Orange",

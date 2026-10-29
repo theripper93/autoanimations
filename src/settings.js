@@ -79,6 +79,16 @@ function systemSettings() {
          return { playtrigger: choice("playAnimations", null, { onAttack: `${S}.attack`, onDamage: `${S}.damage` }, "onAttack") };
       case "swade":
          return { playtrigger: choice("playAnimations", null, { onAttack: `${S}.swadeTraitRolls`, onDamage: `${S}.damage` }, "onDamage") };
+      case "black-flag":
+         return {
+            playonmiss: bool("onmiss_name", "onmiss_hint"),
+            EnableCritical: bool("crithit_name", "crithit_hint"),
+            CriticalAnimation: file("crithitAnim_name"),
+            CriticalAudio: file("crithitAudio_name"),
+            EnableCriticalMiss: bool("critmiss_name", "critmiss_hint"),
+            CriticalMissAnimation: file("critmissAnim_name"),
+            CriticalMissAudio: file("critmissAudio_name")
+         }
       default:
          return {};
    }
