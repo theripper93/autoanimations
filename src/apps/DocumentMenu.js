@@ -1,6 +1,6 @@
 import { AAAutorecFunctions } from "../autorec/search.js";
 import { AAAutorecManager } from "../autorec/manager.js";
-import { getFlags } from "../autorec/flags.js";
+import { getFlags, getFlagSource, setFlags } from "../autorec/flags.js";
 import { newEntry, readEntry, SCHEMA_VERSION, validateEntry, validationMessage } from "../data/entries.js";
 import { MODULE_ID, custom_warning } from "../constants.js";
 import { AnimationEditor } from "./editor/editor.js";
@@ -15,7 +15,7 @@ const t = (key, data) => (data ? game.i18n.format(`autoanimations.ui.document.${
 
 export class DocumentMenu extends HandlebarsApplicationMixin(ApplicationV2) {
    constructor(document, { isActiveEffect = false, ...options } = {}) {
-      super({ ...options, id: `AA-item-settings-${document.uuid ?? document.id}`.replace(/\./g, "-") });
+      super({ ...options, id: `AA-item-settings-${getFlagSource(document).key}`.replace(/\./g, "-") });
       this.document = document;
       this.isActiveEffect = isActiveEffect;
 
@@ -247,9 +247,7 @@ export class DocumentMenu extends HandlebarsApplicationMixin(ApplicationV2) {
       let flags;
       try { flags = validateEntry(this.entry); }
       catch (err) { return ui.notifications.error(`Automated Animations | ${game.i18n.format("autoanimations.ui.common.notSaved", { error: validationMessage(err) })}`); }
-      const doc = this.document;
-      await doc.update({ [`flags.-=${MODULE_ID}`]: null });
-      await doc.update({ [`flags.${MODULE_ID}`]: flags });
+      await setFlags(this.document, flags);
       this.entry = foundry.utils.deepClone(flags);
       this._saved = JSON.stringify(this.entry);
       await this._renderEditor();

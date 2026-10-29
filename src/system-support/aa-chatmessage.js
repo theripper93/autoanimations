@@ -48,7 +48,7 @@ function funkyTest(msg) {
     const token = fromUuidSync(flagTokenUUID || elTokenUUID) || canvas.tokens.get(msg.speaker?.token);
     const itemFromName = token?.actor?.items?.getName(elItemName);
     let item = fromUuidSync(flagItemUUID || elItemUUID) || msg.item || msg.itemSource || itemFromName;
-    const actor = item?.actor || token?.actor || game.actors.get(flagActorID || elActorID);
+    const actor = item?.actor || token?.actor || game.actors.get(flagActorID || elActorID || msg.speaker?.actor);
 
     if(!item) item = actor?.items.get(flagItemID || elItemID || msg.rolls?.[0]?.options?.itemId);
 
@@ -65,15 +65,15 @@ function getItemFromChatMessageData(msg, actor, element){
     const secondaryTargetObject = msgData;
     let bestMatch, goodMatch;
     const mainTargetItemUUIDs = extractItemUUIDFromObject(mainTargetObject);
-    bestMatch = mainTargetItemUUIDs.find(uuid => uuid.includes(actor.id));
+    bestMatch = mainTargetItemUUIDs.find(uuid => uuid.includes(actor?.id));
     goodMatch = mainTargetItemUUIDs[0];
     if(bestMatch) return fromUuidSync(bestMatch);
     const allUUIDs = Array.from(element.querySelectorAll("[data-uuid]")).map(el => el.getAttribute("data-uuid")).filter(uuid => uuid.includes("Item."));
-    bestMatch = allUUIDs.find(uuid => uuid.includes(actor.id));
+    bestMatch = allUUIDs.find(uuid => uuid.includes(actor?.id));
     goodMatch ??= allUUIDs[0];
     if(bestMatch) return fromUuidSync(bestMatch);
     const secondaryTargetItemUUIDs = extractItemUUIDFromObject(secondaryTargetObject);
-    bestMatch = secondaryTargetItemUUIDs.find(uuid => uuid.includes(actor.id));
+    bestMatch = secondaryTargetItemUUIDs.find(uuid => uuid.includes(actor?.id));
     goodMatch ??= secondaryTargetItemUUIDs[0];
     if(bestMatch) return fromUuidSync(bestMatch);
     if(goodMatch) return fromUuidSync(goodMatch);

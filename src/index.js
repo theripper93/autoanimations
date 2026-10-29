@@ -5,6 +5,7 @@ import { registerSettings } from "./settings.js";
 import { setupSocket } from "./socket.js";
 import { initializeAADB } from "./database/databaseSort.js";
 import { AAAutorecManager } from "./autorec/manager.js";
+import { setSystemFlagSource } from "./autorec/flags.js";
 import { playAnimation } from "./system-support/external.js";
 import { registerActiveEffectHooks } from "./active-effects/handleActiveEffectHooks.js";
 import * as systemSupport from "./system-support/index.js";
@@ -41,6 +42,7 @@ Hooks.once("ready", async () => {
 
    const systemId = game.system.id.replace(/-/g, "").toLowerCase();
    const adapter = Object.entries(systemSupport).find(([name]) => name.toLowerCase() === systemId)?.[1];
+   if (adapter?.flagSource) { setSystemFlagSource(adapter.flagSource); }
    (adapter ?? systemSupport.standard).systemHooks();
    registerActiveEffectHooks();
 

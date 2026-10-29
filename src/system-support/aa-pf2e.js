@@ -12,6 +12,11 @@ const PF2E_SIZE_TO_REACH = {
     grg: 15,
 };
 
+export function flagSource(doc) {
+    if (!doc.variantId) { return; }
+    return { document: doc.original, path: `system.overlays.${doc.variantId}.flags`, key: `${doc.uuid}.${doc.variantId}` };
+}
+
 export function systemHooks() {
     Hooks.on("createChatMessage", async (msg) => {
         if (msg.author.id !== game.user.id) { return };
@@ -22,7 +27,7 @@ export function systemHooks() {
             return;
         }
         let compiledData = await getRequiredData({
-            item: msg.item,
+            item: msg.item ?? getCollectionSpell(msg),
             itemUuid: msg.flags.pf2e?.origin?.uuid,
             token: msg.token?.object,
             tokenId: msg.speaker?.token,
@@ -50,11 +55,19 @@ export function systemHooks() {
             workflow: template,
             isTemplate: true
         })
-        // pf2e v5 includes on item getter on templates which handles variants
-        if (template.item) compiledData.item = template.item
+        const overlayIds = template.flags?.pf2e?.origin?.variant?.overlays;
+        if (template.item) compiledData.item = template.item;
+        if (overlayIds?.length && compiledData.item?.loadVariant && !compiledData.item.isVariant) compiledData.item = compiledData.item.loadVariant({ overlayIds }) ?? compiledData.item;
 
         templateAnimation(compiledData)
     })
+}
+
+function getCollectionSpell(msg) {
+    const id = msg.flags.pf2e?.origin?.uuid?.split(".").pop();
+    const collections = msg.actor?.spellcasting?.collections;
+    if (!id || !collections) { return; }
+    return [...collections.values()].find(c => c.get(id))?.get(id);
 }
 
 async function templateAnimation(input) {

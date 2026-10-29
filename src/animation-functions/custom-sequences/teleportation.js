@@ -77,9 +77,7 @@ export async function teleportation(handler, animationData) {
                     elevation: parseFloat(response.flags.levels.elevation),
                 }
     
-                let topLeft = canvas.grid.getTopLeftPoint({ x: pos.x, y: pos.y });
-    
-                if (canvas.grid.measurePath([sourceToken, topLeft], { gridSpaces: true }).distance <= data.options.range) {
+                if (canvas.grid.measurePath([sourceToken.center, pos], { gridSpaces: true }).distance <= data.options.range) {
                     if (data.options.checkCollision && testCollision(pos)) {
                         ui.notifications.error(game.i18n.localize("autoanimations.ui.notify.pathBlocked"))
                         return getPositionFrom3D();
@@ -100,9 +98,7 @@ export async function teleportation(handler, animationData) {
         if (event.data.button !== 0) { return }
         pos = event.data.getLocalPosition(canvas.app.stage);
 
-        let topLeft = canvas.grid.getTopLeftPoint({ x: pos.x, y: pos.y });
-
-        if (canvas.grid.measurePath([sourceToken, topLeft], { gridSpaces: true }).distance <= data.options.range) {
+        if (canvas.grid.measurePath([sourceToken.center, pos], { gridSpaces: true }).distance <= data.options.range) {
             if (data.options.checkCollision && testCollision(pos)) {
                 ui.notifications.error(game.i18n.localize("autoanimations.ui.notify.pathBlocked"))
             } else {
@@ -122,14 +118,9 @@ export async function teleportation(handler, animationData) {
 
     async function deleteTemplatesAndMove() {
 
-        let gridPos = canvas.grid.getTopLeftPoint({ x: pos.x, y: pos.y });
-        let centerPos;
-        if (canvas.scene.gridType === 0) {
-            centerPos = [gridPos.x + sourceToken.w, gridPos.y + sourceToken.w];
-        } else {
-            const center = canvas.grid.getCenterPoint({x: pos.x, y: pos.y});
-            centerPos = [center.x, center.y];
-        }
+        const gridPos = sourceToken.document.getSnappedPosition({ x: pos.x - sourceToken.w / 2, y: pos.y - sourceToken.h / 2 });
+        const center = sourceToken.document.getCenterPoint(gridPos);
+        const centerPos = [center.x, center.y];
 
         Sequencer.EffectManager.endEffects({ name: "teleportation" })
 
@@ -225,7 +216,7 @@ export async function teleportation(handler, animationData) {
             let animSeq = aaSeq.animation()
             animSeq.on(sourceToken)
             animSeq.delay(data.options.delayMove)
-            animSeq.moveTowards({ x: gridPos.x, y: gridPos.y, elevation: pos.elevation }, { relativeToCenter: !canvas.scene.grid.type })
+            animSeq.moveTowards({ x: gridPos.x, y: gridPos.y, elevation: pos.elevation }, { relativeToCenter: false })
             animSeq.moveSpeed(data.options.speed)
         }
         
