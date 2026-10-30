@@ -98,6 +98,7 @@ export class EditWindow extends HandlebarsApplicationMixin(ApplicationV2) {
       this.isNew = false;
       this.entry = foundry.utils.deepClone(copy);
       this._saved = JSON.stringify(this.entry);
+      ui.notifications.info(`Automated Animations | ${game.i18n.localize("autoanimations.ui.common.saved")}`);
       await this.editor.render(this.element.querySelector(".aa-editor"), this.entry);
    }
 }

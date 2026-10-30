@@ -250,6 +250,7 @@ export class DocumentMenu extends HandlebarsApplicationMixin(ApplicationV2) {
       await setFlags(this.document, flags);
       this.entry = foundry.utils.deepClone(flags);
       this._saved = JSON.stringify(this.entry);
+      ui.notifications.info(`Automated Animations | ${game.i18n.localize("autoanimations.ui.common.saved")}`);
       await this._renderEditor();
    }
 

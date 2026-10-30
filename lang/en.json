@@ -965,6 +965,7 @@
                 "openMacro": "Open Macro",
                 "unsavedTitle": "Unsaved Changes",
                 "unsavedContent": "Discard the unsaved changes?",
+                "saved": "Saved",
                 "notSaved": "Not saved. {error}",
                 "notCopied": "Not copied. {error}"
             },
