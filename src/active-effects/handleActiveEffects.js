@@ -124,18 +124,21 @@ export async function toggleActiveEffects(effect, toggle) {
     }
 }
 
-// Used to delete Tile effects when Midi-QOL Concentration is lost
 export async function checkConcentration(effect) {
-
-    // Check effect label and return if it is not equal to "concentrating"
     const label = (effect.name ?? effect.label) || "";
-    if (label.toLowerCase() !== "concentrating") { return; }
-
-    // Get Originating Item. If no Origin, return
-    const origin = effect.origin
+    const isConcentration = effect.statuses?.has?.("concentrating")
+        || effect.system?.type === "concentrating"
+        || label.toLowerCase() === "concentrating";
+    if (!isConcentration) { return; }
+    
+    const origin = effect.origin ?? effect.flags?.dnd5e?.item?.uuid
     if (!origin) {
         debug("Failed to find an Origin for Concentration")
         return;
+    }
+
+    if (Sequencer.EffectManager.getEffects({ origin }).length > 0) {
+        Sequencer.EffectManager.endEffects({ origin })
     }
 
     // Get arrays of Background and Foreground Tiles with the A-A Origin flag UUID matching the Effect Origin

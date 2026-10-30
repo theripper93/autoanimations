@@ -80,6 +80,10 @@ export function registerActiveEffectHooks() {
                 if (game.user.id !== userId) { return; }
                 toggleActiveEffects(data, toggle)
             });
+            Hooks.on("preDeleteActiveEffect", (effect, data, userId) => {
+                if (game.user.id !== userId) { return; }
+                checkConcentration(effect)
+            });
         case "pf1":
             Hooks.on("createActiveEffect", async (effect, data, userId) => {
                 if (game.settings.get("autoanimations", "disableAEAnimations")) {

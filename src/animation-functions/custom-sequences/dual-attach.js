@@ -52,6 +52,10 @@ export async function dualattach(handler, animationData) {
                     .opacity(data.options.opacity)
                     .origin(handler.itemUuid)
 
+                if (handler.systemData.tieToDocuments) {
+                    effect.tieToDocuments(handler.item)
+                }
+
                 const targetLevel = (target?.document ?? target)?.level ?? canvas.level;
                 effect.onLevels([sourceLevel, targetLevel]);
 
