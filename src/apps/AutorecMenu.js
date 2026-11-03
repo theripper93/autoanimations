@@ -12,7 +12,7 @@ export class AutorecMenu extends HandlebarsApplicationMixin(ApplicationV2) {
    static _instance;
 
    static show() {
-      if (!game.user.isGM) { return; }
+      if (!game.user.can("SETTINGS_MODIFY")) { return; }
       this._instance ??= new AutorecMenu();
       return this._instance.render({ force: true });
    }

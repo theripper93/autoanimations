@@ -203,7 +203,7 @@
             "midionhit_name":"Only play animations on Hits",
             "midionhit_hint":"Requires Midi-QOL Workflow settings to Check if Attacks hit",
             "midionmiss_name": "Play Animations on Hits and Misses",
-            "midionmiss_hint": "On a Miss, the Animation will veer off target. Requires MIDI Workflow to check for hits",
+            "midionmiss_hint": "On a Miss, the Animation will veer off target.",
             "pf2eonmiss_hint": "Requires Animations to be played on Attack rolls",
             "midiondmg_name":"Only play animations on Damage Rolls",
             "midiondmg_hint":"When Enabled, this will ONLY play the animations on the Damage Roll if one is present on the item",

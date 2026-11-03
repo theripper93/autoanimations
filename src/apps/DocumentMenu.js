@@ -73,7 +73,7 @@ export class DocumentMenu extends HandlebarsApplicationMixin(ApplicationV2) {
    async _renderFrame(options) {
       const frame = await super._renderFrame(options);
       const buttons = [headerButton("info", "fa-solid fa-circle-info", "autoanimations.ui.document.info")];
-      if (game.user.isGM) { buttons.unshift(headerButton("openAutorec", "fa-solid fa-globe", "autoanimations.ui.document.openAutorec")); }
+      if (game.user.can("SETTINGS_MODIFY")) { buttons.unshift(headerButton("openAutorec", "fa-solid fa-globe", "autoanimations.ui.document.openAutorec")); }
       frame.querySelector("[data-action=close]").before(...buttons);
       return frame;
    }
@@ -174,7 +174,7 @@ export class DocumentMenu extends HandlebarsApplicationMixin(ApplicationV2) {
          icon: "far fa-clone",
          onClick: () => this._copyFromAutorec(),
       }];
-      if (game.user.isGM) {
+      if (game.user.can("SETTINGS_MODIFY")) {
          items.push({ label: "autoanimations.ui.document.copyTo", icon: "far fa-clone", onClick: () => this._copyToAutorec() });
       }
       return items;
