@@ -3,7 +3,7 @@ import "../styles/autoanimations.scss";
 import { MODULE_ID, AnimationState, aaDeletedItems } from "./constants.js";
 import { registerSettings } from "./settings.js";
 import { setupSocket } from "./socket.js";
-import { initializeAADB } from "./database/databaseSort.js";
+import { initializeAADB, refreshDatabase } from "./database/databaseSort.js";
 import { AAAutorecManager } from "./autorec/manager.js";
 import { setSystemFlagSource } from "./autorec/flags.js";
 import { playAnimation } from "./system-support/external.js";
@@ -60,6 +60,7 @@ globalThis.AutomatedAnimations = {
    AutorecManager: AAAutorecManager,
    playAnimation: (sourceToken, item, options = {}) => playAnimation(sourceToken, item, options),
    openAnimationMenu,
+   refreshDatabase,
    showAutorecMenu: () => AutorecMenu.show(),
    DataModels: { ENTRY_CLASSES, entryClass, readEntry, validateEntry },
 };
