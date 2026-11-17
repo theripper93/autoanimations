@@ -43,7 +43,7 @@ export async function initializeAADB() {
       }
    }
 
-   Sequencer.Database.registerEntries("autoanimations", aaDatabase, true);
+   registerWithSequencer(false);
    buildMenuOptions(aaDatabase);
    console.log("%cAutomated Animations Database has been compiled and registered", "color: green", { aaDatabase });
    Hooks.callAll("aa.ready", aaDatabase);
@@ -57,8 +57,20 @@ export async function initializeAADB() {
  */
 export function refreshDatabase() {
    if (!aaDatabase) { return; }
-   Sequencer.Database.registerEntries("autoanimations", aaDatabase, true, true);
+   registerWithSequencer(true);
    buildMenuOptions(aaDatabase);
+}
+
+let sequencerTemplates = {};
+
+/**
+ * Sequencer deletes `_templates` from the entries it registers. Keep a copy (including templates added by other
+ * modules before a refresh), so later registrations still resolve `_template: "ranged"` and the like.
+ */
+function registerWithSequencer(override) {
+   sequencerTemplates = { ...sequencerTemplates, ...aaDatabase._templates };
+   aaDatabase._templates = foundry.utils.deepClone(sequencerTemplates);
+   Sequencer.Database.registerEntries("autoanimations", aaDatabase, true, override);
 }
 
 export function sortDatabase(database, isPatreon = false) {
