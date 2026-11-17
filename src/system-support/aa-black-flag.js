@@ -215,7 +215,7 @@ function criticalCheckBlackFlag(roll, item = {}) {
         if (token) return token;
         const tokens = canvas.tokens.placeables.filter(token => token.actor?.items?.get(item.id));
         const fallBack = tokens[0];
-        const mostLikely = tokens.find(x => x.id === _token.id);
+        const mostLikely = tokens.find(x => x.id === _token?.id);
         return mostLikely ?? fallBack;
     }
 

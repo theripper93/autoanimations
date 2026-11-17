@@ -165,6 +165,6 @@ function getTokenFromItem(item) {
     let token = item?.parent?.token;
     if (token) { return token }
     let tokens = canvas.tokens.placeables.filter(token => token.actor?.items?.get(item.id));
-    let trueToken = tokens.length > 1 ? tokens.find(x => x.id === _token.id) || tokens[0] : tokens[0];
+    let trueToken = tokens.length > 1 ? tokens.find(x => x.id === _token?.id) || tokens[0] : tokens[0];
     return trueToken;
 }
