@@ -49,6 +49,18 @@ export async function initializeAADB() {
    Hooks.callAll("aa.ready", aaDatabase);
 }
 
+/**
+ * Re-register the database with Sequencer and rebuild the select menu options.
+ * Call this after adding or changing entries in the database (e.g. from an `aa.ready` hook),
+ * so the new entries show up in the menus and resolve as `autoanimations.*` Sequencer paths.
+ * Menus that are already open pick up the changes on their next render.
+ */
+export function refreshDatabase() {
+   if (!aaDatabase) { return; }
+   Sequencer.Database.registerEntries("autoanimations", aaDatabase, true, true);
+   buildMenuOptions(aaDatabase);
+}
+
 export function sortDatabase(database, isPatreon = false) {
    const walk = (node, depth) => {
       if (!node || typeof node !== "object" || Array.isArray(node) || depth > 4) { return; }
