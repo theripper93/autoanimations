@@ -8,6 +8,8 @@
  * I implemented this code, overwriting the previous one.
  * If you have any questions about how it works, you can send a message to my Discord: `joaquinp98` or mail to: `joaquinperyera98@gmail.com`
  * But feel free to overwrite this code at any time if you wish.
+ *
+ * This code has been updated since then by Supe on discord, who at the time of writing is one of the developers of the Daggerheart system.
  */
 
 import { trafficCop } from "../router/traffic-cop.js";
@@ -35,20 +37,17 @@ export function systemHooks() {
  */
 async function handleChatMessageCreation(msg, _options, _userId) {
    if (!msg.isAuthor || !VALID_MESSAGE_TYPES.includes(msg.type)) return;
-
-   const workflowData = msg.system ?? msg.flags?.daggerheart;
-   if (!workflowData?.source?.item) return;
+   if (!msg?.system) return;
 
    // Pull the item or action. If there is an action but no item, this is likely a basic attack
    // Action names often don't have the context, so we prioritize the item unless it doesn't exist
-   const { item: itemId, actor: actorUuid } = workflowData.source;
-   const action = workflowData.action;
-   const actor = await fromUuid(actorUuid);
-   const item = actor?.items.get(itemId);
+   const { actionActor: actor, item, action } = msg.system;
+   if (!item && !actor && !action) return;
+
    if (!actor) {
-      return console.warn(`Daggerheart Workflow: Could not find Actor (${actorUuid}) for ChatMessage.`, { msg });
+      return console.warn(`Daggerheart Workflow: Could not find Actor for ChatMessage.`, { msg });
    } else if (!item && !action) {
-      return console.warn(`Daggerheart Workflow: Could not find Item (${itemId}) or action for ChatMessage.`, {
+      return console.warn(`Daggerheart Workflow: Could not find Item or action for ChatMessage.`, {
          msg,
          actor,
          item,
